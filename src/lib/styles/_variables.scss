@@ -1,0 +1,353 @@
+/**
+ * @file src/SCSS/_variables.scss
+ * @description
+ * @author Tom Planche (github.com/TomPlanche)
+ ********************************************/
+
+/* COLORS */
+$gh-bg: #0D1117;
+$gh-bg-secondary: #161B22;
+$gh-button: #21262D;
+$gh-button-active: #30363D;
+$gh-text: #BED1D9;
+$gh-text-secondary: #8B949E;
+$gh-button-border: #363B42;
+$gh-button-border-active: #8B949E;
+$gh-yellow: #E3B341;
+$gh-blue: #58A6FF;
+$gh-blue-dark: #1F6FEB;
+$gh-red: #f56140;
+$gh-red-active: #F78166;
+$gh-green: #238636;
+$gh-green-active: #2EA043;
+$gh-green-dark: #1d5927;
+$gh-border: #30363D;
+$gh-border-dark: #21262D;
+
+$app-bg-dark: #080a13;
+$app-bg-light: #e5e3de;
+
+$black: #02040a;
+$black-dimed: #02040a75;
+$blue: #679fc5;
+
+$header-bg-dark: #eeeeee25;
+$header-bg-light: #00000025;
+
+
+$white: #e8e4d9;
+$white-dimmed: #e8e4d975;
+
+$red-error: #c52d2a;
+$red-error-dimmed: #c52d2a75;
+
+$accent: #1f6feb;
+$accent-dimmed: #1f6feb75;
+
+$border-color: #30363d;
+
+$button-bg: #1f6feb;
+$button-hover-bg: #388bfd;
+
+$gold: #D0D066;
+$gold-dimmed: #D0D06650;
+
+$form-bg-black: #161b22;
+$form-bg-white: #a5abb2;
+
+$green: #39d353;
+$green-dimmed: #39d35375;
+
+/* Corner radiuses */
+$outer-corner-radius: 2rem;
+$inner-corner-radius: $outer-corner-radius * .75;
+
+/* Paddings */
+$main-padding: 2rem;
+
+/* Heights and Widths*/
+$footer-height: 5rem;
+
+
+/******************************************************* Fonts *******************************************************/
+@font-face {
+  font-family: 'Charlevoix';
+  src: url('$lib/fonts/PPCharlevoixPro/PPCharlevoix-Regular.woff2') format('woff2');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Charlevoix';
+  src: url('$lib/fonts/PPCharlevoixPro/PPCharlevoix-Thin.woff2') format('woff2');
+  font-weight: 300;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Charlevoix';
+  src: url('$lib/fonts/PPCharlevoixPro/PPCharlevoix-Bold.woff2') format('woff2');
+  font-weight: bold;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Charlevoix';
+  src: url('$lib/fonts/PPCharlevoixPro/PPCharlevoix-Black.woff2') format('woff2');
+  font-weight: 900;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Editorial New';
+  src: url('$lib/fonts/PPEditorialNew/PPEditorialNew-Regular.woff2') format('woff2');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Editorial New';
+  src: url('$lib/fonts/PPEditorialNew/PPEditorialNew-Bold.woff2') format('woff2');
+  font-weight: bold;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Neue Montreal';
+  src: url('$lib/fonts/PPNeueMontreal/PPNeueMontreal-Regular.woff2') format('woff2');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Neue Montreal';
+  src: url('$lib/fonts/PPNeueMontreal/PPNeueMontreal-Bold.woff2') format('woff2');
+  font-weight: bold;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Neue Bit';
+  src: url('$lib/fonts/PPNeueBit/PPNeueBit-Bold.woff2') format('woff2');
+  font-weight: bold;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Neue Bit';
+  src: url('$lib/fonts/PPNeueBit/PPNeueBit-Regular.woff2') format('woff2');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Mondwest';
+  src: url('$lib/fonts/PPMondwest/PPMondwest-Bold.woff2') format('woff2');
+  font-weight: bold;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Mondwest';
+  src: url('$lib/fonts/PPMondwest/PPMondwest-Regular.woff2') format('woff2');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Maragsa';
+  src: url('$lib/fonts/Maragsa/Maragsâ-Display.otf') format('otf');
+  font-weight: 300;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Fraktion Mono';
+  src: url('$lib/fonts/PPFraktion/PPFraktionMono-Light.woff2') format('woff2');
+  font-weight: 300;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Fraktion Mono';
+  src: url('$lib/fonts/PPFraktion/PPFraktionMono-Regular.woff2') format('woff2');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Fraktion Mono';
+  src: url('$lib/fonts/PPFraktion/PPFraktionMono-Bold.woff2') format('woff2');
+  font-weight: bold;
+  font-style: normal;
+}
+
+/* Cirka */
+@font-face {
+  font-family: 'Cirka';
+  src: url('$lib/fonts/PPCirka/PPCirka-Light.woff2') format('woff2');
+  font-weight: 300;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Cirka';
+  src: url('$lib/fonts/PPCirka/PPCirka-Medium.woff2') format('woff2');
+  font-weight: 500;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Cirka';
+  src: url('$lib/fonts/PPCirka/PPCirka-Regular.woff2') format('woff2');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Cirka';
+  src: url('$lib/fonts/PPCirka/PPCirka-Semibold.woff2') format('woff2');
+  font-weight: 600;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Cirka';
+  src: url('$lib/fonts/PPCirka/PPCirka-Bold.woff2') format('woff2');
+  font-weight: bold;
+  font-style: normal;
+}
+
+/* Migra */
+@font-face {
+  font-family: 'Migra';
+  src: url('$lib/fonts/PPMigra/PPMigra-Extralight.woff2') format('woff2');
+  font-weight: 200;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Migra';
+  src: url('$lib/fonts/PPMigra/PPMigra-ExtralightItalic.woff2') format('woff2');
+  font-weight: 200;
+  font-style: italic;
+}
+
+@font-face {
+  font-family: 'Migra';
+  src: url('$lib/fonts/PPMigra/PPMigra-Italic.woff2') format('woff2');
+  font-weight: normal;
+  font-style: italic;
+}
+
+@font-face {
+  font-family: 'Migra';
+  src: url('$lib/fonts/PPMigra/PPMigra-Light.woff2') format('woff2');
+  font-weight: 300;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Migra';
+  src: url('$lib/fonts/PPMigra/PPMigra-Regular.woff2') format('woff2');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Migra';
+  src: url('$lib/fonts/PPMigra/PPMigra-Extrabold.woff2') format('woff2');
+  font-weight: 800;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Migra';
+  src: url('$lib/fonts/PPMigra/PPMigra-ExtraboldItalic.woff2') format('woff2');
+  font-weight: 800;
+  font-style: italic;
+}
+
+@font-face {
+  font-family: 'Migra';
+  src: url('$lib/fonts/PPMigra/PPMigra-BlackItalic.woff2') format('woff2');
+  font-weight: 900;
+  font-style: italic;
+}
+
+@font-face {
+  font-family: 'Migra';
+  src: url('$lib/fonts/PPMigra/PPMigra-Extrabold.woff2') format('woff2');
+  font-weight: 800;
+  font-style: normal;
+}
+
+/* Radikal */
+@font-face {
+  font-family: 'Radikal';
+  src: url('$lib/fonts/Radikal/Radikal Black.woff2') format('woff2');
+  font-weight: 600;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Radikal';
+  src: url('$lib/fonts/Radikal/Radikal Bold.woff2') format('woff2');
+  font-weight: 500;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Radikal';
+  src: url('$lib/fonts/Radikal/Radikal Medium.woff2') format('woff2');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Radikal';
+  src: url('$lib/fonts/Radikal/Radikal.woff2') format('woff2');
+  font-weight: 700;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Radikal';
+  src: url('$lib/fonts/Radikal/Radikal Light.woff2') format('woff2');
+  font-weight: 300;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Radikal';
+  src: url('$lib/fonts/Radikal/Radikal Thin.woff2') format('woff2');
+  font-weight: 200;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Radikal';
+  src: url('$lib/fonts/Radikal/Radikal UltraThin.woff2') format('woff2');
+  font-weight: 100;
+  font-style: normal;
+}
+
+/* Hyperwave */
+@font-face {
+  font-family: 'Hyperwave';
+  src: url('$lib/fonts/Hyperwave Display.otf') format('opentype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+/* Velura */
+@font-face {
+  font-family: 'Velura';
+  src: url('$lib/fonts/Velura-Personal License.otf') format('opentype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+/**
+ * End of file src/SCSS/_variables.scss
+ */
