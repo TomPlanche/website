@@ -4,6 +4,9 @@
   import { ScrambleTextPlugin } from 'gsap/dist/ScrambleTextPlugin';
   import { onMount } from 'svelte';
   import Hoverable from '$lib/components/Hoverable.svelte';
+  import { store } from '../appStore';
+  import PrimaryButton from '$lib/components/PrimaryButton.svelte';
+  import SongPlaying from '$lib/components/SongPlaying.svelte';
 
   // Register plugins
   gsap.registerPlugin(ScrambleTextPlugin);
@@ -24,7 +27,15 @@
      *
      * Then, we animate the first letter of each word to make the full word appear.
      */
-    const gsapTimeline = gsap.timeline({ defaults: { duration: 0.5, ease: 'power2.out' } });
+    const gsapTimeline = gsap.timeline({
+      defaults: { duration: 0.5, ease: 'power2.out' },
+      onStart: () => {
+        $store.loadingAnimationIsDone = false;
+      },
+      onComplete: () => {
+        $store.loadingAnimationIsDone = true;
+      }
+    });
 
     gsapTimeline
       .to(
@@ -33,7 +44,7 @@
           scrambleText: {
             text: title,
             chars: title.replace(/a/g, '4').replace(/e/g, '3').replace(/o/g, 'O'),
-            revealDelay: 0.125
+            revealDelay: 0.625
           },
           duration: 1
         },
@@ -45,7 +56,7 @@
           scrambleText: {
             text: subtitle,
             chars: '<>[]{}@&#$*%()!=+-',
-            revealDelay: 0.125
+            revealDelay: 0.0625
           },
           duration: 1
         },
@@ -55,12 +66,13 @@
 </script>
 
 <section>
-  <Hoverable>
-    <div class="intro">
-      <h1>Tom Planche</h1>
-      <h2>I do stuff with code</h2>
-    </div>
-  </Hoverable>
+  <div class="intro">
+    <h1>Tom Planche</h1>
+    <h2>I do <span>stuff</span> with code</h2>
+    {#if $store.loadingAnimationIsDone}
+      <SongPlaying showIfNotPlaying />
+    {/if}
+  </div>
 </section>
 
 <style lang="scss">
@@ -69,13 +81,14 @@
   section {
     height: 100%;
     width: 100%;
-    color: $aled;
 
     h1,
     h2 {
       text-align: left;
       font-family: 'PP Mondwest', serif;
       text-shadow: 0 0 5px $aled;
+
+      color: $aled;
 
       @media (max-width: 860px) {
         text-align: center;

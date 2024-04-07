@@ -4,7 +4,7 @@
   import type { T_CursorOptions } from '../types';
 
   // Variables
-  const cursor_base = { size: 15 };
+  const cursor_base = { size: 15, background: 'rgba(205, 201, 255, .8)' };
 
   // Springs
   const opacity = spring(0);
@@ -18,7 +18,7 @@
   const size = spring(cursor_base.size);
   const blur = spring(0);
 
-  let background = '#eeeeee90';
+  let background = cursor_base.background as string;
   let hasMoved = false as boolean;
 
   let innerSvg: string;
@@ -37,24 +37,19 @@
       }
 
       opacity.set(params.opacity ?? 0.5);
-      blur.set(params.blur ?? 0);
-      background = params.backgroundColor ?? '#eeeeee90';
     } else {
       if (params.svg === false || params.svg === undefined) {
         innerSvg = undefined;
-        opacity.set(params.opacity ?? 1);
-      } else {
-        opacity.set(params.opacity ?? 1);
       }
 
+      opacity.set(params.opacity ?? 1);
       if (params.innerText === false || params.innerText === undefined) {
         innerText = undefined;
       }
-
-      blur.set(params.blur ?? 0);
-      background = params.backgroundColor ?? '#eeeeee90';
     }
 
+    blur.set(params.blur ?? 0);
+    background = params.backgroundColor ?? cursor_base.background;
     size.set(params.scale ? cursor_base.size * params.scale : cursor_base.size);
   };
 

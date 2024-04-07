@@ -20,8 +20,6 @@
 
   // Functions
   const defaultOnEnter: T_OnEnter = (cursorOptions?: T_CursorOptions) => {
-    console.log(`[Hoverable] defaultOnEnter`, cursorOptions);
-
     $store.cursor.setCursorParams({
       ...defaultEnterOptions,
       ...cursorOptions

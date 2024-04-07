@@ -15,7 +15,6 @@
   let cursor: SvelteComponent;
 
   $: if (cursor) {
-    console.log('cursor', cursor);
     $store.cursor = cursor;
   }
 </script>
@@ -48,5 +47,7 @@
       color: $gh-text;
       background-color: $app-bg-dark;
     }
+
+    cursor: none;
   }
 </style>

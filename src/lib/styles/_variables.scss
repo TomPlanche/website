@@ -1,8 +1,4 @@
-/**
- * @file src/SCSS/_variables.scss
- * @description
- * @author Tom Planche (github.com/TomPlanche)
- ********************************************/
+
 
 /* COLORS */
 $gh-bg: #0D1117;
@@ -35,6 +31,9 @@ $aled: rgb(205, 201, 255);
 $header-bg-dark: #eeeeee25;
 $header-bg-light: #00000025;
 
+$green-light: #8b9c8f;
+$outline-dark: $header-bg-dark;
+$outline-light: $green-light;
 
 $white: #e8e4d9;
 $white-dimmed: #e8e4d975;
