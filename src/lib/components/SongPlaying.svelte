@@ -16,7 +16,7 @@
    *
    * @type {boolean}
    */
-  export let debug = false;
+  export let debug: boolean = false;
 
   /**
    * Show even if the song is not playing.
@@ -24,7 +24,7 @@
    *
    * @type {boolean}
    */
-  export let showIfNotPlaying = false;
+  export let showIfNotPlaying: boolean = false;
 
   const defaultSong = {
     artist: { mbid: 'fda925d2-7af4-4b67-b8c1-692292c9cb18', '#text': 'Cosmo Sheldrake' },
@@ -192,7 +192,8 @@
    */
   const fetchSong = async () => {
     debug && console.log(`[SongContainer] Fetching song...`);
-    $store.lastFMHandlerInstance
+
+    await $store.lastFMHandlerInstance
       .ifNowPlaying()
       .then(async (track: T_RecentTracksTrackAll) => {
         debug &&
@@ -208,7 +209,7 @@
 
               setTimeout(() => {
                 song = track;
-              }, 1500);
+              }, 1000);
               break;
             case 'large':
               handleClick().then(async () => {
@@ -224,17 +225,15 @@
         }
       })
       .catch(() => {
-        if (showIfNotPlaying) {
-          song = defaultSong;
-        } else {
-          song = null;
-        }
+        song = null;
       });
   };
 
   // Mount
   onMount(async () => {
     await fetchSong();
+
+    debug && console.log(`[SongContainer] Song fetched on mount: ${song?.name}`);
 
     if (!song && showIfNotPlaying) {
       song = defaultSong;
@@ -315,6 +314,8 @@
     align-items: center;
 
     z-index: 900;
+
+    @include no-user-select();
 
     .img-container {
       height: 100%;

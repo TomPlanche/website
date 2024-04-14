@@ -69,10 +69,10 @@
   <div class="intro">
     <h1>Tom Planche</h1>
     <h2>I do <span>stuff</span> with code</h2>
-    {#if $store.loadingAnimationIsDone}
-      <SongPlaying showIfNotPlaying />
-    {/if}
   </div>
+  {#if $store.loadingAnimationIsDone}
+    <SongPlaying showIfNotPlaying />
+  {/if}
 </section>
 
 <style lang="scss">
@@ -110,6 +110,8 @@
       flex-direction: column;
       justify-content: center;
       align-items: center;
+
+      @include no-user-select();
     }
   }
 </style>
