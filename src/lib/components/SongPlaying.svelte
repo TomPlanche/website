@@ -3,12 +3,14 @@
   import { onMount } from 'svelte';
   import { scale, fade } from 'svelte/transition';
   import { gsap } from 'gsap/dist/gsap';
+  import { ScrollTrigger } from 'gsap/dist/ScrollTrigger';
 
   import { style_vars } from '$lib/globals';
   import { store } from '$lib/appStore';
   import type { T_RecentTracksTrackAll } from '$lib/LastFM_handler';
   import Hoverable from '$lib/components/Hoverable.svelte';
 
+  gsap.registerPlugin(ScrollTrigger);
   // Variables
   // Props
   /**
@@ -75,17 +77,8 @@
   }
 
   // gsap
-  let gsapTimeline = gsap.timeline({
-    defaults: {
-      ease: 'power4.inOut'
-    },
-    onStart: () => {
-      isAnimating = true;
-    },
-    onComplete: () => {
-      isAnimating = false;
-    }
-  });
+  let gsapTimeline: gsap.core.Timeline;
+  let scrollTriggerTimeline: gsap.core.Timeline;
 
   // Types
   type T_Size = 'small' | 'large';
@@ -101,6 +94,11 @@
   // Other
   let isAnimating = false;
   let fetchInterval: NodeJS.Timeout;
+
+  // Watchers
+  // $: if ($store.hideIsPlaying) {
+  //   song = null;
+  // }
 
   // Functions
   const handleClick = async (): Promise<void> => {
@@ -225,9 +223,22 @@
         }
       })
       .catch(() => {
-        song = null;
+        if (!showIfNotPlaying) {
+          song = null;
+        }
       });
   };
+
+  // Watchers
+  // $: if ($store.hideIsPlaying) {
+  //   finalStyle += `
+  //     bottom: 10rem;
+  //   `;
+  // } else {
+  //   finalStyle += `
+  //     bottom: ${padding};
+  //   `;
+  // }
 
   // Mount
   onMount(async () => {
@@ -242,49 +253,74 @@
     fetchInterval = setInterval(() => {
       fetchSong();
     }, 5000);
+
+    gsapTimeline = gsap.timeline({
+      defaults: {
+        ease: 'power4.inOut'
+      },
+      onStart: () => {
+        isAnimating = true;
+      },
+      onComplete: () => {
+        isAnimating = false;
+      }
+    });
+
+    scrollTriggerTimeline = gsap.timeline({
+      scrollTrigger: {
+        trigger: container,
+        start: 'top bottom',
+        end: 'bottom top',
+        scrub: true
+      },
+
+      defaults: {
+        ease: 'power4.inOut'
+      }
+    });
   });
 </script>
 
-{#if song}
-  <Hoverable
-    onEnterOptions={{
-      opacity: 0.125,
-      innerText: '🎧'
-    }}
+{#if song && !$store.hideIsPlaying}
+  <!--  <Hoverable-->
+  <!--    onEnterOptions={{-->
+  <!--      opacity: 0.125,-->
+  <!--      innerText: '🎧'-->
+  <!--    }}-->
+  <!--  >-->
+  <div
+    class="song_container"
+    style={finalStyle}
+    aria-disabled="true"
+    bind:this={container}
+    on:click={handleClick}
+    in:scale={{ duration: 200 }}
+    out:scale={{ duration: 400 }}
+    aria-hidden="true"
   >
-    <div
-      class="song_container"
-      style={finalStyle}
-      aria-disabled="true"
-      bind:this={container}
-      on:click={handleClick}
-      in:scale={{ duration: 200 }}
-      out:scale={{ duration: 200 }}
-      aria-hidden="true"
-    >
-      <div class="img-container">
-        <img src={song.image[song.image.length - 1]['#text']} alt="Song cover" />
+    <div class="img-container">
+      <img src={song.image[song.image.length - 1]['#text']} alt="Song cover" />
 
-        {#if size === 'small'}
-          <div class="overlay">
-            <i class="gg-loadbar-sound"></i>
-          </div>
-        {/if}
-      </div>
-
-      {#if size === 'large'}
-        <div
-          class="song_container__infos"
-          bind:this={infos}
-          in:fade={{ duration: 200, delay: 1500 }}
-          out:fade={{ duration: 200 }}
-        >
-          <p>{song.name}</p>
-          <p>{song.artist['#text']}</p>
+      {#if size === 'small'}
+        <div class="overlay">
+          <i class="gg-loadbar-sound"></i>
         </div>
       {/if}
     </div>
-  </Hoverable>
+
+    {#if size === 'large'}
+      <div
+        class="song_container__infos"
+        bind:this={infos}
+        in:fade={{ duration: 200, delay: 1500 }}
+        out:fade={{ duration: 200 }}
+      >
+        <p>{song.name}</p>
+        <p>{song.artist['#text']}</p>
+      </div>
+    {/if}
+  </div>
+  <!--</Hoverable>-->
 {/if}
 
 <style lang="scss">

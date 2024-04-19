@@ -2,6 +2,7 @@
   // Imports
   import { spring } from 'svelte/motion';
   import type { T_CursorOptions } from '../types';
+  import { store } from '$lib/appStore';
 
   // Variables
   const cursor_base = { size: 15, background: 'rgba(205, 201, 255, .8)' };

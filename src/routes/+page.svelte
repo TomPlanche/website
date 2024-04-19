@@ -3,10 +3,9 @@
   import { gsap } from 'gsap';
   import { ScrambleTextPlugin } from 'gsap/dist/ScrambleTextPlugin';
   import { onMount } from 'svelte';
-  import Hoverable from '$lib/components/Hoverable.svelte';
-  import { store } from '../appStore';
-  import PrimaryButton from '$lib/components/PrimaryButton.svelte';
+  import { store } from '$lib/appStore';
   import SongPlaying from '$lib/components/SongPlaying.svelte';
+  import Footer from '$lib/components/Footer.svelte';
 
   // Register plugins
   gsap.registerPlugin(ScrambleTextPlugin);
@@ -16,6 +15,8 @@
   const subtitle = 'I do stuff with code';
 
   // Watchers
+
+  // Functions
 
   // Methods
   onMount(() => {
@@ -70,17 +71,24 @@
     <h1>Tom Planche</h1>
     <h2>I do <span>stuff</span> with code</h2>
   </div>
-  {#if $store.loadingAnimationIsDone}
-    <SongPlaying showIfNotPlaying />
-  {/if}
+  <SongPlaying showIfNotPlaying />
 </section>
+
+{#if $store.loadingAnimationIsDone}
+  <Footer />
+{/if}
 
 <style lang="scss">
   @import '../lib/styles/variables';
 
   section {
-    height: 100%;
+    height: 100vh;
     width: 100%;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
 
     h1,
     h2 {

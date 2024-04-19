@@ -5,6 +5,7 @@
   import '$lib/styles/main.scss';
   import Cursor from '$lib/components/Cursor.svelte';
   import { store } from '$lib/appStore';
+  import Footer from '$lib/components/Footer.svelte';
 
   // Variables
   let headerHeight = style_vars.header_height;
