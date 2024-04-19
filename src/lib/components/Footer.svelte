@@ -25,7 +25,7 @@
 
   <div class="socials">
     <Hoverable>
-      <MagneticContainer field_size={1.5} field_force={0.3}>
+      <MagneticContainer field_size={1.5}>
         <a href="https://github.com/tomplanche">
           <svg width="98" height="96" xmlns="http://www.w3.org/2000/svg">
             <path
@@ -40,7 +40,7 @@
     </Hoverable>
 
     <Hoverable>
-      <MagneticContainer field_size={1.5} field_force={0.3}>
+      <MagneticContainer field_size={1.5}>
         <a href="https://www.linkedin.com/in/tom-planche/">
           <svg
             xmlns="http://www.w3.org/2000/svg"

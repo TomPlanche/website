@@ -42,7 +42,7 @@
     /* cursor: none; */
 
     background-color: $app-bg-light;
-    transition: background-color 0.3s ease-in-out;
+    transition: background-color 0.5s ease-in-out;
 
     :global(body.dark) & {
       color: $gh-text;

@@ -17,11 +17,17 @@
    * @type {number | 'full'} - The size of the field compared to passed slot
    */
   export let field_size: number | 'full' = 2;
-  export let field_force = 0.1;
+  /**
+   * @property {field_force} number The force of the field:
+   * 1 means the passed slot will follow the mouse exactly.
+   * .5 means the passed slot will move half the distance of the mouse.
+   * default: .25 (25%)
+   */
+  export let field_force = 0.5;
   export let centered = true;
   export let recentered: T_recenteredTrue | false = false;
   export let block = false;
-  export let debug = false;
+  export let debug = true;
 
   // Normal variables
   let container_ref: HTMLDivElement;
@@ -36,8 +42,7 @@
 
     const { clientX, clientY } = e;
     const mainContainerRect = container_ref.getBoundingClientRect();
-    // @ts-ignore
-    // (TS2339: Property 'current' does not exist on type '((instance: HTMLElement | null) => void) | MutableRefObject<HTMLElement | null>'.
+
     const passedRect = passed_slot_ref.getBoundingClientRect();
 
     const mainContainerInfos = {
@@ -70,8 +75,6 @@
       ? (mainContainerInfos.height / 2) * sideRatioY * field_force
       : ((passedInfos.height - mainContainerInfos.height) / -2) * sideRatioY * field_force;
 
-    // @ts-ignore
-    // (TS2339: Property 'current' does not exist on type '((instance: HTMLElement | null) => void) | MutableRefObject<HTMLElement | null>'.
     gsap.to(passed_slot_ref, {
       duration: 0.3,
       x: translateX,

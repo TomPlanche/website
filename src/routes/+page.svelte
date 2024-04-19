@@ -1,8 +1,8 @@
 <script lang="ts">
   // Imports
+  import { onMount } from 'svelte';
   import { gsap } from 'gsap';
   import { ScrambleTextPlugin } from 'gsap/dist/ScrambleTextPlugin';
-  import { onMount } from 'svelte';
   import { store } from '$lib/appStore';
   import SongPlaying from '$lib/components/SongPlaying.svelte';
   import Footer from '$lib/components/Footer.svelte';
@@ -39,6 +39,7 @@
     });
 
     gsapTimeline
+      .set('#my-ugly-face', { height: 0, opacity: 0 })
       .to(
         'h1',
         {
@@ -62,18 +63,22 @@
           duration: 1
         },
         '<'
-      );
+      )
+      .to('#my-ugly-face', { height: '20rem', duration: 0.5 })
+      .to('section', { gap: '5rem', duration: 0.5 }, '<')
+      .to('#my-ugly-face', { opacity: 1, duration: 0.5 }, '<0.25');
   });
 </script>
 
 <section>
+  <img src="/imgs/me-blue.png" alt="My ugly face" id="my-ugly-face" />
   <div class="intro">
     <h1>Tom Planche</h1>
     <h2>I do <span>stuff</span> with code</h2>
   </div>
-  <SongPlaying showIfNotPlaying />
 </section>
 
+<SongPlaying showIfNotPlaying />
 {#if $store.loadingAnimationIsDone}
   <Footer />
 {/if}
@@ -86,7 +91,7 @@
     width: 100%;
 
     display: flex;
-    flex-direction: column;
+    flex-direction: row-reverse;
     justify-content: center;
     align-items: center;
 
@@ -120,6 +125,12 @@
       align-items: center;
 
       @include no-user-select();
+    }
+
+    img {
+      height: 20rem;
+      width: auto;
+      text-shadow: 0 0 5px $aled;
     }
   }
 </style>

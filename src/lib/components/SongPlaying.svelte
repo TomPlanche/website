@@ -340,7 +340,7 @@
     outline: 1px solid $outline-dark;
 
     // Blurry background
-    background-color: #eeeeee25;
+    background-color: rgba(205, 201, 255, 0.2);
     backdrop-filter: blur(16px);
     -webkit-backdrop-filter: blur(16px); // Compatible with Safari
 
