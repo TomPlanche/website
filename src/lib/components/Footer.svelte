@@ -1,8 +1,6 @@
 <script lang="ts">
   // Imports
-  import { inView } from '$actions/inView';
   import Hoverable from '$lib/components/Hoverable.svelte';
-  import { store } from '$lib/appStore';
   import MagneticContainer from '$lib/components/MagneticContainer.svelte';
 
   // Variables
@@ -11,20 +9,16 @@
 </script>
 
 <footer>
-  <h1
-    use:inView={{ inViewName: 'Footer', threshold: 0 }}
-    on:inViewFooter={() => {
-      $store.hideIsPlaying = true;
-    }}
-    on:outViewFooter={() => {
-      $store.hideIsPlaying = false;
-    }}
-  >
-    Based in Paris.
-  </h1>
+  <h1>Based in Paris.</h1>
 
   <div class="socials">
-    <Hoverable>
+    <Hoverable
+      onEnterOptions={{
+        svg: '/imgs/mona-loading-dark.gif',
+        backgroundColor: 'transparent',
+        opacity: 0
+      }}
+    >
       <MagneticContainer field_size={1.5}>
         <a href="https://github.com/tomplanche">
           <svg width="98" height="96" xmlns="http://www.w3.org/2000/svg">
@@ -80,6 +74,7 @@
       font-size: 5rem;
       font-weight: 900;
       font-family: Mondwest, sans-serif;
+      text-shadow: 0 0 5px $aled;
     }
 
     .socials {
@@ -92,8 +87,10 @@
         height: 20%;
         width: auto;
         aspect-ratio: 1/1;
+        text-shadow: 0 0 5px $aled;
 
         scale: 0.5;
+
         path {
           fill: $aled;
         }

@@ -118,8 +118,8 @@
       border: 2px dotted blue;
     }
 
-    .slot-container {
-      pointer-events: none;
-    }
+    //.slot-container {
+    //  pointer-events: none;
+    //}
   }
 </style>

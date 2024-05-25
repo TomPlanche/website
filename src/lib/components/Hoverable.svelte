@@ -3,7 +3,6 @@
   import type { T_CursorOptions, T_OnEnter, T_OnLeave } from '../types';
   import { store } from '$lib/appStore';
   import CSSProperties = gsap.CSSProperties;
-  import { scale, fade } from 'svelte/transition';
 
   // Variables
   const defaultEnterOptions: T_CursorOptions = {

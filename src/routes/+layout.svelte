@@ -6,6 +6,8 @@
   import Cursor from '$lib/components/Cursor.svelte';
   import { store } from '$lib/appStore';
   import Footer from '$lib/components/Footer.svelte';
+  import Header from '$lib/components/Header.svelte';
+  import SongPlaying from '$lib/components/SongPlaying.svelte';
 
   // Variables
   let headerHeight = style_vars.header_height;
@@ -22,8 +24,16 @@
 
 <main style="padding: 0 {padding};">
   <Cursor bind:this={cursor} />
+  {#if $store.loadingAnimationIsDone}
+    <Header />
+  {/if}
 
   <slot />
+
+  {#if $store.loadingAnimationIsDone}
+    <SongPlaying showIfNotPlaying />
+    <Footer />
+  {/if}
 </main>
 
 <style lang="scss">
@@ -37,7 +47,7 @@
     display: flex;
     flex-direction: column;
     justify-content: center;
-    align-items: flex-start;
+    align-items: flex-end;
 
     /* cursor: none; */
 

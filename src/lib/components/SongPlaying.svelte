@@ -7,7 +7,7 @@
 
   import { style_vars } from '$lib/globals';
   import { store } from '$lib/appStore';
-  import type { T_RecentTracksTrackAll } from '$lib/LastFM_handler';
+  import type { TRecentTracksTrackAll } from '$lib/LastFMHandler';
   import Hoverable from '$lib/components/Hoverable.svelte';
 
   gsap.registerPlugin(ScrollTrigger);
@@ -78,22 +78,20 @@
 
   // gsap
   let gsapTimeline: gsap.core.Timeline;
-  let scrollTriggerTimeline: gsap.core.Timeline;
 
   // Types
   type T_Size = 'small' | 'large';
   type T_compareTracks = (
-    track1: T_RecentTracksTrackAll,
-    track2: T_RecentTracksTrackAll | null
+    track1: TRecentTracksTrackAll,
+    track2: TRecentTracksTrackAll | null
   ) => boolean;
 
   // States
   let size: T_Size = 'small';
-  let song: T_RecentTracksTrackAll | null = null;
+  let song: TRecentTracksTrackAll | null = null;
 
   // Other
   let isAnimating = false;
-  let fetchInterval: NodeJS.Timeout;
 
   // Watchers
   // $: if ($store.hideIsPlaying) {
@@ -165,14 +163,14 @@
   /**
    * Compare two tracks to see if they are the same.
    *
-   * @param track1 {T_RecentTracksTrackAll} The first track to compare
-   * @param track2 {T_RecentTracksTrackAll | null} The second track to compare
+   * @param track1 {TRecentTracksTrackAll} The first track to compare
+   * @param track2 {TRecentTracksTrackAll | null} The second track to compare
    *
    * @returns {boolean} True if the tracks are the same, false otherwise
    */
   const compareTracks: T_compareTracks = (
-    track1: T_RecentTracksTrackAll,
-    track2: T_RecentTracksTrackAll | null
+    track1: TRecentTracksTrackAll,
+    track2: TRecentTracksTrackAll | null
   ): boolean => {
     if (!track2) {
       return false;
@@ -193,7 +191,7 @@
 
     await $store.lastFMHandlerInstance
       .ifNowPlaying()
-      .then(async (track: T_RecentTracksTrackAll) => {
+      .then(async (track: TRecentTracksTrackAll) => {
         debug &&
           console.log(`[SongContainer] Song fetched: ${track.name} - ${track.artist['#text']}`);
 
@@ -282,52 +280,54 @@
 </script>
 
 {#if song && !$store.hideIsPlaying}
-  <!--  <Hoverable-->
-  <!--    onEnterOptions={{-->
-  <!--      opacity: 0.125,-->
-  <!--      innerText: '🎧'-->
-  <!--    }}-->
-  <!--  >-->
-  <div
-    class="song_container"
-    style={finalStyle}
-    aria-disabled="true"
-    bind:this={container}
-    on:click={handleClick}
-    in:scale={{ duration: 200 }}
-    out:scale={{ duration: 400 }}
-    aria-hidden="true"
+  <Hoverable
+    onEnterOptions={{
+      opacity: 0.125,
+      innerText: '🎧'
+    }}
   >
-    <div class="img-container">
-      <img src={song.image[song.image.length - 1]['#text']} alt="Song cover" />
+    <div
+      class="song_container"
+      style={finalStyle}
+      aria-disabled="true"
+      bind:this={container}
+      on:click={handleClick}
+      in:scale={{ duration: 200 }}
+      out:scale={{ duration: 400 }}
+      aria-hidden="true"
+    >
+      <div class="img-container">
+        <img src={song.image[song.image.length - 1]['#text']} alt="Song cover" />
 
-      {#if size === 'small'}
-        <div class="overlay">
-          <i class="gg-loadbar-sound"></i>
+        {#if size === 'small'}
+          <div class="overlay">
+            <i class="gg-loadbar-sound"></i>
+          </div>
+        {/if}
+      </div>
+
+      {#if size === 'large'}
+        <div
+          class="song_container__infos"
+          bind:this={infos}
+          in:fade={{ duration: 200, delay: 1500 }}
+          out:fade={{ duration: 200 }}
+        >
+          <p>{song.name}</p>
+          <p class="artist">{song.artist['#text']}</p>
         </div>
       {/if}
     </div>
-
-    {#if size === 'large'}
-      <div
-        class="song_container__infos"
-        bind:this={infos}
-        in:fade={{ duration: 200, delay: 1500 }}
-        out:fade={{ duration: 200 }}
-      >
-        <p>{song.name}</p>
-        <p>{song.artist['#text']}</p>
-      </div>
-    {/if}
-  </div>
-  <!--</Hoverable>-->
+  </Hoverable>
 {/if}
 
 <style lang="scss">
   @import '../styles/variables';
 
   .song_container {
-    position: fixed;
+    position: sticky;
+
+    right: 0;
 
     height: 4rem;
     max-height: 6rem;
@@ -460,7 +460,7 @@
       p {
         text-align: left;
         font-family: 'Radikal', serif;
-        font-size: 1rem;
+        font-size: 1.1rem;
         font-weight: bold;
         // if the text is more than 2 lines, we want to hide the overflow
         overflow: hidden;
@@ -472,6 +472,11 @@
         // balance the text
         max-inline-size: 15ch;
         text-wrap: balance;
+
+        &.artist {
+          font-weight: bolder;
+          font-size: 0.9rem;
+        }
       }
     }
   }

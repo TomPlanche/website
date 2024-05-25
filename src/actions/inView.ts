@@ -1,12 +1,34 @@
-import type { Action } from 'svelte/action';
-
 /**
  * Action to detect when an element is in view.
  * It will add a class to the element when it is in view and remove it when it is not.
  *
+ * ## Usage
+ * Let's say fou have a footer and you want to hide somethin when the footer is in view.
+ * ````svelte
+ * <footer
+ *    use:inView={{inViewName: 'footer'}}
+ * >...</footer>
+ * ````
+ *
+ * And in the element you can listen to the event like this:
+ * ```svelte
+ *  <h1
+ *    use:inView={{ inViewName: 'Footer', threshold: 0 }}
+ *    on:inViewFooter={() => {
+ *      ...
+ *    }}
+ *    on:outViewFooter={() => {
+ *      ...
+ *    }}
+ *  >
+ *    Title
+ * </h1>
+ *
  */
+import type { Action } from 'svelte/action';
+
 export const inView: Action<
-  HTMLDivElement,
+  HTMLElement,
   | {
       inViewName: string;
       topOffset?: number;
@@ -15,7 +37,7 @@ export const inView: Action<
     }
   | undefined
 > = (
-  node: Element,
+  node: HTMLElement,
   params = {
     inViewName: 'default'
   }
@@ -24,6 +46,7 @@ export const inView: Action<
     (entries) => {
       entries.forEach((entry) => {
         if (entry.isIntersecting) {
+          console.log(entry);
           node.dispatchEvent(new CustomEvent(`inView${params.inViewName}`));
         } else {
           node.dispatchEvent(new CustomEvent(`outView${params.inViewName}`));

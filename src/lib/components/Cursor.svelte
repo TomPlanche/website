@@ -6,6 +6,7 @@
 
   // Variables
   const cursor_base = { size: 15, background: 'rgba(205, 201, 255, .8)' };
+  let scroll = { x: 0, y: 0 };
 
   // Springs
   const opacity = spring(0);
@@ -73,12 +74,23 @@
       x: e.clientX,
       y: e.clientY
     });
+
+    scroll = {
+      x: window.scrollX,
+      y: window.scrollY
+    };
   }}
   on:mousedown={() => {
     size.update((s) => s * 1.5);
   }}
   on:mouseup={() => {
     size.update((s) => s / 1.5);
+  }}
+  on:scroll={() => {
+    scroll = {
+      x: window.scrollX,
+      y: window.scrollY
+    };
   }}
 />
 
@@ -104,7 +116,7 @@
     style="
 			height: {$size * 2}px;
 			width: {$size * 2}px;
-			transform: translate({$coords.x - $size}px, {$coords.y - $size}px);
+			transform: translate({$coords.x + scroll.x - $size}px, {$coords.y + scroll.y - $size}px) ;
 		"
   />
 {/if}
@@ -131,6 +143,10 @@
 {/if}
 
 <style lang="scss">
+  * {
+    pointer-events: none;
+  }
+
   svg {
     position: fixed;
     top: 0;
