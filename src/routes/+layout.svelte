@@ -31,7 +31,7 @@
   <slot />
 
   {#if $store.loadingAnimationIsDone}
-    <SongPlaying showIfNotPlaying />
+    <SongPlaying />
     <Footer />
   {/if}
 </main>

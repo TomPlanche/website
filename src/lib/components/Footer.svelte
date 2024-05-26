@@ -2,13 +2,28 @@
   // Imports
   import Hoverable from '$lib/components/Hoverable.svelte';
   import MagneticContainer from '$lib/components/MagneticContainer.svelte';
+  import { inView } from '../../actions/inView';
+  import { store } from '$lib/appStore';
 
   // Variables
 
   // Functions
 </script>
 
-<footer>
+<footer
+  use:inView={{
+    inViewName: 'footer',
+    threshold: 0.1,
+    inCallback: (percentage) => {
+      if (percentage > 0.5) {
+        $store.songCurrentlyPlaying = undefined;
+      } else {
+        !$store.songCurrentlyPlaying && ($store.songCurrentlyPlaying = true);
+      }
+    },
+    optionalThresholds: Array.from({ length: 100 }, (_, i) => (i + 1) / 100)
+  }}
+>
   <h1>Based in Paris.</h1>
 
   <div class="socials">

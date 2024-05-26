@@ -62,6 +62,8 @@
   let container: HTMLDivElement;
   let infos: HTMLDivElement;
 
+  let fetchInterval: number;
+
   // Style
   let padding = style_vars.main_padding;
 
@@ -88,7 +90,7 @@
 
   // States
   let size: T_Size = 'small';
-  let song: TRecentTracksTrackAll | null = null;
+  let song = $store.songCurrentlyPlaying;
 
   // Other
   let isAnimating = false;
@@ -228,54 +230,45 @@
   };
 
   // Watchers
-  // $: if ($store.hideIsPlaying) {
-  //   finalStyle += `
-  //     bottom: 10rem;
-  //   `;
-  // } else {
-  //   finalStyle += `
-  //     bottom: ${padding};
-  //   `;
-  // }
+  $: if ($store.songCurrentlyPlaying === true) {
+    fetchSong();
+  }
 
   // Mount
-  onMount(async () => {
-    await fetchSong();
+  onMount(() => {
+    fetchSong()
+      .then(() => {
+        debug && console.log(`[SongContainer] Song fetched on mount: ${song?.name}`);
 
-    debug && console.log(`[SongContainer] Song fetched on mount: ${song?.name}`);
+        if (!song && showIfNotPlaying) {
+          song = defaultSong;
+        }
 
-    if (!song && showIfNotPlaying) {
-      song = defaultSong;
-    }
+        fetchInterval = setInterval(() => {
+          fetchSong();
+        }, 5000);
 
-    fetchInterval = setInterval(() => {
-      fetchSong();
-    }, 5000);
+        gsapTimeline = gsap.timeline({
+          defaults: {
+            ease: 'power4.inOut'
+          },
+          onStart: () => {
+            isAnimating = true;
+          },
+          onComplete: () => {
+            isAnimating = false;
+          }
+        });
+      })
+      .catch(() => {
+        if (!showIfNotPlaying) {
+          song = null;
+        }
+      });
 
-    gsapTimeline = gsap.timeline({
-      defaults: {
-        ease: 'power4.inOut'
-      },
-      onStart: () => {
-        isAnimating = true;
-      },
-      onComplete: () => {
-        isAnimating = false;
-      }
-    });
-
-    scrollTriggerTimeline = gsap.timeline({
-      scrollTrigger: {
-        trigger: container,
-        start: 'top bottom',
-        end: 'bottom top',
-        scrub: true
-      },
-
-      defaults: {
-        ease: 'power4.inOut'
-      }
-    });
+    return () => {
+      clearInterval(fetchInterval);
+    };
   });
 </script>
 
@@ -325,9 +318,10 @@
   @import '../styles/variables';
 
   .song_container {
-    position: sticky;
+    position: fixed;
 
-    right: 0;
+    bottom: 1rem;
+    right: 1rem;
 
     height: 4rem;
     max-height: 6rem;

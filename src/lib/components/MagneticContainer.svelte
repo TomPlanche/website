@@ -27,7 +27,7 @@
   export let centered = true;
   export let recentered: T_recenteredTrue | false = false;
   export let block = false;
-  export let debug = true;
+  export let debug = false;
 
   // Normal variables
   let container_ref: HTMLDivElement;

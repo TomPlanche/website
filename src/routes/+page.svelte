@@ -13,8 +13,6 @@
   const title = 'Tom Planche';
   const subtitle = 'I do stuff with code';
 
-  let startState: Flip.FlipState;
-
   // Watchers
 
   // Functions
@@ -24,6 +22,7 @@
     $store.currentLink = LINKS.HOME;
 
     if (!$store.isFirstLoad) {
+      gsap.set('#my-ugly-face', { height: '20rem', opacity: 1 });
       return;
     }
 
@@ -140,7 +139,8 @@
     img {
       height: 20rem;
       width: auto;
-      text-shadow: 0 0 5px $aled;
+      text-shadow: 0 0 5px $aled; // svg only
+      opacity: 0;
     }
   }
 </style>

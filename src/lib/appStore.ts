@@ -6,7 +6,7 @@
 
 // IMPORTS ===================================================================================================  IMPORTS
 import { writable } from 'svelte/store';
-import LastFMHandler from '$lib/LastFMHandler';
+import LastFMHandler, { type TRecentTracksTrackAll } from '$lib/LastFMHandler';
 import { style_vars } from '$lib/globals';
 import type { SvelteComponent } from 'svelte';
 // END IMPORTS ==========================================================================================   END IMPORTS
@@ -23,7 +23,7 @@ export type TState = {
   pageMinHeight: string;
 
   loadingAnimationIsDone: boolean;
-  hideIsPlaying: boolean;
+  songCurrentlyPlaying?: TRecentTracksTrackAll | true;
 
   isFirstLoad: boolean;
   currentLink: LINKS;
@@ -63,7 +63,6 @@ export const store = writable<TState>({
   pageMinHeight: page_size_with_padding,
 
   loadingAnimationIsDone: false,
-  hideIsPlaying: false,
 
   isFirstLoad: true,
   currentLink: LINKS.HOME,
