@@ -12,6 +12,12 @@ import type { SvelteComponent } from 'svelte';
 // END IMPORTS ==========================================================================================   END IMPORTS
 
 // VARIABLES ================================================================================================ VARIABLE
+export enum LINKS {
+  HOME = 'home',
+  ABOUT = 'about',
+  BONUS = 'bonus'
+}
+
 // Type(s)
 export type TTHEME = 'dark' | 'light';
 
@@ -23,7 +29,7 @@ export type TState = {
   pageMinHeight: string;
 
   loadingAnimationIsDone: boolean;
-  songCurrentlyPlaying?: TRecentTracksTrackAll | true;
+  songCurrentlyPlaying?: TRecentTracksTrackAll | 'toFetch';
 
   isFirstLoad: boolean;
   currentLink: LINKS;
@@ -36,11 +42,6 @@ export type TState = {
 };
 
 // Other(s)
-export enum LINKS {
-  HOME = 'home',
-  ABOUT = 'about'
-  // CONTACT = 'contact'
-}
 
 const headerHeight = style_vars.header_height;
 const padding = style_vars.main_padding;
@@ -63,6 +64,8 @@ export const store = writable<TState>({
   pageMinHeight: page_size_with_padding,
 
   loadingAnimationIsDone: false,
+
+  songCurrentlyPlaying: 'toFetch',
 
   isFirstLoad: true,
   currentLink: LINKS.HOME,

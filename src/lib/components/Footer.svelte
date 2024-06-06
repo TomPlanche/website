@@ -16,9 +16,11 @@
     threshold: 0.1,
     inCallback: (percentage) => {
       if (percentage > 0.5) {
-        $store.songCurrentlyPlaying = undefined;
+        if ($store.songCurrentlyPlaying !== undefined) {
+          $store.songCurrentlyPlaying = undefined;
+        }
       } else {
-        !$store.songCurrentlyPlaying && ($store.songCurrentlyPlaying = true);
+        !$store.songCurrentlyPlaying && ($store.songCurrentlyPlaying = 'toFetch');
       }
     },
     optionalThresholds: Array.from({ length: 100 }, (_, i) => (i + 1) / 100)
@@ -99,10 +101,12 @@
       align-items: center;
 
       svg {
+        $dropShadow: 0px 0px 2px $aled;
+        @include dropShadowFilter($dropShadow);
+
         height: 20%;
         width: auto;
         aspect-ratio: 1/1;
-        text-shadow: 0 0 5px $aled;
 
         scale: 0.5;
 

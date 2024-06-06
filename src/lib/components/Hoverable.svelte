@@ -84,6 +84,11 @@
    */
   export let passedClass: string = '';
 
+  /**
+   * The id of the element
+   */
+  export let id: string = '';
+
   // Watchers
   $: style = debug ? { ...style, outline: '2px dotted red;' } : style;
 </script>
@@ -94,6 +99,7 @@
   on:mouseleave={() => defaultOnLeave(onLeaveOptions)}
   on:click={onClick}
   class={passedClass}
+  {id}
   style:display="contents"
 >
   <slot>

@@ -7,27 +7,33 @@
   user-select: none;
 }
 
-/* COLORS */
-$gh-bg: #0D1117;
-$gh-bg-secondary: #161B22;
-$gh-button: #21262D;
-$gh-button-active: #30363D;
-$gh-text: #BED1D9;
-$gh-text-secondary: #8B949E;
-$gh-button-border: #363B42;
-$gh-button-border-active: #8B949E;
-$gh-yellow: #E3B341;
-$gh-blue: #58A6FF;
-$gh-blue-dark: #1F6FEB;
-$gh-red: #f56140;
-$gh-red-active: #F78166;
-$gh-green: #238636;
-$gh-green-active: #2EA043;
-$gh-green-dark: #1d5927;
-$gh-border: #30363D;
-$gh-border-dark: #21262D;
+@mixin dropShadowFilter ($dropShadow) {
+  filter: drop-shadow($dropShadow);
+  -webkit-filter: drop-shadow($dropShadow);
+}
 
-$app-bg-dark: #080a13;
+/* COLORS */
+$gh-bg: #0d1117;
+$gh-bg-secondary: #161b22;
+$gh-button: #21262d;
+$gh-button-active: #30363d;
+$gh-text: #bed1d9;
+$gh-text-secondary: #8b949e;
+$gh-button-border: #363b42;
+$gh-button-border-active: #8b949e;
+$gh-yellow: #e3b341;
+$gh-blue: #58a6ff;
+$gh-blue-dark: #1f6feb;
+$gh-red: #f56140;
+$gh-red-active: #f78166;
+$gh-green: #238636;
+$gh-green-active: #2ea043;
+$gh-green-dark: #1d5927;
+$gh-border: #30363d;
+$gh-border-dark: #21262d;
+
+$app-bg-dark: rgb(24 41 56 / 1);
+/* $app-bg-dark: #080a13; */
 $app-bg-light: #e5e3de;
 
 $black: #02040a;
@@ -56,8 +62,8 @@ $border-color: #30363d;
 $button-bg: #1f6feb;
 $button-hover-bg: #388bfd;
 
-$gold: #D0D066;
-$gold-dimmed: #D0D06650;
+$gold: #d0d066;
+$gold-dimmed: #d0d06650;
 
 $form-bg-black: #161b22;
 $form-bg-white: #a5abb2;
@@ -67,14 +73,13 @@ $green-dimmed: #39d35375;
 
 /* Corner radiuses */
 $outer-corner-radius: 2rem;
-$inner-corner-radius: $outer-corner-radius * .75;
+$inner-corner-radius: $outer-corner-radius * 0.75;
 
 /* Paddings */
 $main-padding: 2rem;
 
 /* Heights and Widths*/
 $footer-height: 5rem;
-
 
 /******************************************************* Fonts *******************************************************/
 @font-face {
@@ -355,4 +360,10 @@ $footer-height: 5rem;
   font-style: normal;
 }
 
-
+/* Color font */
+@font-face {
+  font-family: 'ColorFont';
+  src: url('$lib/fonts/color-font.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}

@@ -12,6 +12,10 @@
   const links = Object.values(LINKS);
 
   // Functions
+  const handleFontChange = () => {
+    document.body.classList.toggle('colored');
+  };
+
   const handleMouseHoverLink = (itemId: string) => {
     const link = document.querySelector(`#${itemId} .link`);
     const splitText = new SplitText(link, { type: 'words,chars' });
@@ -27,12 +31,12 @@
     });
 
     tl.to(splitText.chars, {
-      backgroundColor: 'rgba(205, 201, 255)',
+      backgroundColor: 'rgb(24 41 56 / 1)',
       color: '#080a13'
     }).to(
       splitText.chars,
       {
-        backgroundColor: '#080a13',
+        backgroundColor: 'rgb(24 41 56 / 1)',
         color: 'rgba(205, 201, 255)'
       },
       `<${duration / 2}`
@@ -41,6 +45,12 @@
 </script>
 
 <header in:fade={{ duration: 200 }} out:fade={{ duration: 200 }}>
+  <span>
+    <Hoverable>
+      <button aria-hidden="true" on:click={handleFontChange}> T </button>
+    </Hoverable>
+  </span>
+
   <nav>
     <ul>
       {#each links as link}
@@ -73,10 +83,17 @@
     left: 0;
 
     display: flex;
-    justify-content: flex-end;
+    justify-content: space-between;
     align-items: center;
 
     width: 100%;
+
+    span {
+      button {
+        font-family: 'ColorFont', sans-serif;
+        font-size: 2.5rem;
+      }
+    }
 
     nav {
       ul {

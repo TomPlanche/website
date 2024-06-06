@@ -137,9 +137,11 @@
     }
 
     img {
+      $dropShadow: 0px 0px 2px $aled;
+      @include dropShadowFilter($dropShadow);
+
       height: 20rem;
       width: auto;
-      text-shadow: 0 0 5px $aled; // svg only
       opacity: 0;
     }
   }

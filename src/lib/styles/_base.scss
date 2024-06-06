@@ -8,7 +8,6 @@ html {
   font-size: 100%;
 }
 
-
 //.link {
 //  display: inline-block;
 //  position: relative;
@@ -39,10 +38,15 @@ html {
   text-align: center;
 
   -webkit-box-sizing: border-box; /* Safari/Chrome, other WebKit */
-  -moz-box-sizing: border-box;    /* Firefox, other Gecko */
-  box-sizing: border-box;         /* Opera/IE 8+ */
+  -moz-box-sizing: border-box; /* Firefox, other Gecko */
+  box-sizing: border-box; /* Opera/IE 8+ */
 
   cursor: none;
+}
+
+body.colored * {
+  font-family: 'ColorFont', sans-serif !important;
+  text-shadow: none !important;
 }
 
 // RESPONSIVE ------------------------------------------------------------------
@@ -53,5 +57,3 @@ html {
     }
   }
 }
-
-

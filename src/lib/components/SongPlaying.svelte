@@ -197,13 +197,13 @@
         debug &&
           console.log(`[SongContainer] Song fetched: ${track.name} - ${track.artist['#text']}`);
 
-        if (song) {
+        if (song && song !== 'toFetch') {
           debug && console.log(`[SongContainer] Comparing songs...`);
           if (compareTracks(track, song)) return;
 
           switch (size) {
             case 'small':
-              song = null;
+              song = undefined;
 
               setTimeout(() => {
                 song = track;
@@ -224,13 +224,13 @@
       })
       .catch(() => {
         if (!showIfNotPlaying) {
-          song = null;
+          song = undefined;
         }
       });
   };
 
   // Watchers
-  $: if ($store.songCurrentlyPlaying === true) {
+  $: if (song === 'toFetch') {
     fetchSong();
   }
 
@@ -262,7 +262,7 @@
       })
       .catch(() => {
         if (!showIfNotPlaying) {
-          song = null;
+          song = undefined;
         }
       });
 
@@ -272,12 +272,13 @@
   });
 </script>
 
-{#if song && !$store.hideIsPlaying}
+{#if $store.songCurrentlyPlaying !== undefined && song && song !== 'toFetch'}
   <Hoverable
     onEnterOptions={{
       opacity: 0.125,
       innerText: '🎧'
     }}
+    id="song_playing"
   >
     <div
       class="song_container"
@@ -448,7 +449,7 @@
       flex-direction: column;
       justify-content: center;
       align-items: flex-start;
-      gap: 0.5rem;
+      gap: 0.25rem;
       padding: 0 1rem;
 
       p {
@@ -467,9 +468,12 @@
         max-inline-size: 15ch;
         text-wrap: balance;
 
+        line-height: 1.1rem;
+
         &.artist {
           font-weight: bolder;
           font-size: 0.9rem;
+          line-height: 1rem;
         }
       }
     }
