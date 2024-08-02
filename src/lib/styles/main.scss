@@ -1,0 +1,13 @@
+@import "reset";
+@import "variables";
+@import "base";
+
+body {
+  background-color: $aled;
+  transition: background-color 0.5s ease-in-out;
+
+  &.dark {
+    color: $aled;
+    background-color: $app-bg-dark;
+  }
+}
