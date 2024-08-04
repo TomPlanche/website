@@ -147,7 +147,7 @@ const handleMouseHoverLink = (itemId: string) => {
             }
 
             span.link {
-              margin-left: 1rem;
+              margin-left: .5rem;
             }
 
             &:hover {

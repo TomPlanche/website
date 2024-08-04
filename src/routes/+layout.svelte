@@ -4,6 +4,7 @@ import Header from "$lib/components/Header.svelte";
 import { style_vars } from "$lib/globals";
 import { mainStore } from "$lib/stores/mainStore";
 import "$lib/styles/main.scss";
+import MusicPlaying from "$lib/components/MusicPlaying.svelte";
 
 // Variables
 const { mainPadding } = style_vars;
@@ -21,6 +22,7 @@ const { mainPadding } = style_vars;
 
   <slot></slot>
 
+  <MusicPlaying debug={false}/>
 </main>
 
 <style lang="scss">
