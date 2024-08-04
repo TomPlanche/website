@@ -1,11 +1,12 @@
 <script lang="ts">
 // Imports
 import Header from "$lib/components/Header.svelte";
-import { pageSizeWithPadding, style_vars } from "$lib/globals";
-import { mainStore } from "$lib/mainStore";
+import { style_vars } from "$lib/globals";
+import { mainStore } from "$lib/stores/mainStore";
+import "$lib/styles/main.scss";
 
 // Variables
-const { mainPadding, headerHeight } = style_vars;
+const { mainPadding } = style_vars;
 
 // Functions
 </script>
@@ -19,6 +20,7 @@ const { mainPadding, headerHeight } = style_vars;
 <main style="padding: {mainPadding} 0;">
 
   <slot></slot>
+
 </main>
 
 <style lang="scss">

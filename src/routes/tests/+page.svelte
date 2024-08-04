@@ -1,4 +1,5 @@
 <script lang="ts">
+import MusicPlaying from "$lib/components/MusicPlaying.svelte";
 import { mainStore } from "$lib/stores/mainStore";
 import { onMount } from "svelte";
 
@@ -7,4 +8,7 @@ onMount(() => {
 });
 </script>
 
-<h1>Hello !</h1>
+<h1>TESTS !</h1>
+
+
+<MusicPlaying debug={true}/>

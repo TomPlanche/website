@@ -1,6 +1,6 @@
 <script lang="ts">
 import { style_vars } from "$lib/globals";
-import { LINKS, mainStore } from "$lib/mainStore";
+import { LINKS, mainStore } from "$lib/stores/mainStore";
 import { fade } from "svelte/transition";
 
 // Variables
@@ -68,7 +68,7 @@ const handleMouseHoverLink = (itemId: string) => {
 </svg>
 
 <header
-  style="padding: {style_vars.mainPadding}; height: {style_vars.headerHeight}"
+  style="padding: 1rem; height: {style_vars.headerHeight}"
   in:fade={{ duration: 200 }}
   out:fade={{ duration: 200 }}
 >

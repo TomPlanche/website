@@ -25,6 +25,8 @@
 	"type": "module",
 	"dependencies": {
 		"axios": "^1.7.2",
+		"gsap": "npm:@gsap/shockingly",
+		"jest": "^29.7.0",
 		"zod": "^3.23.8"
 	}
 }

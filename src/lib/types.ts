@@ -1,0 +1,25 @@
+import { z } from "zod";
+
+export const IpInfoResponseSchema = z.object({
+	ip: z.string().regex(/^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$/),
+	city: z.string(),
+	region: z.string(),
+	country: z.string(),
+	loc: z.string().regex(/^\d{1,3}.\d{1,5},\d{1,3}.\d{1,5}$/),
+	org: z.string(),
+	postal: z.string(),
+	timezone: z.string(),
+});
+
+export type TIpInfoResponse = z.infer<typeof IpInfoResponseSchema>;
+
+export const UserLocationSchema = z.object({
+	location: z.string(),
+	coords: z.object({
+		lat: z.number(),
+		lon: z.number(),
+	}),
+	ip: z.string(),
+});
+
+export type TUserLocation = z.infer<typeof UserLocationSchema>;

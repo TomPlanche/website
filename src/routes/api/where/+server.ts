@@ -13,7 +13,7 @@ const getIp = (req: Request) => {
 };
 
 const prepareResponse = (res: TIpInfoResponse): TUserLocation => {
-	const { city, country, ip, loc } = res.data;
+	const { city, country, ip, loc } = res;
 
 	const [lat, lon] = loc.split(",").map(Number.parseFloat);
 
@@ -24,7 +24,7 @@ const prepareResponse = (res: TIpInfoResponse): TUserLocation => {
 			lon,
 		},
 		ip,
-	} as TUserLocation);
+	});
 };
 
 export const GET: RequestHandler = async ({ request }) => {
@@ -33,13 +33,13 @@ export const GET: RequestHandler = async ({ request }) => {
 	const url = `https://ipinfo.io/${clientIp}/json`;
 
 	try {
-		const parsedResponse = IpInfoResponseSchema.parse(
-			await axios.get(url, {
-				params: {
-					token: IPINFO_TOKEN,
-				},
-			}),
-		);
+		const res = await axios.get(url, {
+			params: {
+				token: IPINFO_TOKEN,
+			},
+		});
+
+		const parsedResponse = IpInfoResponseSchema.parse(res.data);
 
 		return json(prepareResponse(parsedResponse));
 	} catch (error) {
