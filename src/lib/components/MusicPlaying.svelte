@@ -379,7 +379,7 @@ onMount(() => {
         -webkit-box-orient: vertical;
 
         // balance the text
-        max-inline-size: 20ch;
+        max-inline-size: 25ch;
         text-wrap: balance;
 
         line-height: 1.5rem;
