@@ -4,13 +4,41 @@ import Header from "$lib/components/Header.svelte";
 import { style_vars } from "$lib/globals";
 import { mainStore } from "$lib/stores/mainStore";
 import "$lib/styles/main.scss";
+import Cursor from "$lib/components/Cursor.svelte";
 import MusicPlaying from "$lib/components/MusicPlaying.svelte";
+import { type SvelteComponent, onMount } from "svelte";
 
 // Variables
 const { mainPadding } = style_vars;
 
+let dimensions = {
+	width: 0,
+	height: 0,
+};
+
+// Binds
+let cursor: SvelteComponent;
+
+// Watchers
+$: if (cursor) {
+	$mainStore.cursor = cursor;
+}
+
+// Lifecycle
+onMount(() => {
+	dimensions = {
+		width: window.innerWidth,
+		height: window.innerHeight,
+	};
+});
+
 // Functions
 </script>
+
+<svelte:window on:resize={() => {
+  dimensions.width = window.innerWidth;
+  dimensions.height = window.innerHeight;
+}} />
 
 {#if $mainStore.loadingAnimationIsDone}
   <Header />
@@ -22,7 +50,10 @@ const { mainPadding } = style_vars;
 
   <slot></slot>
 
-  <MusicPlaying debug={false}/>
+  {#if dimensions.width > 768}
+    <MusicPlaying debug={false}/>
+    <Cursor bind:this={cursor} />
+  {/if}
 </main>
 
 <style lang="scss">

@@ -59,8 +59,11 @@ onMount(() => {
 <style lang="scss">
   @import '../lib/styles/variables';
 
+
   h1,
   h2 {
+    @include no-user-select();
+
     text-align: left;
     font-family: 'Mondwest', serif;
     text-shadow: 0 0 5px $aled;

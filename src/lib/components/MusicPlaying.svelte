@@ -67,13 +67,13 @@ let fetchTimeout: NodeJS.Timeout;
 
 const containerStyleVars = {
 	small: {
-		height: "4rem",
-		width: "4rem",
-		mawWidth: "4rem",
+		height: "4vmax",
+		width: "4vmax",
+		mawWidth: "4vmax",
 	},
 	large: {
-		height: "6rem",
-		width: "6rem",
+		height: "6vmax",
+		width: "6vmax",
 		mawWidth: "20rem",
 	},
 };
@@ -86,11 +86,9 @@ let size: "small" | "large" = "small";
 // Bindings
 const gsapTimeline: gsap.core.Timeline = gsap.timeline({
 	onStart: () => {
-		console.log("Animation started");
 		isAnimating = true;
 	},
 	onComplete: () => {
-		console.log("Animation complete");
 		isAnimating = false;
 	},
 });
@@ -102,8 +100,6 @@ let infos: HTMLDivElement;
 const handleContainerClick = (): Promise<null> => {
 	return new Promise((resolve, reject) => {
 		if (isAnimating) {
-			console.log("Stopped");
-
 			reject("Animation is already running");
 			return;
 		}
@@ -323,9 +319,9 @@ onMount(() => {
     bottom: 1rem;
     right: 1rem;
 
-    height: 4rem;
-    max-height: 6rem;
-    width: 4rem;
+    height: 4vmax;
+    max-height: 6vmax;
+    width: 4vmax;
     max-width: 20rem;
 
     display: flex;

@@ -1,5 +1,6 @@
 import { z } from "zod";
 
+// IP INFO
 export const IpInfoResponseSchema = z.object({
 	ip: z.string().regex(/^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$/),
 	city: z.string(),
@@ -23,3 +24,13 @@ export const UserLocationSchema = z.object({
 });
 
 export type TUserLocation = z.infer<typeof UserLocationSchema>;
+
+// CURSOR
+export type CursorParams = {
+	size?: number;
+	background?: string;
+	opacity?: number;
+	blur?: number;
+	stiffness?: number;
+	damping?: number;
+};
