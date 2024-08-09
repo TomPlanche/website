@@ -41,8 +41,17 @@ $: if (!hasMoved) {
 }
 
 // Functions
-export const setCursorParams = (params: CursorParams) => {
-	console.log(`[Cursor.svelte] setCursorParams called`);
+/**
+ * Set the cursor parameters
+ *
+ * This function uses Svelte's `export const` syntax to allow the function to be called from other components.
+ * It'll be called from the `mainStore.cursor`.
+ *
+ * @param params {CursorParams} The parameters to set
+ * @param debug {boolean} Whether to log debug information
+ */
+export const setCursorParams = (params: CursorParams, debug = false) => {
+	debug && console.log("[Cursor.svelte] setCursorParams called with:", params);
 
 	if (params.size !== undefined) {
 		size.set(params.size);
@@ -115,11 +124,9 @@ export const setCursorParams = (params: CursorParams) => {
     top: 0;
     left: 0;
 
-    pointer-events: none;
-
     width: 100%;
     height: 100%;
 
-    z-index: 99998;
+    z-index: 99999;
   }
 </style>

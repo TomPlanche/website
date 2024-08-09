@@ -1,12 +1,22 @@
 <script lang="ts">
 // Imports
+import { onMount } from "svelte";
+
+import Cursor from "$lib/components/Cursor.svelte";
+import type TCursor from "$lib/components/Cursor.svelte";
 import Header from "$lib/components/Header.svelte";
+import MusicPlaying from "$lib/components/MusicPlaying.svelte";
+
 import { style_vars } from "$lib/globals";
 import { mainStore } from "$lib/stores/mainStore";
+
 import "$lib/styles/main.scss";
-import Cursor from "$lib/components/Cursor.svelte";
-import MusicPlaying from "$lib/components/MusicPlaying.svelte";
-import { type SvelteComponent, onMount } from "svelte";
+
+import Footer from "$lib/components/Footer.svelte";
+import NiceHeader from "$lib/components/NiceHeader.svelte";
+import { gsap } from "gsap";
+import ScrollTrigger from "gsap/dist/ScrollTrigger";
+gsap.registerPlugin(ScrollTrigger);
 
 // Variables
 const { mainPadding } = style_vars;
@@ -17,7 +27,8 @@ let dimensions = {
 };
 
 // Binds
-let cursor: SvelteComponent;
+let cursor: TCursor;
+let footer: HTMLElement;
 
 // Watchers
 $: if (cursor) {
@@ -41,20 +52,23 @@ onMount(() => {
 }} />
 
 {#if $mainStore.loadingAnimationIsDone}
-  <Header />
+<!--  <Header />-->
+  <NiceHeader />
 {/if}
 
-<div id="noise"></div>
 
 <main style="padding: {mainPadding} 0;">
+  <div id="noise"></div>
 
   <slot></slot>
 
-  {#if dimensions.width > 768}
-    <MusicPlaying debug={false}/>
-    <Cursor bind:this={cursor} />
-  {/if}
 </main>
+
+{#if dimensions.width > 768}
+  <MusicPlaying debug={false} showIfNotPlaying={false}/>
+  <Cursor bind:this={cursor} />
+{/if}
+<Footer />
 
 <style lang="scss">
   main {
@@ -64,6 +78,13 @@ onMount(() => {
     flex-direction: column;
     justify-content: center;
     align-items: center;
+
+    overflow: hidden;
+    position: relative;
+
+    isolation: isolate;
+
+    z-index: -1;
   }
 
   #noise {

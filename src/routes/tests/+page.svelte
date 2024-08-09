@@ -1,6 +1,7 @@
 <script lang="ts">
+import Experiences from "$lib/components/Experiences.svelte";
 import Hoverable from "$lib/components/Hoverable.svelte";
-import MusicPlaying from "$lib/components/MusicPlaying.svelte";
+import Link from "$lib/components/Link.svelte";
 import { mainStore } from "$lib/stores/mainStore";
 import { onMount } from "svelte";
 
@@ -13,16 +14,25 @@ onMount(() => {
 </script>
 
 <article>
-  <Hoverable><h1>TESTS !</h1></Hoverable>
-</article>
+  <Hoverable
+      on:click={() => {
+        console.log("hihihi");
+      }}
+  ><h1>TESTS !</h1></Hoverable>
+<!--  <Experiences />-->
 
+<!--  <Link href="www.aled.com">hihihi</Link>-->
+</article>
 
 <style lang="scss">
   article {
+    height: 100%;
+    width: 100%;
+
     display: flex;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
-    height: 200vh;
-    width: 100%;
+
   }
 </style>

@@ -5,6 +5,7 @@ import {
 	type TRecentTrack,
 } from "$lib/LastFMMiddleware/LastFMHandler";
 import { lastFMStore } from "$lib/stores/lastFMStore";
+import { mainStore } from "$lib/stores/mainStore";
 import { gsap } from "gsap";
 import { onMount } from "svelte";
 import { fade, scale } from "svelte/transition";
@@ -21,10 +22,9 @@ export let debug: boolean;
 /**
  * Show even if the song is not playing.
  * Use fake data.
- *
- * @type {boolean}
  */
-export const showIfNotPlaying = false;
+// biome-ignore lint/style/useConst: This is a prop
+export let showIfNotPlaying = false;
 
 // Base variables
 export const defaultSong = RecentTrackSchema.parse({
@@ -251,47 +251,23 @@ onMount(() => {
 });
 </script>
 
-<svg xmlns="http://www.w3.org/2000/svg" width="0" height="0">
-  <defs>
-    <filter id="svgfilter">
-      <feTurbulence
-        type="fractalNoise"
-        baseFrequency="0.3"
-        numOctaves="1"
-        seed="0"
-        stitchTiles="stitch"
-        result="feTurbulence-391ac80d"
-      ></feTurbulence>
-      <feGaussianBlur
-        in="SourceGraphic"
-        stdDeviation="2"
-        edgeMode="duplicate"
-        result="feGaussianBlur-85e146a6"
-      ></feGaussianBlur>
-      <feDisplacementMap
-        in="feGaussianBlur-85e146a6"
-        in2="feTurbulence-391ac80d"
-        scale="37"
-        xChannelSelector="A"
-        yChannelSelector="A"
-      ></feDisplacementMap>
-    </filter>
-  </defs>
-</svg>
-
 {#if localSong}
+
   <div
     class="container"
 
-
     aria-disabled="true"
     aria-hidden="true"
+
+    style="bottom: calc(1rem + {$mainStore.musicPlayingYDistance}px)"
 
     on:click={handleContainerClick}
     bind:this={container}
 
     in:scale={{ duration: 200 }}
     out:scale={{ duration: 400 }}
+
+    title={`${localSong.name} by ${localSong.artist['#text']}`}
   >
     <div class="artwork-container">
       <img src={localSong.image[localSong.image.length - 1]['#text']} alt="Song cover" />
@@ -314,6 +290,8 @@ onMount(() => {
   @import '../styles/variables';
 
   .container {
+    @include no-user-select();
+
     position: fixed;
 
     bottom: 1rem;
@@ -322,14 +300,12 @@ onMount(() => {
     height: 4vmax;
     max-height: 6vmax;
     width: 4vmax;
-    max-width: 20rem;
+    max-width: 25rem;
 
     display: flex;
     flex-direction: row;
     justify-content: flex-start;
     align-items: center;
-
-    backdrop-filter: url('#svgfilter');
 
     border-radius: 8px;
     padding: 4px;
@@ -358,13 +334,14 @@ onMount(() => {
       flex-direction: column;
       justify-content: center;
       align-items: flex-start;
+      gap: .25rem;
 
       h2, h3 {
         padding: 0 1rem;
 
         text-align: left;
         font-family: 'Radikal', serif;
-        font-size: 1.1rem;
+        font-size: 1rem;
         font-weight: bold;
 
         // if the text is more than 2 lines, we want to hide the overflow
@@ -375,10 +352,10 @@ onMount(() => {
         -webkit-box-orient: vertical;
 
         // balance the text
-        max-inline-size: 25ch;
+        max-inline-size: 20ch;
         text-wrap: balance;
 
-        line-height: 1.5rem;
+        line-height: 1rem;
       }
     }
   }
