@@ -1,7 +1,5 @@
 <script lang="ts">
-import Experiences from "$lib/components/Experiences.svelte";
 import Hoverable from "$lib/components/Hoverable.svelte";
-import Link from "$lib/components/Link.svelte";
 import { mainStore } from "$lib/stores/mainStore";
 import { onMount } from "svelte";
 

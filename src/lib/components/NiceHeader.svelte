@@ -1,50 +1,149 @@
 <script lang="ts">
 // Imports
+import { fade } from "svelte/transition";
+
+import { onClickOutside } from "$lib/actions/onClickOutside";
+import { LINKS, mainStore } from "$lib/stores/mainStore";
+
 import { gsap } from "gsap";
-import { onMount } from "svelte";
 
 // Variables
 // Binds
 let nav: HTMLElement;
 let svg: HTMLOrSVGElement;
+let linksContainer: HTMLElement;
 
 let isAnimating = false;
 let isNavOpen = false;
 
-$: if (isNavOpen) {
+$: if (isNavOpen && linksContainer) {
 	const timeline = gsap.timeline({
 		defaults: { duration: 0.6, ease: "power2.out" },
 	});
+
+	timeline.fromTo(
+		".content a",
+		{
+			opacity: 0,
+			y: 10,
+		},
+		{
+			opacity: 1,
+			y: 0,
+			stagger: 0.1,
+		},
+	);
+}
+
+// Timelines
+const timelineDefaults = {
+	defaults: { duration: 0.6, ease: "power2.out" },
+};
+
+let openTimeline: gsap.core.Timeline;
+let closeTimeline: gsap.core.Timeline;
+
+// Watchers
+$: if (svg && nav) {
+	closeTimeline = gsap
+		.timeline(timelineDefaults)
+		.to(nav, {
+			height: "10vh",
+		})
+		.to(
+			svg,
+			{
+				rotate: 180,
+			},
+			"<",
+		)
+		.to(
+			"#nav-container",
+			{
+				// css `backdrop-filter` property
+				backdropFilter: "blur(0px)",
+			},
+			"<",
+		)
+		.set(svg, {
+			rotate: 0,
+		})
+		.pause();
+
+	openTimeline = gsap
+		.timeline(timelineDefaults)
+		.to(nav, {
+			height: "40vh",
+		})
+		.to(
+			svg,
+			{
+				rotate: 135,
+			},
+			"<",
+		)
+		.to(
+			"#nav-container",
+			{
+				backdropFilter: "blur(4px)",
+			},
+			"<",
+		)
+		.pause();
 }
 
 // Functions
+const handleOnStart = (onClickIsNavOpen: boolean) => {
+	isAnimating = true;
+
+	if (onClickIsNavOpen) {
+		isNavOpen = false;
+	}
+};
+
+const handleOnComplete = (onClickIsNavOpen: boolean) => {
+	isAnimating = false;
+
+	if (!onClickIsNavOpen) {
+		isNavOpen = true;
+	}
+};
+
 const handleNavClick = () => {
 	if (isAnimating) return;
 
 	const onClickIsNavOpen = isNavOpen;
 
+	const timeline: gsap.core.Timeline = isNavOpen ? closeTimeline : openTimeline;
+
+	timeline.eventCallback("onStart", () => {
+		handleOnStart(onClickIsNavOpen);
+	});
+
+	timeline.eventCallback("onComplete", () => {
+		handleOnComplete(onClickIsNavOpen);
+	});
+
+	timeline.restart();
+	timeline.play();
+};
+
+const handleClickOutside = () => {
 	const timeline = gsap.timeline({
 		defaults: { duration: 0.6, ease: "power2.out" },
 		onStart: () => {
 			isAnimating = true;
-
-			if (onClickIsNavOpen) {
-				isNavOpen = false;
-			}
+			isNavOpen = false;
 		},
 		onComplete: () => {
 			isAnimating = false;
-
-			if (!onClickIsNavOpen) {
-				isNavOpen = true;
-			}
 		},
 	});
 
 	if (isNavOpen) {
 		timeline
 			.to(nav, {
-				height: "8vh",
+				height: "10vh",
 			})
 			.to(
 				svg,
@@ -53,40 +152,39 @@ const handleNavClick = () => {
 				},
 				"<",
 			)
+			.to(
+				"#nav-container",
+				{
+					// css `backdrop-filter` property
+					backdropFilter: "blur(0px)",
+				},
+				"<",
+			)
 			.set(svg, {
 				rotate: 0,
 			});
-	} else {
-		timeline
-			.to(nav, {
-				height: "30vh",
-			})
-			.to(
-				svg,
-				{
-					rotate: 135,
-				},
-				"<",
-			);
 	}
 };
-
-onMount(() => {
-	console.log("NiceHeader mounted");
-});
 </script>
 
 
 <div
     id="nav-container"
+    in:fade={{ duration: 200 }}
 >
   <nav
     bind:this={nav}
     on:click={handleNavClick}
+
+    use:onClickOutside={handleClickOutside}
+
     aria-hidden="true"
   >
     <div class="top">
-      <h1>Tom Planche.</h1>
+      <div class="infos">
+        <h1>Tom Planche.</h1>
+        <h2>French software engineer.</h2>
+      </div>
 
       <svg
         bind:this={svg}
@@ -105,15 +203,41 @@ onMount(() => {
     </div>
 
     {#if isNavOpen}
-      <div class="content">
-        <h2>ZIZI</h2>
+      <div
+          class="content"
+
+          bind:this={linksContainer}
+      >
+        {#each LINKS as link, i}
+          <a
+              href={link.href}
+
+              class:active={link.title === $mainStore.currentLink.title}
+          >
+            <span>
+              <svg
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M6.85046 13.4005C5.74589 13.4005 4.85046 12.5051 4.85046 11.4005V3.40051H2.85046V11.4005C2.85046 13.6097 4.64132 15.4005 6.85046 15.4005H17.156L13.3714 19.1852L14.7856 20.5994L21.1495 14.2354L14.7856 7.87146L13.3714 9.28567L17.4862 13.4005H6.85046Z"
+                  fill="currentColor"
+                />
+              </svg>
+            </span>
+            {link.description}
+          </a>
+        {/each}
       </div>
     {/if}
   </nav>
 </div>
 
 <style lang="scss">
-  $nav-height: 8vh;
+  $nav-height: 10vh;
   $nav-padding: 2rem;
 
   #nav-container {
@@ -128,18 +252,17 @@ onMount(() => {
 
     nav {
       height: $nav-height;
-      max-height: 30vh;
+      max-height: 40vh;
       width: 100%;
 
       display: flex;
       flex-direction: column;
-      justify-content: flex-start;
-      align-items: center;
+      justify-content: space-between;
+      align-items: flex-start;
 
       padding: $nav-padding;
 
       background: #1c3b4f;
-      background: red;
 
       border-radius: 1rem;
 
@@ -154,6 +277,18 @@ onMount(() => {
         justify-content: space-between;
         align-items: center;
 
+        .infos {
+          display: flex;
+          flex-direction: column;
+          align-items: flex-start;
+
+          h2 {
+            font-size: 1.75rem;
+            font-weight: 400;
+          }
+
+        }
+
         svg {
           $svg-size: 3vh;
 
@@ -163,7 +298,49 @@ onMount(() => {
           cursor: pointer;
 
         }
+      }
 
+      .content {
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-end;
+        align-items: flex-start;
+
+        a {
+          display: flex;
+          flex-direction: row;
+          justify-content: center;
+          align-items: center;
+
+          margin-left: .5rem;
+
+          font-size: 2.5rem;
+
+          span {
+            opacity: 0;
+
+            height: 2rem;
+            width: 0;
+
+            margin-right: 1rem;
+
+            transition:
+              opacity 0.2s ease-in-out,
+              width 0.2s ease-in-out;
+          }
+
+          &:not(.active) {
+            opacity: .8;
+          }
+
+          &:hover,
+          &.active {
+            span {
+              opacity: 1;
+              width: 2rem;
+            }
+          }
+        }
       }
     }
   }

@@ -4,7 +4,6 @@ import { onMount } from "svelte";
 
 import Cursor from "$lib/components/Cursor.svelte";
 import type TCursor from "$lib/components/Cursor.svelte";
-import Header from "$lib/components/Header.svelte";
 import MusicPlaying from "$lib/components/MusicPlaying.svelte";
 
 import { style_vars } from "$lib/globals";
@@ -12,7 +11,6 @@ import { mainStore } from "$lib/stores/mainStore";
 
 import "$lib/styles/main.scss";
 
-import Footer from "$lib/components/Footer.svelte";
 import NiceHeader from "$lib/components/NiceHeader.svelte";
 import { gsap } from "gsap";
 import ScrollTrigger from "gsap/dist/ScrollTrigger";
@@ -68,7 +66,6 @@ onMount(() => {
   <MusicPlaying debug={false} showIfNotPlaying={false}/>
   <Cursor bind:this={cursor} />
 {/if}
-<Footer />
 
 <style lang="scss">
   main {
