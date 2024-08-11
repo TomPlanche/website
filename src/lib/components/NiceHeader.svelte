@@ -251,6 +251,12 @@ const handleClickOutside = () => {
 
     padding: 1rem;
 
+    pointer-events: none;
+
+    * {
+      pointer-events: all;
+    }
+
     nav {
       height: $nav-height;
       max-height: 40vh;
