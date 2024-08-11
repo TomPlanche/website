@@ -238,7 +238,8 @@ const handleClickOutside = () => {
 
 <style lang="scss">
   $nav-height: 10vh;
-  $nav-padding: 2rem;
+  $nav-height-padding: 1rem;
+  $nav-width-padding: 2rem;
 
   #nav-container {
     position: fixed;
@@ -260,7 +261,7 @@ const handleClickOutside = () => {
       justify-content: space-between;
       align-items: flex-start;
 
-      padding: $nav-padding;
+      padding: $nav-height-padding $nav-width-padding;
 
       background: #1c3b4f;
 
@@ -269,7 +270,7 @@ const handleClickOutside = () => {
       z-index: 10;
 
       .top {
-        height: calc(#{$nav-height} - #{$nav-padding * 2});
+        height: calc(#{$nav-height} - #{$nav-height-padding * 2});
         width: 100%;
 
         display: flex;
@@ -301,15 +302,19 @@ const handleClickOutside = () => {
       }
 
       .content {
+        width: 100%;
+
         display: flex;
         flex-direction: column;
         justify-content: flex-end;
         align-items: flex-start;
 
         a {
+          width: 100%;
+
           display: flex;
           flex-direction: row;
-          justify-content: center;
+          justify-content: flex-start;
           align-items: center;
 
           margin-left: .5rem;
