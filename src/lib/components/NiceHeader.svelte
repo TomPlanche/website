@@ -253,6 +253,8 @@ const handleClickOutside = () => {
 
     pointer-events: none;
 
+    z-index: 2;
+
     * {
       pointer-events: all;
     }

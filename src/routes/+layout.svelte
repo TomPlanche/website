@@ -69,11 +69,6 @@ onMount(() => {
   <Footer />
 {/if}
 
-{#if dimensions.width > 768}
-  <MusicPlaying debug={false} showIfNotPlaying={false}/>
-  <Cursor bind:this={cursor} />
-{/if}
-
 <style lang="scss">
   main {
     min-height: 100vh;
@@ -85,10 +80,6 @@ onMount(() => {
 
     overflow: hidden;
     position: relative;
-
-    isolation: isolate;
-
-    z-index: -1;
   }
 
   #noise {
