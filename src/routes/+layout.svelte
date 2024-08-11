@@ -11,6 +11,7 @@ import { mainStore } from "$lib/stores/mainStore";
 
 import "$lib/styles/main.scss";
 
+import Footer from "$lib/components/Footer.svelte";
 import NiceHeader from "$lib/components/NiceHeader.svelte";
 import { gsap } from "gsap";
 import ScrollTrigger from "gsap/dist/ScrollTrigger";
@@ -61,6 +62,12 @@ onMount(() => {
   <slot></slot>
 
 </main>
+
+{#if dimensions.width > 768}
+  <MusicPlaying debug={false} showIfNotPlaying={false}/>
+  <Cursor bind:this={cursor} />
+  <Footer />
+{/if}
 
 {#if dimensions.width > 768}
   <MusicPlaying debug={false} showIfNotPlaying={false}/>
