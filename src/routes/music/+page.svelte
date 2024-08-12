@@ -1,4 +1,5 @@
 <script lang="ts">
+// Imports
 import type {
 	TGetUserLovedTracksResponse,
 	TLovedTrack,
@@ -6,7 +7,6 @@ import type {
 import { LINKS, mainStore } from "$lib/stores/mainStore";
 
 import { onMount } from "svelte";
-// Imports
 
 // Variables
 type TData = {

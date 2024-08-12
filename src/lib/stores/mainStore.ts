@@ -34,6 +34,7 @@ export type TMainStore = {
 	currentLink: (typeof LINKS)[number];
 	cursor: Cursor | null;
 	musicPlayingYDistance: number;
+	hideFooter: boolean;
 };
 
 const mainStoreDefault: TMainStore = {
@@ -41,6 +42,7 @@ const mainStoreDefault: TMainStore = {
 	currentLink: LINKS[0],
 	cursor: null,
 	musicPlayingYDistance: 0,
+	hideFooter: false,
 };
 
 export const mainStore = writable<TMainStore>(mainStoreDefault);

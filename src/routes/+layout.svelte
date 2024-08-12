@@ -66,7 +66,11 @@ onMount(() => {
 {#if dimensions.width > 768}
   <MusicPlaying debug={false} showIfNotPlaying={false}/>
   <Cursor bind:this={cursor} />
-  <Footer />
+
+  {#if !$mainStore.hideFooter}
+    <Footer />
+  {/if}
+
 {/if}
 
 <style lang="scss">
