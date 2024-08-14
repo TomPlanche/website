@@ -18,5 +18,7 @@ export let tracks: TLovedTrack[] = [];
   #canvas-container {
     width: 100%;
     height: 100%;
+
+    padding-top: 10vh;
   }
 </style>

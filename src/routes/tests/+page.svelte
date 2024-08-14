@@ -15,6 +15,8 @@ type TData = {
  */
 export let data: TData;
 
+$: console.log(data);
+
 // Lifecycle
 onMount(() => {
 	$mainStore.loadingAnimationIsDone = true;
@@ -30,13 +32,12 @@ onMount(() => {
 
 <style lang="scss">
   article {
-    height: 80vh;
+    height: 100vh;
     width: 100%;
 
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
-
   }
 </style>
