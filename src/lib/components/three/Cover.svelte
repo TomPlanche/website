@@ -30,7 +30,6 @@ $: localRotation = [$localXRotation, $localYRotation, rotation[2]] as [
 	number,
 ];
 
-// biome-ignore lint/style/useConst: This is for a prop
 export let onClick: () => void;
 
 const coverParams = {
@@ -47,7 +46,7 @@ const textPosition: [number, number, number] = [
 	position[2],
 ];
 
-$: if (isCentered) {
+$: if (!isCentered) {
 	localYRotation.set(0);
 	localXRotation.set(0);
 }

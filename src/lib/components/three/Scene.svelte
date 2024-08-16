@@ -9,6 +9,8 @@ import Cover from "$lib/components/three/Cover.svelte";
 import { onMount } from "svelte";
 import { spring } from "svelte/motion";
 
+import { OrbitControls } from "@threlte/extras";
+
 interactivity();
 
 // Props
@@ -136,7 +138,9 @@ onMount(() => {
   on:create={({ ref }) => {
     ref.lookAt(0, 1, 0)
   }}
-/>
+>
+<!--  <OrbitControls />-->
+</T.PerspectiveCamera>
 
 <T.DirectionalLight position={[0, 10, 10]}/>
 
@@ -188,7 +192,7 @@ onMount(() => {
       ]}
       track={track}
       isCentered={
-        (i * groupScrollSpeed) * .9 <= $position && $position <= (i * groupScrollSpeed) * 1.1
+        (i * groupScrollSpeed) * .95 <= $position && $position <= (i * groupScrollSpeed) * 1.05
       }
 
       onClick={() => handleOnClicked(i)}
