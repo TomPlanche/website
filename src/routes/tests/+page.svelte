@@ -1,5 +1,5 @@
 <script lang="ts">
-import Hoverable from "$lib/components/Hoverable.svelte";
+import Contact from "$lib/components/Contact.svelte";
 import { mainStore } from "$lib/stores/mainStore";
 import { onMount } from "svelte";
 
@@ -12,14 +12,6 @@ onMount(() => {
 </script>
 
 <article>
-  <Hoverable
-      on:click={() => {
-        console.log("hihihi");
-      }}
-  ><h1>TESTS !</h1></Hoverable>
-<!--  <Experiences />-->
-
-<!--  <Link href="www.aled.com">hihihi</Link>-->
 </article>
 
 <style lang="scss">
