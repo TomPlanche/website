@@ -81,4 +81,34 @@ export const differenceBetweenDates = (
 	return monthsString;
 };
 
+/**
+ * Convert miliseconds to object
+ *
+ * @param ms The number of miliseconds
+ *
+ */
+export const msToTime = (ms: number) => {
+	const seconds = Math.floor((ms / 1000) % 60);
+	const minutes = Math.floor((ms / (1000 * 60)) % 60);
+	const hours = Math.floor((ms / (1000 * 60 * 60)) % 24);
+
+	const stringified = {
+		seconds: seconds.toString().padStart(2, "0"),
+		minutes: minutes.toString().padStart(2, "0"),
+		hours: hours.toString().padStart(2, "0"),
+	};
+
+	return {
+		hours,
+		minutes,
+		seconds,
+		string:
+			hours > 0
+				? `${stringified.hours}:${stringified.minutes}:${stringified.seconds}`
+				: minutes > 0
+					? `${stringified.minutes}:${stringified.seconds}`
+					: `${stringified.seconds}`,
+	};
+};
+
 export const baseUrl = "http://localhost:5173";
