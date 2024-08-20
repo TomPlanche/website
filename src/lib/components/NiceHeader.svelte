@@ -237,6 +237,8 @@ const handleClickOutside = () => {
 </div>
 
 <style lang="scss">
+  @import "src/lib/styles/variables.scss";
+
   $nav-height: 10vh;
   $nav-height-padding: 1rem;
   $nav-width-padding: 2rem;
@@ -253,9 +255,9 @@ const handleClickOutside = () => {
 
     pointer-events: none;
 
-    z-index: 2;
-
     * {
+      @include no-user-select();
+
       pointer-events: all;
     }
 
