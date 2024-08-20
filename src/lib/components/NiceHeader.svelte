@@ -255,6 +255,8 @@ const handleClickOutside = () => {
 
     pointer-events: none;
 
+    z-index: 10;
+
     * {
       @include no-user-select();
 
