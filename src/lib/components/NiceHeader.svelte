@@ -275,8 +275,7 @@ const handleClickOutside = () => {
 
       padding: $nav-height-padding $nav-width-padding;
 
-      background: #1c3b4f;
-
+      background: #00203E60;
       border-radius: 1rem;
 
       z-index: 10;
