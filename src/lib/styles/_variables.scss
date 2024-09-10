@@ -20,7 +20,7 @@
   transition: background-color 0.5s ease-in-out;
 
   :global(body.dark) & {
-    color: $aled;
+    color: $main-color;
     background-color: $app-bg-dark;
   }
 }
@@ -54,20 +54,20 @@ $gh-green-dark: #1d5927;
 $gh-border: #30363d;
 $gh-border-dark: #21262d;
 
-$app-bg-dark: #00203E;
-/* $app-bg-dark: #080a13; */
+//$app-bg-dark: #212A37;
+//$app-bg-dark: #00203E;
+//$app-bg-dark: #080a13;
+$app-bg-dark: #1c3b4f;
 $app-bg-light: #e5e3de;
 
 $black: #02040a;
 $black-dimed: #02040a75;
-$blue: #679fc5;
-$aled: rgb(205, 201, 255);
+$main-color: rgb(205, 201, 255);
 
-$header-bg-dark: #eeeeee25;
-$header-bg-light: #00000025;
+$header-bg: #1c3b4f;
 
 $green-light: #8b9c8f;
-$outline-dark: $header-bg-dark;
+$outline-dark: #eeeeee25;
 $outline-light: $green-light;
 
 $white: #e8e4d9;
@@ -196,7 +196,7 @@ $footer-height: 5rem;
 
 @font-face {
   font-family: 'Maragsa';
-  src: url('$lib/fonts/Maragsa/Maragsâ-Display.otf') format('otf');
+  src: url('$lib/fonts/Maragsa/Maragsâ-Display.otf') format('otf');
   font-weight: 300;
   font-style: normal;
 }

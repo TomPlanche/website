@@ -66,7 +66,7 @@ onMount(() => {
 
     text-align: left;
     font-family: 'Mondwest', serif;
-    text-shadow: 0 0 5px $aled;
+    text-shadow: 0 0 5px $main-color;
   }
 
   h1 {
