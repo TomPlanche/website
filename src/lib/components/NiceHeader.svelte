@@ -237,7 +237,10 @@ const handleClickOutside = () => {
 </div>
 
 <style lang="scss">
+  @use "sass:color";
+  
   @import "src/lib/styles/variables.scss";
+
 
   $nav-height: 10vh;
   $nav-height-padding: 1rem;
@@ -294,6 +297,8 @@ const handleClickOutside = () => {
           flex-direction: column;
           align-items: flex-start;
 
+          font-family: "Mondwest", sans-serif;
+
           h2 {
             font-size: 1.75rem;
             font-weight: 400;
@@ -319,6 +324,7 @@ const handleClickOutside = () => {
         flex-direction: column;
         justify-content: flex-end;
         align-items: flex-start;
+        gap: .25rem;
 
         a {
           width: 100%;
@@ -328,9 +334,16 @@ const handleClickOutside = () => {
           justify-content: flex-start;
           align-items: center;
 
-          margin-left: .5rem;
+          padding: .25rem 0 .25rem 1rem;
 
-          font-size: 2.5rem;
+          font-size: 2.25rem;
+          font-family: "Fraktion Mono", sans-serif;
+          // regroup the letters
+          letter-spacing: -.2rem;
+
+          transition: background 0.2s ease-in-out;
+
+          border-radius: .25rem;
 
           span {
             opacity: 0;
@@ -347,9 +360,11 @@ const handleClickOutside = () => {
           &:not(.active) {
             opacity: .8;
           }
-
+          
           &:hover,
           &.active {
+            background: color.adjust($main-color, $alpha: -0.9);
+
             span {
               opacity: 1;
               width: 2rem;
