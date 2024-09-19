@@ -27,6 +27,8 @@
 		"axios": "^1.7.2",
 		"gsap": "npm:@gsap/shockingly",
 		"jest": "^29.7.0",
+		"p5-svelte": "^3.1.2",
+		"svelte-tweakpane-ui": "^1.3.3",
 		"zod": "^3.23.8"
 	}
 }

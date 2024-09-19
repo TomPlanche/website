@@ -1,88 +1,89 @@
 <script lang="ts">
-import type { CursorParams } from "$lib/types";
-// Imports
-import { spring } from "svelte/motion";
+  // Imports
+  import type {CursorParams} from "$lib/types";
+  import {spring} from "svelte/motion";
+  import {mainStore} from "$lib/stores/mainStore";
 
-// Types
+  // Types
 
-// Variables
-const cursor_base: CursorParams = {
-	size: 15,
-	background: "rgba(205, 201, 255, .8)",
-	opacity: 0,
-	blur: 8,
-	stiffness: 0.3,
-	damping: 0.8,
-};
+  // Variables
+  const cursor_base: CursorParams = {
+    size: 15,
+    background: "rgba(205, 201, 255, .8)",
+    opacity: 0,
+    blur: 8,
+    stiffness: 0.3,
+    damping: 0.8,
+  };
 
-// Springs
-const opacity = spring(0);
-const coords = spring(
-	{
-		x: 0,
-		y: 0,
-	},
-	{ stiffness: 0.3, damping: 0.8 },
-);
-const size = spring(cursor_base.size);
-const blur = spring(0);
+  // Springs
+  const opacity = spring(0);
+  const coords = spring(
+    {
+      x: 0,
+      y: 0,
+    },
+    {stiffness: 0.3, damping: 0.8},
+  );
+  const size = spring(cursor_base.size);
+  const blur = spring(0);
 
-let background = cursor_base.background as string;
-// biome-ignore lint/style/useConst: The variable is used in the script but the linter doesn't recognize it
-let hasMoved = false;
+  let background = cursor_base.background as string;
+  // biome-ignore lint/style/useConst: The variable is used in the script but the linter doesn't recognize it
+  let hasMoved = false;
 
-// if hasMoved is false, then the cursor is not visible
-$: if (!hasMoved) {
-	opacity.set(0);
-} else {
-	setTimeout(() => {
-		opacity.set(1);
-	}, 150);
-}
+  // if hasMoved is false, then the cursor is not visible
+  $: if (!hasMoved) {
+    opacity.set(0);
+  } else {
+    setTimeout(() => {
+      opacity.set(1);
+    }, 150);
+  }
 
-// Functions
-/**
- * Set the cursor parameters
- *
- * This function uses Svelte's `export const` syntax to allow the function to be called from other components.
- * It'll be called from the `mainStore.cursor`.
- *
- * @param params {CursorParams} The parameters to set
- * @param debug {boolean} Whether to log debug information
- */
-export const setCursorParams = (params: CursorParams, debug = false) => {
-	debug && console.log("[Cursor.svelte] setCursorParams called with:", params);
+  // Functions
+  /**
+   * Set the cursor parameters
+   *
+   * This function uses Svelte's `export const` syntax to allow the function to be called from other components.
+   * It'll be called from the `mainStore.cursor`.
+   *
+   * @param params {CursorParams} The parameters to set
+   * @param debug {boolean} Whether to log debug information
+   */
+  export const setCursorParams = (params: CursorParams, debug = false) => {
+    debug && console.log("[Cursor.svelte] setCursorParams called with:", params);
 
-	if (params.size !== undefined) {
-		size.set(params.size);
-	}
+    if (params.size !== undefined) {
+      size.set(params.size);
+    }
 
-	if (params.background !== undefined) {
-		background = params.background;
-	}
+    if (params.background !== undefined) {
+      background = params.background;
+    }
 
-	if (params.opacity !== undefined) {
-		opacity.set(params.opacity);
-	}
+    if (params.opacity !== undefined) {
+      opacity.set(params.opacity);
+    }
 
-	if (params.blur !== undefined) {
-		blur.set(params.blur);
-	}
+    if (params.blur !== undefined) {
+      blur.set(params.blur);
+    }
 
-	if (params.stiffness !== undefined || params.damping !== undefined) {
-		const newSpringOptions = {
-			stiffness: params.stiffness ?? cursor_base.stiffness,
-			damping: params.damping ?? cursor_base.damping,
-		};
-		coords.stiffness = <number>newSpringOptions.stiffness;
-		coords.damping = <number>newSpringOptions.damping;
-	}
-};
+    if (params.stiffness !== undefined || params.damping !== undefined) {
+      const newSpringOptions = {
+        stiffness: params.stiffness ?? cursor_base.stiffness,
+        damping: params.damping ?? cursor_base.damping,
+      };
+      coords.stiffness = <number>newSpringOptions.stiffness;
+      coords.damping = <number>newSpringOptions.damping;
+    }
+  };
 </script>
 
 <!-- The window is used to get the mouse position -->
 <svelte:window
-  on:mousemove={(e) => {
+    on:mousemove={(e) => {
     if (!hasMoved) {
       hasMoved = true;
     }
@@ -92,27 +93,29 @@ export const setCursorParams = (params: CursorParams, debug = false) => {
       y: e.clientY
     });
   }}
-  on:mousedown={() => {
+    on:mousedown={() => {
     size.update((s) => s * 1.5);
   }}
-  on:mouseup={() => {
+    on:mouseup={() => {
     size.update((s) => s / 1.5);
   }}
 />
 
-<!-- The svg is always displayed -->
-<svg aria-hidden="true">
-  <circle
-    cx={$coords.x}
-    cy={$coords.y}
-    r={$size}
-    style="
+{#if !$mainStore.hideCursor}
+  <!-- The svg is always displayed -->
+  <svg aria-hidden="true">
+    <circle
+        cx={$coords.x}
+        cy={$coords.y}
+        r={$size}
+        style="
 			opacity: {$opacity};
 			filter: blur({$blur}px);
 			fill: {background};
 		"
-  />
-</svg>
+    />
+  </svg>
+{/if}
 
 <style lang="scss">
   * {
