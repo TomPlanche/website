@@ -29,7 +29,7 @@
 		"@threlte/extras": "^8.11.5",
 		"@types/three": "^0.167.1",
 		"axios": "^1.7.2",
-		"gsap": "npm:@gsap/shockingly",
+		"gsap": "^3.12.5",
 		"jest": "^29.7.0",
 		"three": "^0.167.1",
 		"zod": "^3.23.8"

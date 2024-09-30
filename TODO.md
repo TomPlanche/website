@@ -1,0 +1,1 @@
+- [ ] Find (or build) an alternative to gsap's `ScrambleTextPlugin` for the `scrambleText` function in `src/utils.js` (it's a paid plugin).

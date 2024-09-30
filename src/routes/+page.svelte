@@ -3,10 +3,6 @@ import { mainStore } from "$lib/stores/mainStore";
 import { onMount } from "svelte";
 
 import { gsap } from "gsap";
-import { ScrambleTextPlugin } from "gsap/dist/ScrambleTextPlugin";
-
-// Register plugins
-gsap.registerPlugin(ScrambleTextPlugin);
 
 // Variables
 const titleContent = "Tom Planche";
@@ -35,14 +31,6 @@ onMount(() => {
 		.to(title, {
 			opacity: 1,
 			duration: 1,
-			scrambleText: {
-				text: titleContent,
-				chars: `${titleContent
-					.replace(/a/g, "4")
-					.replace(/e/g, "3")
-					.replace(/o/g, "O")}@#&<>()!;`,
-				revealDelay: 0.625,
-			},
 		})
 		.to(subtitle, {
 			opacity: 1,
