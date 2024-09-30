@@ -56,7 +56,7 @@ onMount(() => {
 {/if}
 
 
-<main style="padding: {mainPadding} 0;">
+<main style="padding: {mainPadding};">
   <div id="noise"></div>
 
   <slot></slot>
