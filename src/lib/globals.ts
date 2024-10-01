@@ -1,12 +1,12 @@
-export const style_vars = {
-	mainPadding: "2rem",
-	headerHeight: "5rem",
+const mainPadding = "1rem";
+const headerHeight = "10vh";
+
+export const styleVars = {
+	mainPadding,
+	headerHeight,
 };
 
-const { headerHeight } = style_vars;
-
-export const pageSizeWithPadding = `calc(100vh - ${headerHeight})`;
-
+export const mainTopPadding = `calc(${headerHeight} + ${mainPadding} * 2)`;
 /**
  * Formats a date into a `Month Year` string.
  *

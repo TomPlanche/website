@@ -8,7 +8,7 @@ import { lastFMStore } from "$lib/stores/lastFMStore";
 import { mainStore } from "$lib/stores/mainStore";
 import { gsap } from "gsap";
 import { onMount } from "svelte";
-import { fade, scale } from "svelte/transition";
+import { scale } from "svelte/transition";
 
 // Variables
 // Props
@@ -27,6 +27,9 @@ export let debug: boolean;
 export let showIfNotPlaying = false;
 
 // Base variables
+const defaultCover =
+	"https://lastfm.freetls.fastly.net/i/u/300x300/2a96cbd8b46e442fc41c2b86b821562f.png";
+
 export const defaultSong = RecentTrackSchema.parse({
 	artist: {
 		mbid: "fda925d2-7af4-4b67-b8c1-692292c9cb18",
@@ -270,7 +273,7 @@ onMount(() => {
     title={`${localSong.name} by ${localSong.artist['#text']}`}
   >
     <div class="artwork-container">
-      <img src={localSong.image[localSong.image.length - 1]['#text']} alt="Song cover" />
+      <img src={localSong.image[localSong.image.length - 1]['#text'] || defaultCover} alt="Song cover" />
     </div>
 
       <div

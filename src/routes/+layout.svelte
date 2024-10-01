@@ -6,7 +6,6 @@ import Cursor from "$lib/components/Cursor.svelte";
 import type TCursor from "$lib/components/Cursor.svelte";
 import MusicPlaying from "$lib/components/MusicPlaying.svelte";
 
-import { style_vars } from "$lib/globals";
 import { mainStore } from "$lib/stores/mainStore";
 
 import "$lib/styles/main.scss";
@@ -18,7 +17,6 @@ import ScrollTrigger from "gsap/dist/ScrollTrigger";
 gsap.registerPlugin(ScrollTrigger);
 
 // Variables
-const { mainPadding } = style_vars;
 
 let dimensions = {
 	width: 0,
@@ -27,7 +25,6 @@ let dimensions = {
 
 // Binds
 let cursor: TCursor;
-let footer: HTMLElement;
 
 // Watchers
 $: if (cursor) {
@@ -56,7 +53,7 @@ onMount(() => {
 {/if}
 
 
-<main style="padding: {mainPadding};">
+<main>
   <div id="noise"></div>
 
   <slot></slot>
@@ -67,12 +64,15 @@ onMount(() => {
   <Cursor bind:this={cursor} />
   <Footer />
 
-  <MusicPlaying debug={false} showIfNotPlaying={false}/>
+<!--  <MusicPlaying debug={false} showIfNotPlaying={false}/>-->
 {/if}
 
 <style lang="scss">
+  @import '$lib/styles/variables';
+
   main {
-    min-height: 100vh;
+    min-height: $main-min-height;
+    padding: $main-top-padding $main-padding;
 
     display: flex;
     flex-direction: column;

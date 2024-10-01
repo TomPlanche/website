@@ -3,6 +3,7 @@
 import { fade } from "svelte/transition";
 
 import { onClickOutside } from "$lib/actions/onClickOutside";
+import { styleVars } from "$lib/globals";
 import { LINKS, mainStore } from "$lib/stores/mainStore";
 
 import { gsap } from "gsap";
@@ -179,6 +180,8 @@ const handleClickOutside = () => {
       use:onClickOutside={handleClickOutside}
 
       aria-hidden="true"
+
+      style="height: {styleVars.headerHeight}"
   >
     <div class="top">
       <div class="infos">

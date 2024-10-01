@@ -100,12 +100,16 @@ $inner-corner-radius: $outer-corner-radius * 0.75;
 /**
  * Paddings
  */
-$main-padding: 2rem;
+$main-padding: 1rem;
 
 /**
  * Heights and Widths
  */
-$footer-height: 5rem;
+$header-height: 10vh;
+$footer-height: $header-height;
+
+$main-top-padding: calc($header-height + 2 * $main-padding);
+$main-min-height: calc(100vh - $main-top-padding * 2);
 
 /**
  * Fonts
@@ -407,6 +411,14 @@ $footer-height: 5rem;
 @font-face {
   font-family: 'Mass Transit Mono';
   src: url('$lib/fonts/MassTransitMono/masstransitmono_regular_v1.0-webfont.woff2') format('woff2');
+  font-weight: normal;
+  font-style: normal;
+}
+
+/* Departure Mono */
+@font-face {
+  font-family: 'Departure Mono';
+  src: url('$lib/fonts/DepartureMono/DepartureMono-Regular.woff') format('woff');
   font-weight: normal;
   font-style: normal;
 }
