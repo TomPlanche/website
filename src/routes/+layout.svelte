@@ -62,7 +62,7 @@ onMount(() => {
 
 {#if dimensions.width > 768}
   <Cursor bind:this={cursor} />
-  <Footer />
+<!--  <Footer />-->
 
 <!--  <MusicPlaying debug={false} showIfNotPlaying={false}/>-->
 {/if}

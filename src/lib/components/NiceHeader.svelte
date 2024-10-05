@@ -11,7 +11,7 @@ import { gsap } from "gsap";
 // Variables
 // Binds
 let nav: HTMLElement;
-let svg: HTMLOrSVGElement;
+let crossSvg: HTMLOrSVGElement;
 let linksContainer: HTMLElement;
 
 let isAnimating = false;
@@ -45,14 +45,14 @@ let openTimeline: gsap.core.Timeline;
 let closeTimeline: gsap.core.Timeline;
 
 // Watchers
-$: if (svg && nav) {
+$: if (crossSvg && nav) {
 	closeTimeline = gsap
 		.timeline(timelineDefaults)
 		.to(nav, {
 			height: "10vh",
 		})
 		.to(
-			svg,
+			crossSvg,
 			{
 				rotate: 180,
 			},
@@ -62,11 +62,11 @@ $: if (svg && nav) {
 			"#nav-container",
 			{
 				// css `backdrop-filter` property
-				backdropFilter: "blur(0px)",
+				backdropFilter: "none",
 			},
 			"<",
 		)
-		.set(svg, {
+		.set(crossSvg, {
 			rotate: 0,
 		})
 		.pause();
@@ -77,7 +77,7 @@ $: if (svg && nav) {
 			height: "40vh",
 		})
 		.to(
-			svg,
+			crossSvg,
 			{
 				rotate: 135,
 			},
@@ -147,7 +147,7 @@ const handleClickOutside = () => {
 				height: "10vh",
 			})
 			.to(
-				svg,
+				crossSvg,
 				{
 					rotate: 180,
 				},
@@ -157,11 +157,11 @@ const handleClickOutside = () => {
 				"#nav-container",
 				{
 					// css `backdrop-filter` property
-					backdropFilter: "blur(0px)",
+					backdropFilter: "none",
 				},
 				"<",
 			)
-			.set(svg, {
+			.set(crossSvg, {
 				rotate: 0,
 			});
 	}
@@ -180,8 +180,6 @@ const handleClickOutside = () => {
       use:onClickOutside={handleClickOutside}
 
       aria-hidden="true"
-
-      style="height: {styleVars.headerHeight}"
   >
     <div class="top">
       <div class="infos">
@@ -190,7 +188,7 @@ const handleClickOutside = () => {
       </div>
 
       <svg
-          bind:this={svg}
+          bind:this={crossSvg}
 
           width="24"
           height="24"
@@ -283,6 +281,8 @@ const handleClickOutside = () => {
 
       outline: $main-color solid 1px;
       border-radius: 1rem;
+
+      backdrop-filter: blur(4px);
 
       z-index: 10;
 

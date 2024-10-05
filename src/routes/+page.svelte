@@ -79,6 +79,8 @@ const experiences: TWork[] = [
 let title: HTMLHeadingElement;
 let subtitle: HTMLHeadingElement;
 
+// Watchers
+
 // Lifecycle
 onMount(() => {
 	$mainStore.loadingAnimationIsDone = true;
@@ -112,46 +114,20 @@ onMount(() => {
 <section id="home">
   <h1 bind:this={title}>{titleContent}</h1>
   <h2 bind:this={subtitle}>I do <span>stuff</span> with code</h2>
-
-  <svg
-      id="down"
-
-      width="24"
-      height="24"
-      viewBox="0 0 24 24"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-  >
-    <path
-        d="M16.9498 14.3948L18.364 12.9805L12 6.61658L5.63605 12.9805L7.05026 14.3948L12 9.445L16.9498 14.3948Z"
-        fill="currentColor"
-    />
-    <path d="M6.00014 17.3835H18.0001V15.3835H6.00014V17.3835Z" fill="currentColor"/>
-  </svg>
-
 </section>
 
-<Spacer height="{mainTopPadding}"/>
+{#if $mainStore.loadingAnimationIsDone}
+  <Spacer height="{mainTopPadding}"/>
 
-<section>
-  <h3>Work Experience</h3>
+  <section>
+    <h3>Work Experience</h3>
 
-  <Work {experiences}/>
-</section>
+    <Work {experiences}/>
+  </section>
+{/if}
 
 <style lang="scss">
   @import '$lib/styles/variables';
-
-  #down {
-    position: absolute;
-    bottom: $main-padding;
-    right: 50%;
-
-    transform: translateX(50%);
-
-    height: 3rem;
-    width: 3rem;
-  }
 
   section {
     align-self: flex-start;
