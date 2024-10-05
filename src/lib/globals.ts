@@ -149,3 +149,16 @@ export const mapRange = (
 };
 
 export const baseUrl = "http://localhost:5173";
+
+// DISTANCE FROM MOUSE ACTION
+export const referencePoints = [
+	"top",
+	"bottom",
+	"left",
+	"right",
+	"center",
+	"top-left",
+	"top-right",
+	"bottom-left",
+	"bottom-right",
+] as const;

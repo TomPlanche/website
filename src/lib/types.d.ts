@@ -1,3 +1,4 @@
+import type { referencePoints } from "$lib/globals";
 import { z } from "zod";
 
 // IP INFO
@@ -59,3 +60,12 @@ export type TWork = {
 	image?: string;
 	tags?: TWorkTag[];
 };
+
+// DISTANCE FROM MOUSE ACTION
+export interface DistanceEvent extends MouseEvent {
+	x: number;
+	y: number;
+	distance: number;
+}
+
+export type ReferencePoint = (typeof referencePoints)[number];
