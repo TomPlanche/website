@@ -2,6 +2,7 @@
 import { mainStore } from "$lib/stores/mainStore";
 import { onMount } from "svelte";
 
+import Magnetic from "$lib/components/Magnetic.svelte";
 import Spacer from "$lib/components/Spacer.svelte";
 import Work from "$lib/components/Work.svelte";
 import { mainTopPadding } from "$lib/globals";
@@ -75,6 +76,8 @@ const experiences: TWork[] = [
 	},
 ];
 
+const blurTriggerIsHovered = false;
+
 // Binds
 let title: HTMLHeadingElement;
 let subtitle: HTMLHeadingElement;
@@ -112,12 +115,30 @@ onMount(() => {
 </script>
 
 <section id="home">
-  <h1 bind:this={title}>{titleContent}</h1>
-  <h2 bind:this={subtitle}>I do <span>stuff</span> with code</h2>
+  <Magnetic
+      fieldSize={[1.5, 2]}
+      force={1}
+      debug
+  >
+    <h1 bind:this={title}>{titleContent}</h1>
+    <h2 bind:this={subtitle}>I do <span>stuff</span> with code</h2>
+  </Magnetic>
 </section>
 
 {#if $mainStore.loadingAnimationIsDone}
   <Spacer height="{mainTopPadding}"/>
+
+  <section>
+    <h3>About me</h3>
+
+    <p>
+      Hi, <span class="important">I'm Tom</span>, a <span class="important">backend developer</span> with a passion for
+      <span class="important">clean and efficient code</span>.
+      <br>
+      Currently <span class="important">studying at <a href="www.cnam.fr" class="img-reveal"><img
+        src="/logos/cnam_logo.svg" alt="CNAM's logo"> le CNAM </a></span> in Paris as a <span class="important">software engineer</span>.
+    </p>
+  </section>
 
   <section>
     <h3>Work Experience</h3>
@@ -127,8 +148,14 @@ onMount(() => {
 {/if}
 
 <style lang="scss">
+  @use 'sass:color';
+
   @import '$lib/styles/variables';
 
+  * {
+    @include no-user-select();
+  }
+  
   section {
     align-self: flex-start;
     width: 100%;
@@ -138,15 +165,18 @@ onMount(() => {
     justify-content: flex-start;
     align-items: center;
 
-    height: $main-min-height;
 
     &#home {
+      min-height: $main-min-height;
       justify-content: center;
+    }
+
+    &:not(#home) {
+      margin-top: 5rem;
     }
 
     h1,
     h2 {
-      @include no-user-select();
 
       text-align: left;
       font-family: 'Mondwest', serif;
@@ -164,7 +194,77 @@ onMount(() => {
     }
 
     h3 {
+      font-size: 6vw;
       align-self: flex-start;
+    }
+
+    p {
+      font-size: 1.75rem;
+      text-align: justify;
+      margin-top: 1rem;
+      margin-left: 1rem;
+      align-self: flex-start;
+
+      line-height: 1.5;
+
+      span {
+        &.important {
+          font-weight: 700;
+          padding: 0.25rem 0.4rem;
+          position: relative;
+
+          &:hover, .active {
+            &::before {
+              height: 100%;
+              background-color: $translucent-tag;
+            }
+          }
+
+          &::before {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 10%;
+            background-color: color.change($translucent-tag, $alpha: 1);
+            z-index: -1;
+            border-radius: 0.25rem;
+
+            transition: border-radius 0.15s ease-in-out,
+            background-color 0.15s ease-in-out,
+            height 0.15s ease-in-out;
+          }
+        }
+      }
+
+      a {
+        &.img-reveal {
+          display: inline-flex;
+          flex-direction: row;
+          justify-content: center;
+          align-items: baseline;
+          gap: 0.25rem;
+
+          &:hover {
+            img {
+              height: 1.5rem;
+              scale: 1;
+              margin: 0 .125rem;
+            }
+          }
+
+          img {
+            height: 0;
+            max-height: 1.5rem;
+            width: auto;
+            margin: 0;
+            scale: 0;
+
+            transition: scale 0.3s, height 0.3s, margin 0.3s;
+          }
+        }
+      }
     }
   }
 </style>
