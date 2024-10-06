@@ -67,6 +67,8 @@ const formatDescription = (description: string): string[] => {
 {/each}
 
 <style lang="scss">
+  @import "$lib/styles/variables";
+
   $article-line-height: 1.75rem;
   $img-margin: .5rem;
 
@@ -81,7 +83,7 @@ const formatDescription = (description: string): string[] => {
 
     padding: 1rem;
 
-    border-bottom: 2px solid rgba(162, 162, 162, 0.1);
+    border-bottom: 2px solid $translucent-tag;
 
     &:hover {
       img {
@@ -133,10 +135,10 @@ const formatDescription = (description: string): string[] => {
           font-size: 1rem;
           font-weight: 900;
           margin-right: .5rem;
-          padding: .25rem .5rem;
-          border-radius: .75rem;
+          padding: .125rem .5rem;
+          border-radius: .5rem;
 
-          background-color: rgba(162, 162, 162, 0.1);
+          background-color: $translucent-tag;
         }
       }
 
