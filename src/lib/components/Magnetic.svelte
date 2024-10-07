@@ -6,6 +6,7 @@
 // Imports
 import { mapRange } from "$lib/globals";
 import { type SpringOpts, spring } from "svelte/motion";
+import { map } from "zod";
 
 // Variables
 interface Props {
@@ -34,6 +35,23 @@ const defaultProps: Required<Props> = {
 export let { block, debug, fieldSize, force, invert, springOptions }: Props =
 	defaultProps;
 
+let _windowScrollX = 0;
+let _windowScrollY = 0;
+
+const contentX = spring(0, springOptions);
+const contentY = spring(0, springOptions);
+
+// bindings
+let container: HTMLElement;
+let content: HTMLElement;
+let debugField: HTMLDivElement;
+let debugForceField: HTMLDivElement;
+
+// Watchers
+$: if (content) {
+	content.style.transform = `translate(${$contentX}px, ${$contentY}px)`;
+}
+
 $: _force = force || defaultProps.force;
 $: _forceX = typeof _force === "number" ? _force : _force[0];
 $: _forceY = typeof _force === "number" ? _force : _force[1];
@@ -43,34 +61,82 @@ $: _fieldSizeX =
 $: _fieldSizeY =
 	typeof fieldSize === "number" ? fieldSize : fieldSize?.[1] ?? 1;
 
+$: console.log(_windowScrollX);
+
 $: if (debug) {
 	console.log(
 		`Magnetic effect: block=${block}, debug=${debug}, forceX=${_forceX}, forceY=${_forceY}, invert=${_invert}, fieldSizeX=${_fieldSizeX}, fieldSizeY=${_fieldSizeY}`,
 	);
 }
 
-let container: HTMLElement;
-let content: HTMLElement;
+$: if (container && debug) {
+	const containerRect = container.getBoundingClientRect();
 
-const contentX = spring(0, springOptions);
-const contentY = spring(0, springOptions);
-
-// bindings
-let debugField: HTMLDivElement;
-
-// Watchers
-$: if (content) {
-	content.style.transform = `translate(${$contentX}px, ${$contentY}px)`;
-}
-
-$: if (debug && debugField) {
-	debugField.style.width = `${container?.getBoundingClientRect().width * _fieldSizeX}px`;
-	debugField.style.height = `${container?.getBoundingClientRect().height * _fieldSizeY}px`;
-	debugField.style.left = `${container?.getBoundingClientRect().left - (container?.getBoundingClientRect().width * (_fieldSizeX - 1)) / 2}px`;
-	debugField.style.top = `${container?.getBoundingClientRect().top - (container?.getBoundingClientRect().height * (_fieldSizeY - 1)) / 2}px`;
+	if (containerRect) {
+		updateDebugField(containerRect, debugField, _fieldSizeX, _fieldSizeY);
+		updateDebugField(
+			containerRect,
+			debugForceField,
+			_fieldSizeX * _forceX,
+			_fieldSizeY * _forceY,
+		);
+	}
 }
 
 // Functions
+/**
+ * Handle window scroll
+ *
+ * @param _e {Event} The scroll event
+ */
+const handleWindowScroll = (_e: Event) => {
+	_windowScrollX = window.scrollX;
+	_windowScrollY = window.scrollY;
+
+	if (block || !content) {
+		return;
+	}
+
+	updateDebugField(
+		container.getBoundingClientRect(),
+		debugField,
+		_fieldSizeX,
+		_fieldSizeY,
+	);
+
+	updateDebugField(
+		container.getBoundingClientRect(),
+		debugForceField,
+		_fieldSizeX * _forceX,
+		_fieldSizeY * _forceY,
+	);
+};
+
+/**
+ * Update the debug field
+ *
+ * @param containerRect {DOMRect} The container rect
+ * @param field {HTMLDivElement} The debug field
+ * @param scaleX {number} The scale on the X axis
+ * @param scaleY {number} The scale on the Y axis
+ */
+const updateDebugField = (
+	containerRect: DOMRect,
+	field: HTMLDivElement,
+	scaleX: number,
+	scaleY: number,
+) => {
+	if (!field) return;
+
+	const width = containerRect.width * scaleX;
+	const height = containerRect.height * scaleY;
+
+	field.style.width = `${width}px`;
+	field.style.height = `${height}px`;
+	field.style.left = `${containerRect.left - (width - containerRect.width) / 2}px`;
+	field.style.top = `${containerRect.top - (height - containerRect.height) / 2}px`;
+};
+
 /**
  * Handle mouse move
  *
@@ -127,10 +193,15 @@ const handleMouseLeave = () => {
 };
 </script>
 
-<svelte:window on:mousemove={handleMouseMove} />
+<svelte:window
+    on:mousemove={handleMouseMove}
+    on:mouseleave={handleMouseLeave}
+    on:scroll={handleWindowScroll}
+/>
 
 {#if debug}
     <div id="debug-field" bind:this={debugField}></div>
+    <div id="debuf-field-limit" bind:this={debugForceField}></div>
 {/if}
 
 <div
@@ -154,7 +225,16 @@ const handleMouseLeave = () => {
         height: 100%;
         pointer-events: none;
 
-        outline: 2px solid red;
+        outline: 2px dotted red;
+    }
+
+    #debuf-field-limit {
+        position: fixed;
+        top: 0;
+        left: 0;
+        pointer-events: none;
+
+        outline: 2px dotted green;
     }
 
     .container {
