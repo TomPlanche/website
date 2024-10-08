@@ -1,3 +1,4 @@
+import type { referencePoints } from "$lib/globals";
 import { z } from "zod";
 
 // IP INFO
@@ -34,3 +35,37 @@ export type CursorParams = {
 	stiffness?: number;
 	damping?: number;
 };
+
+// PLAYGROUND
+export type TFile = {
+	name: string;
+	link: string;
+};
+
+// WORK
+export type TWorkTag = {
+	name: string;
+	color?: string;
+	background?: string;
+};
+
+export type TWork = {
+	title: string;
+	company: string;
+	description: string;
+
+	from: string;
+	to?: string;
+
+	image?: string;
+	tags?: TWorkTag[];
+};
+
+// DISTANCE FROM MOUSE ACTION
+export interface DistanceEvent extends MouseEvent {
+	x: number;
+	y: number;
+	distance: number;
+}
+
+export type ReferencePoint = (typeof referencePoints)[number];

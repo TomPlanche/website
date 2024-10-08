@@ -1,4 +1,4 @@
-import { differenceBetweenDates, formatDate } from "$lib/globals";
+import { differenceBetweenDates, formatDate, mapRange } from "$lib/globals";
 import { describe, expect, it } from "vitest";
 
 describe("Test `globals` functions", () => {
@@ -102,6 +102,106 @@ describe("Test `globals` functions", () => {
 			expect(() => {
 				differenceBetweenDates(date1, date2);
 			}).toThrowError("The start date must be before the end date");
+		});
+	});
+
+	describe("Test `mapRange`", () => {
+		it("test with 0, no out, no clamp", () => {
+			const number = 0;
+			const range = mapRange(number, 0, 255);
+
+			expect(range).toEqual(0);
+		});
+
+		it("test with 255, no out, no clamp", () => {
+			const number = 255;
+			const range = mapRange(number, 0, 255);
+
+			expect(range).toEqual(1);
+		});
+
+		it("test with 0, out, no clamp", () => {
+			const number = 0;
+			const range = mapRange(number, 0, 255, 0, 100);
+
+			expect(range).toEqual(0);
+		});
+
+		it("test with 255, out (0-100), no clamp", () => {
+			const number = 255;
+			const range = mapRange(number, 0, 255, 0, 100);
+
+			expect(range).toEqual(100);
+		});
+
+		it("test with 255, out (0-100), no clamp", () => {
+			const number = 255;
+			const range = mapRange(number, 0, 255, 0, 100);
+
+			expect(range).toEqual(100);
+		});
+
+		it("test with 256, out (0-100), clamp", () => {
+			const number = 256;
+			const range = mapRange(number, 0, 255, 0, 100, true);
+
+			expect(range).toEqual(100);
+		});
+
+		it("test with median value, no specified output, no clamp", () => {
+			const number = 127.5;
+			const range = mapRange(number, 0, 255);
+
+			expect(range).toBeCloseTo(0.5);
+		});
+
+		it("test with negative input value, no clamp", () => {
+			const number = -50;
+			const range = mapRange(number, -100, 100, 0, 1);
+
+			expect(range).toBeCloseTo(0.25);
+		});
+
+		it("test with inverted output range, no clamp", () => {
+			const number = 75;
+			const range = mapRange(number, 0, 100, 1, 0);
+
+			expect(range).toBeCloseTo(0.25);
+		});
+
+		it("test with out-of-bounds value, with clamp", () => {
+			const number = 150;
+			const range = mapRange(number, 0, 100, 0, 1, true);
+
+			expect(range).toEqual(1);
+		});
+
+		it("test with negative out-of-bounds value, with clamp", () => {
+			const number = -50;
+			const range = mapRange(number, 0, 100, 0, 1, true);
+
+			expect(range).toEqual(0);
+		});
+
+		it("test with identical input and output ranges", () => {
+			const number = 75;
+			const range = mapRange(number, 0, 100, 0, 100);
+
+			expect(range).toEqual(75);
+		});
+
+		it("test with floating-point numbers", () => {
+			const number = 3.14;
+			const range = mapRange(number, 0, 10, 0, 100);
+
+			expect(range).toBeCloseTo(31.4);
+		});
+
+		it("test with very large ranges", () => {
+			const number = 1e6;
+			const range = mapRange(number, 0, 1e9, 0, 100);
+
+			expect(range).toBeCloseTo(0.1);
 		});
 	});
 });

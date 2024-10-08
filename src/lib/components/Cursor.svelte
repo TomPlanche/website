@@ -1,6 +1,7 @@
 <script lang="ts">
-import type { CursorParams } from "$lib/types";
+import { mainStore } from "$lib/stores/mainStore";
 // Imports
+import type { CursorParams } from "$lib/types";
 import { spring } from "svelte/motion";
 
 // Types
@@ -8,7 +9,7 @@ import { spring } from "svelte/motion";
 // Variables
 const cursor_base: CursorParams = {
 	size: 15,
-	background: "rgba(205, 201, 255, .8)",
+	background: "#cacaca",
 	opacity: 0,
 	blur: 8,
 	stiffness: 0.3,
@@ -82,7 +83,7 @@ export const setCursorParams = (params: CursorParams, debug = false) => {
 
 <!-- The window is used to get the mouse position -->
 <svelte:window
-  on:mousemove={(e) => {
+    on:mousemove={(e) => {
     if (!hasMoved) {
       hasMoved = true;
     }
@@ -92,27 +93,29 @@ export const setCursorParams = (params: CursorParams, debug = false) => {
       y: e.clientY
     });
   }}
-  on:mousedown={() => {
+    on:mousedown={() => {
     size.update((s) => s * 1.5);
   }}
-  on:mouseup={() => {
+    on:mouseup={() => {
     size.update((s) => s / 1.5);
   }}
 />
 
-<!-- The svg is always displayed -->
-<svg aria-hidden="true">
-  <circle
-    cx={$coords.x}
-    cy={$coords.y}
-    r={$size}
-    style="
+{#if !$mainStore.hideCursor}
+  <!-- The svg is always displayed -->
+  <svg aria-hidden="true">
+    <circle
+        cx={$coords.x}
+        cy={$coords.y}
+        r={$size}
+        style="
 			opacity: {$opacity};
 			filter: blur({$blur}px);
 			fill: {background};
 		"
-  />
-</svg>
+    />
+  </svg>
+{/if}
 
 <style lang="scss">
   * {

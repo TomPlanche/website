@@ -34,6 +34,18 @@ $font-size-multiplier: 1.5vw;
 body {
   font-size: calc(#{$base-font-size} + #{$font-size-multiplier});
   margin: 0;
+
+
+  height: 100%;
+  overflow: auto;
+
+  overscroll-behavior-x: none;
+  overscroll-behavior-y: none;
+
+  &.colored * {
+    font-family: 'ColorFont', sans-serif !important;
+    text-shadow: none !important;
+  }
 }
 
 * {
@@ -44,11 +56,6 @@ body {
   box-sizing: border-box; /* Opera/IE 8+ */
 
   //cursor: none;
-}
-
-body.colored * {
-  font-family: 'ColorFont', sans-serif !important;
-  text-shadow: none !important;
 }
 
 // RESPONSIVE ------------------------------------------------------------------

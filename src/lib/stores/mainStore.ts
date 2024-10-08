@@ -32,7 +32,10 @@ export const LINKS: TLink[] = [
 export type TMainStore = {
 	loadingAnimationIsDone: boolean;
 	currentLink: (typeof LINKS)[number];
+
 	cursor: Cursor | null;
+	hideCursor: boolean;
+
 	musicPlayingYDistance: number;
 	hideFooter: boolean;
 };
@@ -40,7 +43,10 @@ export type TMainStore = {
 const mainStoreDefault: TMainStore = {
 	loadingAnimationIsDone: false,
 	currentLink: LINKS[0],
+
 	cursor: null,
+	hideCursor: false,
+
 	musicPlayingYDistance: 0,
 	hideFooter: false,
 };

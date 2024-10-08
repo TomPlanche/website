@@ -20,7 +20,7 @@
   transition: background-color 0.5s ease-in-out;
 
   :global(body.dark) & {
-    color: $aled;
+    color: $main-color;
     background-color: $app-bg-dark;
   }
 }
@@ -54,44 +54,21 @@ $gh-green-dark: #1d5927;
 $gh-border: #30363d;
 $gh-border-dark: #21262d;
 
-$app-bg-dark: rgb(24 41 56 / 1);
-/* $app-bg-dark: #080a13; */
+//$app-bg-dark: #212A37;
+//$app-bg-dark: #00203E;
+//$app-bg-dark: #080a13;
+$app-bg-dark: #002b36;
 $app-bg-light: #e5e3de;
 
 $black: #02040a;
 $black-dimed: #02040a75;
-$blue: #679fc5;
-$aled: rgb(205, 201, 255);
+//$main-color: rgb(205, 201, 255);
+$main-color: rgb(255, 255, 255);
 
-$header-bg-dark: #eeeeee25;
-$header-bg-light: #00000025;
+$translucent-tag: rgba(162, 162, 162, 0.2);
 
-$green-light: #8b9c8f;
-$outline-dark: $header-bg-dark;
-$outline-light: $green-light;
+$outline-dark: #eeeeee25;
 
-$white: #e8e4d9;
-$white-dimmed: #e8e4d975;
-
-$red-error: #c52d2a;
-$red-error-dimmed: #c52d2a75;
-
-$accent: #1f6feb;
-$accent-dimmed: #1f6feb75;
-
-$border-color: #30363d;
-
-$button-bg: #1f6feb;
-$button-hover-bg: #388bfd;
-
-$gold: #d0d066;
-$gold-dimmed: #d0d06650;
-
-$form-bg-black: #161b22;
-$form-bg-white: #a5abb2;
-
-$green: #39d353;
-$green-dimmed: #39d35375;
 
 /* Corner radiuses */
 $outer-corner-radius: 2rem;
@@ -100,12 +77,16 @@ $inner-corner-radius: $outer-corner-radius * 0.75;
 /**
  * Paddings
  */
-$main-padding: 2rem;
+$main-padding: 1rem;
 
 /**
  * Heights and Widths
  */
-$footer-height: 5rem;
+$header-height: 10vh;
+$footer-height: $header-height;
+
+$main-top-padding: calc($header-height + 2 * $main-padding);
+$main-min-height: calc(100vh - $main-top-padding * 2);
 
 /**
  * Fonts
@@ -196,7 +177,7 @@ $footer-height: 5rem;
 
 @font-face {
   font-family: 'Maragsa';
-  src: url('$lib/fonts/Maragsa/Maragsâ-Display.otf') format('otf');
+  src: url('$lib/fonts/Maragsa/Maragsâ-Display.otf') format('otf');
   font-weight: 300;
   font-style: normal;
 }
@@ -407,6 +388,14 @@ $footer-height: 5rem;
 @font-face {
   font-family: 'Mass Transit Mono';
   src: url('$lib/fonts/MassTransitMono/masstransitmono_regular_v1.0-webfont.woff2') format('woff2');
+  font-weight: normal;
+  font-style: normal;
+}
+
+/* Departure Mono */
+@font-face {
+  font-family: 'Departure Mono';
+  src: url('$lib/fonts/DepartureMono/DepartureMono-Regular.woff') format('woff');
   font-weight: normal;
   font-style: normal;
 }

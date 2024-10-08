@@ -3,6 +3,7 @@
 import { fade } from "svelte/transition";
 
 import { onClickOutside } from "$lib/actions/onClickOutside";
+import { styleVars } from "$lib/globals";
 import { LINKS, mainStore } from "$lib/stores/mainStore";
 
 import { gsap } from "gsap";
@@ -10,7 +11,7 @@ import { gsap } from "gsap";
 // Variables
 // Binds
 let nav: HTMLElement;
-let svg: HTMLOrSVGElement;
+let crossSvg: HTMLOrSVGElement;
 let linksContainer: HTMLElement;
 
 let isAnimating = false;
@@ -44,14 +45,14 @@ let openTimeline: gsap.core.Timeline;
 let closeTimeline: gsap.core.Timeline;
 
 // Watchers
-$: if (svg && nav) {
+$: if (crossSvg && nav) {
 	closeTimeline = gsap
 		.timeline(timelineDefaults)
 		.to(nav, {
 			height: "10vh",
 		})
 		.to(
-			svg,
+			crossSvg,
 			{
 				rotate: 180,
 			},
@@ -61,11 +62,11 @@ $: if (svg && nav) {
 			"#nav-container",
 			{
 				// css `backdrop-filter` property
-				backdropFilter: "blur(0px)",
+				backdropFilter: "none",
 			},
 			"<",
 		)
-		.set(svg, {
+		.set(crossSvg, {
 			rotate: 0,
 		})
 		.pause();
@@ -76,7 +77,7 @@ $: if (svg && nav) {
 			height: "40vh",
 		})
 		.to(
-			svg,
+			crossSvg,
 			{
 				rotate: 135,
 			},
@@ -146,7 +147,7 @@ const handleClickOutside = () => {
 				height: "10vh",
 			})
 			.to(
-				svg,
+				crossSvg,
 				{
 					rotate: 180,
 				},
@@ -156,11 +157,11 @@ const handleClickOutside = () => {
 				"#nav-container",
 				{
 					// css `backdrop-filter` property
-					backdropFilter: "blur(0px)",
+					backdropFilter: "none",
 				},
 				"<",
 			)
-			.set(svg, {
+			.set(crossSvg, {
 				rotate: 0,
 			});
 	}
@@ -173,12 +174,12 @@ const handleClickOutside = () => {
     in:fade={{ duration: 200 }}
 >
   <nav
-    bind:this={nav}
-    on:click={handleNavClick}
+      bind:this={nav}
+      on:click={handleNavClick}
 
-    use:onClickOutside={handleClickOutside}
+      use:onClickOutside={handleClickOutside}
 
-    aria-hidden="true"
+      aria-hidden="true"
   >
     <div class="top">
       <div class="infos">
@@ -187,17 +188,17 @@ const handleClickOutside = () => {
       </div>
 
       <svg
-        bind:this={svg}
+          bind:this={crossSvg}
 
-        width="24"
-        height="24"
-        viewBox="0 0 24 24"
-        fill="none"
-        xmlns="http://www.w3.org/2000/svg"
+          width="24"
+          height="24"
+          viewBox="0 0 24 24"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
       >
         <path
-          d="M12 4C11.4477 4 11 4.44772 11 5V11H5C4.44772 11 4 11.4477 4 12C4 12.5523 4.44772 13 5 13H11V19C11 19.5523 11.4477 20 12 20C12.5523 20 13 19.5523 13 19V13H19C19.5523 13 20 12.5523 20 12C20 11.4477 19.5523 11 19 11H13V5C13 4.44772 12.5523 4 12 4Z"
-          fill="currentColor"
+            d="M12 4C11.4477 4 11 4.44772 11 5V11H5C4.44772 11 4 11.4477 4 12C4 12.5523 4.44772 13 5 13H11V19C11 19.5523 11.4477 20 12 20C12.5523 20 13 19.5523 13 19V13H19C19.5523 13 20 12.5523 20 12C20 11.4477 19.5523 11 19 11H13V5C13 4.44772 12.5523 4 12 4Z"
+            fill="currentColor"
         />
       </svg>
     </div>
@@ -216,15 +217,15 @@ const handleClickOutside = () => {
           >
             <span>
               <svg
-                width="24"
-                height="24"
-                viewBox="0 0 24 24"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
               >
                 <path
-                  d="M6.85046 13.4005C5.74589 13.4005 4.85046 12.5051 4.85046 11.4005V3.40051H2.85046V11.4005C2.85046 13.6097 4.64132 15.4005 6.85046 15.4005H17.156L13.3714 19.1852L14.7856 20.5994L21.1495 14.2354L14.7856 7.87146L13.3714 9.28567L17.4862 13.4005H6.85046Z"
-                  fill="currentColor"
+                    d="M6.85046 13.4005C5.74589 13.4005 4.85046 12.5051 4.85046 11.4005V3.40051H2.85046V11.4005C2.85046 13.6097 4.64132 15.4005 6.85046 15.4005H17.156L13.3714 19.1852L14.7856 20.5994L21.1495 14.2354L14.7856 7.87146L13.3714 9.28567L17.4862 13.4005H6.85046Z"
+                    fill="currentColor"
                 />
               </svg>
             </span>
@@ -237,6 +238,11 @@ const handleClickOutside = () => {
 </div>
 
 <style lang="scss">
+  @use "sass:color";
+  
+  @import "src/lib/styles/variables.scss";
+
+
   $nav-height: 10vh;
   $nav-height-padding: 1rem;
   $nav-width-padding: 2rem;
@@ -253,9 +259,11 @@ const handleClickOutside = () => {
 
     pointer-events: none;
 
-    z-index: 2;
+    z-index: 10;
 
     * {
+      @include no-user-select();
+
       pointer-events: all;
     }
 
@@ -271,9 +279,10 @@ const handleClickOutside = () => {
 
       padding: $nav-height-padding $nav-width-padding;
 
-      background: #1c3b4f;
-
+      outline: $main-color solid 1px;
       border-radius: 1rem;
+
+      backdrop-filter: blur(4px);
 
       z-index: 10;
 
@@ -290,6 +299,8 @@ const handleClickOutside = () => {
           display: flex;
           flex-direction: column;
           align-items: flex-start;
+
+          font-family: "Mondwest", sans-serif;
 
           h2 {
             font-size: 1.75rem;
@@ -316,6 +327,7 @@ const handleClickOutside = () => {
         flex-direction: column;
         justify-content: flex-end;
         align-items: flex-start;
+        gap: .25rem;
 
         a {
           width: 100%;
@@ -325,9 +337,16 @@ const handleClickOutside = () => {
           justify-content: flex-start;
           align-items: center;
 
-          margin-left: .5rem;
+          padding: .25rem 0 .25rem 1rem;
 
-          font-size: 2.5rem;
+          font-size: 2.25rem;
+          font-family: "Fraktion Mono", sans-serif;
+          // regroup the letters
+          letter-spacing: -.2rem;
+
+          transition: background 0.2s ease-in-out;
+
+          border-radius: .25rem;
 
           span {
             opacity: 0;
@@ -337,17 +356,18 @@ const handleClickOutside = () => {
 
             margin-right: 1rem;
 
-            transition:
-              opacity 0.2s ease-in-out,
-              width 0.2s ease-in-out;
+            transition: opacity 0.2s ease-in-out,
+            width 0.2s ease-in-out;
           }
 
           &:not(.active) {
             opacity: .8;
           }
-
+          
           &:hover,
           &.active {
+            background: color.adjust($main-color, $alpha: -0.9);
+
             span {
               opacity: 1;
               width: 2rem;

@@ -1,12 +1,12 @@
-export const style_vars = {
-	mainPadding: "2rem",
-	headerHeight: "5rem",
+const mainPadding = "1rem";
+const headerHeight = "10vh";
+
+export const styleVars = {
+	mainPadding,
+	headerHeight,
 };
 
-const { headerHeight } = style_vars;
-
-export const pageSizeWithPadding = `calc(100vh - ${headerHeight})`;
-
+export const mainTopPadding = `calc(${headerHeight} + ${mainPadding} * 2)`;
 /**
  * Formats a date into a `Month Year` string.
  *
@@ -111,4 +111,54 @@ export const msToTime = (ms: number) => {
 	};
 };
 
+/**
+ * Map a number from one range to another.
+ *
+ * @param num {number} The number to map
+ * @param inMin {number} The minimum value of the input range
+ * @param inMax {number} The maximum value of the input range
+ * @param outMin {number} The minimum value of the output range
+ * @param outMax {number} The maximum value of the output range
+ * @param clamp {boolean} Whether to clamp the output to the output range
+ *
+ * @example
+ * ```ts
+ * const number = 50;
+ * const range = mapRange(number, 0, 100, 0, 255);
+ *
+ * console.log(range); // 127.5
+ * ```
+ *
+ * @returns The mapped number
+ */
+export const mapRange = (
+	num: number,
+	inMin: number,
+	inMax: number,
+	outMin = 0,
+	outMax = 1,
+	clamp = false,
+): number => {
+	const output = ((num - inMin) * (outMax - outMin)) / (inMax - inMin) + outMin;
+
+	if (clamp) {
+		return Math.min(Math.max(output, outMin), outMax);
+	}
+
+	return output;
+};
+
 export const baseUrl = "http://localhost:5173";
+
+// DISTANCE FROM MOUSE ACTION
+export const referencePoints = [
+	"top",
+	"bottom",
+	"left",
+	"right",
+	"center",
+	"top-left",
+	"top-right",
+	"bottom-left",
+	"bottom-right",
+] as const;
