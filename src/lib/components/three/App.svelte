@@ -14,11 +14,21 @@ export let tracks: TLovedTrack[] = [];
   </Canvas>
 </div>
 
-<style>
+<style lang="scss">
+  :global(main) {
+    height: 100vh;
+    padding: 0 !important;
+  }
+
   #canvas-container {
     width: 100%;
     height: 100%;
 
     padding-top: 10vh;
+
+    canvas {
+      width: 100%;
+      height: 100%;
+    }
   }
 </style>

@@ -10,6 +10,7 @@ import { onMount } from "svelte";
 import { spring } from "svelte/motion";
 
 import { OrbitControls } from "@threlte/extras";
+import AxesHelper from "./AxesHelper.svelte";
 
 interactivity();
 
@@ -106,7 +107,9 @@ const handleOnClicked = async (index: number) => {
 
 	if (index === tracks.length - 1) {
 		// We animate the position to the new position.
-		await position.set(tracks.length * groupScrollSpeed, { hard: true });
+		await position.set(tracks.length * groupScrollSpeed, {
+			hard: true,
+		});
 	}
 
 	// We animate the position to the new position.
@@ -131,88 +134,80 @@ onMount(() => {
 });
 </script>
 
-
 <T.PerspectiveCamera
-  makeDefault
-  position={[0, 5, 60]}
-  on:create={({ ref }) => {
-    ref.lookAt(0, 1, 0)
-  }}
+    makeDefault
+    position={[0, 5, 60]}
+    on:create={({ ref }) => {
+        ref.lookAt(0, 1, 0);
+    }}
 >
-<!--  <OrbitControls />-->
+    <OrbitControls />
 </T.PerspectiveCamera>
 
-<T.DirectionalLight position={[0, 10, 10]}/>
+<T.DirectionalLight position={[0, 10, 10]} />
 
 <Text
     position={[0, 25, 0]}
     rotation={[0, 0, 0]}
     scale={[10, 10, 10]}
     text={$position.toString()}
-
     color="red"
     anchorX="center"
     renderOrder={1}
-  />
+/>
 
-<T.Group
-    position={groupPosition.toArray()}
->
-  <!--
+<T.Group position={groupPosition.toArray()}>
+    <!--
   This group is to fake the "infinite" scroll effect.
   It's the tracks that will go before the first track.
   -->
-  {#each xLastTracks as before, i}
-    <Cover
-      position={[-(i + 1) * $coverGap, 0, 0]}
-      rotation={[0, Math.PI / 2, 0]}
-      track={before}
+    {#each xLastTracks as before, i}
+        <Cover
+            position={[-(i + 1) * $coverGap, 0, 0]}
+            rotation={[0, Math.PI / 2, 0]}
+            track={before}
+            onClick={() => handleOnClicked(tracks.length - i - 1)}
+        />
+    {/each}
 
-      onClick={() => handleOnClicked(tracks.length - i - 1)}
-    />
-  {/each}
-
-  <!--
+    <!--
   This group is the main group of tracks.
   -->
-  {#each tracks as track, i}
-    <Cover
-      position={[i * $coverGap, 0, 0]}
-      rotation={[
-        0,
-        /**
-        * The rotation.y should be:
-        * - 0 for the cover at i * groupScrollSpeed = $position
-        * else Math.PI / 2
-        *
-        * lerp the rotation.y between 0 and Math.PI / 2
-        */
-        Math.PI / 2,
-        0
-      ]}
-      track={track}
-      isCentered={
-        (i * groupScrollSpeed) * .95 <= $position && $position <= (i * groupScrollSpeed) * 1.05
-      }
+    {#each tracks as track, i}
+        <Cover
+            position={[i * $coverGap, 0, 0]}
+            rotation={[
+                0,
+                /**
+                 * The rotation.y should be:
+                 * - 0 for the cover at i * groupScrollSpeed = $position
+                 * else Math.PI / 2
+                 *
+                 * lerp the rotation.y between 0 and Math.PI / 2
+                 */
+                Math.PI / 2,
+                0,
+            ]}
+            {track}
+            isCentered={i * groupScrollSpeed * 0.95 <= $position &&
+                $position <= i * groupScrollSpeed * 1.05}
+            onClick={() => handleOnClicked(i)}
+        />
+    {/each}
 
-      onClick={() => handleOnClicked(i)}
-    />
-  {/each}
-
-  <!--
+    <!--
   This group is to fake the "infinite" scroll effect.
   It's the tracks that will go after the last track.
   -->
-  {#each xFirstTracks as after, i}
-    <Cover
-      position={[(tracks.length + i) * $coverGap, 0, 0]}
-      rotation={[0, Math.PI / 2, 0]}
-      track={after}
-
-      onClick={() => handleOnClicked(tracks.length + i)}
-    />
-  {/each}
+    {#each xFirstTracks as after, i}
+        <Cover
+            position={[(tracks.length + i) * $coverGap, 0, 0]}
+            rotation={[0, Math.PI / 2, 0]}
+            track={after}
+            onClick={() => handleOnClicked(tracks.length + i)}
+        />
+    {/each}
 </T.Group>
 
-<Inspector />
-
+<!--<Inspector />-->
+<AxesHelper />
