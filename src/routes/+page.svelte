@@ -115,10 +115,10 @@ onMount(() => {
 });
 </script>
 
-<section id="home">
-    <h1 bind:this={title}>{titleContent}</h1>
-    <h2 bind:this={subtitle}>I do <span>stuff</span> with code</h2>
-</section>
+<!--<section id="home">-->
+<!--    <h1 bind:this={title}>{titleContent}</h1>-->
+<!--    <h2 bind:this={subtitle}>I do <span>stuff</span> with code</h2>-->
+<!--</section>-->
 
 {#if $mainStore.loadingAnimationIsDone}
   <Spacer height={mainTopPadding}/>
@@ -160,6 +160,8 @@ onMount(() => {
     flex-direction: column;
     justify-content: flex-start;
     align-items: center;
+
+    padding: 0 5vw;
 
     &#home {
       min-height: $main-min-height;
