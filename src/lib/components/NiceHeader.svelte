@@ -256,9 +256,7 @@ const handleClickOutside = () => {
     width: 100vw;
 
     padding: 1rem;
-
-    pointer-events: none;
-
+    
     z-index: 10;
 
     * {
