@@ -3,6 +3,7 @@
   import {type Theme, theme} from "$lib/stores/theme";
   import "$lib/styles/main.scss";
   import {onMount} from "svelte";
+  import Header from "$lib/components/Header.svelte";
 
   // Variables
 
@@ -19,7 +20,7 @@
 </script>
 
 <main>
-
+  <Header />
   <slot></slot>
 </main>
 
@@ -28,6 +29,9 @@
 
   main {
     padding: variables.$main-padding;
+
+    min-height: 100vh;
+    width: 100%;
 
     display: flex;
     flex-direction: column;

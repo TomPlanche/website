@@ -29,3 +29,5 @@ vite.config.ts.timestamp-*
 # Personal
 .commitignore
 commit_message.md
+
+src/lib/fonts

@@ -3,13 +3,13 @@
 @use "base";
 
 html[data-theme='1'] {
-  --background-color: #95ABC0;
-  --text-color: #2B303B;
+  --background-color: #002b36;
+  --text-color: #DDD;
 }
 
 html[data-theme='2'] {
-  --background-color: #002b36;
-  --text-color: #DDD;
+  --background-color: #95ABC0;
+  --text-color: #2B303B;
 }
 
 html[data-theme='3'] {
@@ -20,5 +20,8 @@ html[data-theme='3'] {
 body {
   background-color: var(--background-color);
   color: var(--text-color);
+
+  //font-family: ;
+
   transition: background-color 0.1s ease-in-out;
 }

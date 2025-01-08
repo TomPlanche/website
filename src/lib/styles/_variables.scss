@@ -91,3 +91,56 @@ $main-min-height: calc(100vh - $main-top-padding * 2);
 /**
  * Fonts
  */
+// Departure Monogi
+@font-face {
+  font-family: 'Departure Mono';
+  src: url('$lib/fonts/DepartureMono/DepartureMono-Regular.woff') format('woff');
+  font-weight: normal;
+  font-style: normal;
+}
+
+// Mondwest
+@font-face {
+  font-family: 'Mondwest';
+  src: url('$lib/fonts/PPMondwest/PPMondwest-Bold.woff2') format('woff2');
+  font-weight: bold;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Mondwest';
+  src: url('$lib/fonts/PPMondwest/PPMondwest-Regular.woff2') format('woff2');
+  font-weight: normal;
+  font-style: normal;
+}
+
+// Supply Mono
+@font-face {
+  font-family: 'Supply Mono';
+  src: url('$lib/fonts/PPSupplyMono/PPSupplyMono-Ultralight.woff2') format('woff2');
+  font-weight: 300;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Supply Mono';
+  src: url('$lib/fonts/PPSupplyMono/PPSupplyMono-Regular.woff2') format('woff2');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Supply Mono';
+  src: url('$lib/fonts/PPSupplyMono/PPSupplyMono-Medium.woff2') format('woff2');
+  font-weight: 500;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Supply Mono';
+  src: url('$lib/fonts/PPSupplyMono/PPSupplyMono-Bold.woff2') format('woff2');
+  font-weight: bold;
+  font-style: normal;
+}
+
+
