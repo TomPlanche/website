@@ -6,8 +6,41 @@
   import Header from "$lib/components/Header.svelte";
 
   // Variables
+  /**
+   * Delay between each title update in milliseconds
+   */
+  const DELAY_MS: number = 200;
+
+  let titleScrollInterval: number;
 
   // Functions
+  /**
+   * Returns the next state of the title by moving the first character to the end
+   * @param currentTitle - The current title string
+   * @returns The next state of the title
+   */
+  const getNextTitle = (currentTitle: string): string => {
+    if (!currentTitle) {
+      throw new Error('Title cannot be empty');
+    }
+    return currentTitle.slice(1) + currentTitle[0];
+  }
+
+  /**
+   * Initializes the scrolling title animation
+   */
+  const initTitleScroll = (): void => {
+    console.log("initTitleScroll");
+
+    // Store the original title
+    let currentTitle = "Tom Planche's website ";
+
+    // Start the scroll animation
+    titleScrollInterval = setInterval((): void => {
+      currentTitle = getNextTitle(currentTitle);
+      document.title = currentTitle;
+    }, DELAY_MS);
+  }
 
   // Lifecycle
   onMount(() => {
@@ -16,6 +49,14 @@
     if (storedTheme) {
       theme.set(storedTheme);
     }
+
+
+    // Start the animation when the page loads
+    initTitleScroll();
+
+    return () => {
+      clearInterval(titleScrollInterval);
+    };
   });
 </script>
 
@@ -33,7 +74,7 @@
   main {
     padding: variables.$main-padding;
 
-    min-height: 100vh;
+    min-height: 100dvh;
     width: 100%;
 
     display: flex;
