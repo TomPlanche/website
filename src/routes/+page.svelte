@@ -53,9 +53,13 @@
       font-size: 3vw;
       text-align: center;
       font-kerning: none;
-      letter-spacing: -.2rem;
+      letter-spacing: -.1ch;
 
       opacity: 0;
+    }
+
+    h1, p {
+      text-shadow: 0 0 5px var(--text-color);
     }
   }
 </style>

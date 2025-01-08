@@ -143,4 +143,39 @@ $main-min-height: calc(100vh - $main-top-padding * 2);
   font-style: normal;
 }
 
+// iA Writer Duo
+@font-face {
+  font-family: 'iA Writer Duo';
+  src: url('$lib/fonts/iAWriterDuo/Webfonts/iAWriterDuoS-Regular.eot');
+  src: url('$lib/fonts/iAWriterDuo/Webfonts/iAWriterDuoS-Regular.woff2') format('woff2'),
+  url('$lib/fonts/iAWriterDuo/Webfonts/iAWriterDuoS-Regular.woff') format('woff');
+  font-weight: normal;
+  font-style: normal;
+}
 
+@font-face {
+  font-family: 'iA Writer Duo';
+  src: url('$lib/fonts/iAWriterDuo/Webfonts/iAWriterDuoS-Italic.eot');
+  src: url('$lib/fonts/iAWriterDuo/Webfonts/iAWriterDuoS-Italic.woff2') format('woff2'),
+  url('$lib/fonts/iAWriterDuo/Webfonts/iAWriterDuoS-Italic.woff') format('woff');
+  font-weight: normal;
+  font-style: italic;
+}
+
+@font-face {
+  font-family: 'iA Writer Duo';
+  src: url('$lib/fonts/iAWriterDuo/Webfonts/iAWriterDuoS-Bold.eot');
+  src: url('$lib/fonts/iAWriterDuo/Webfonts/iAWriterDuoS-Bold.woff2') format('woff2'),
+  url('$lib/fonts/iAWriterDuo/Webfonts/iAWriterDuoS-Bold.woff') format('woff');
+  font-weight: bold;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'iA Writer Duo';
+  src: url('$lib/fonts/iAWriterDuo/Webfonts/iAWriterDuoS-BoldItalic.eot');
+  src: url('$lib/fonts/iAWriterDuo/Webfonts/iAWriterDuoS-BoldItalic.woff2') format('woff2'),
+  url('$lib/fonts/iAWriterDuo/Webfonts/iAWriterDuoS-BoldItalic.woff') format('woff');
+  font-weight: bold;
+  font-style: italic;
+}
