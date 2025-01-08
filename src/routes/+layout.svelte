@@ -4,6 +4,7 @@
   import "$lib/styles/main.scss";
   import {onMount} from "svelte";
   import Header from "$lib/components/Header.svelte";
+  import Footer from "$lib/components/Footer.svelte";
 
   // Variables
   /**
@@ -65,7 +66,10 @@
 
 <main>
   <Header />
+
   <slot></slot>
+
+  <Footer/>
 </main>
 
 <style lang="scss">

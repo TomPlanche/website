@@ -179,3 +179,40 @@ $main-min-height: calc(100vh - $main-top-padding * 2);
   font-weight: bold;
   font-style: italic;
 }
+
+// Monorama
+@font-face {
+  font-family: 'Monorama';
+  src: url('$lib/fonts/monorama/Monorama-Regular.eot');
+  src: url('$lib/fonts/monorama/Monorama-Regular.woff2') format('woff2'),
+  url('$lib/fonts/monorama/Monorama-Regular.woff') format('woff');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Monorama';
+  src: url('$lib/fonts/monorama/Monorama-Medium.eot');
+  src: url('$lib/fonts/monorama/Monorama-Medium.woff2') format('woff2'),
+  url('$lib/fonts/monorama/Monorama-Medium.woff') format('woff');
+  font-weight: 500;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Monorama';
+  src: url('$lib/fonts/monorama/Monorama-SemiBold.eot');
+  src: url('$lib/fonts/monorama/Monorama-SemiBold.woff2') format('woff2'),
+  url('$lib/fonts/monorama/Monorama-SemiBold.woff') format('woff');
+  font-weight: 600;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Monorama';
+  src: url('$lib/fonts/monorama/Monorama-Bold.eot');
+  src: url('$lib/fonts/monorama/Monorama-Bold.woff2') format('woff2'),
+  url('$lib/fonts/monorama/Monorama-Bold.woff') format('woff');
+  font-weight: bold;
+  font-style: normal;
+}
