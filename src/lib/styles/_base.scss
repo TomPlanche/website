@@ -41,11 +41,6 @@ body {
 
   overscroll-behavior-x: none;
   overscroll-behavior-y: none;
-
-  &.colored * {
-    font-family: 'ColorFont', sans-serif !important;
-    text-shadow: none !important;
-  }
 }
 
 * {
@@ -55,7 +50,6 @@ body {
   -moz-box-sizing: border-box; /* Firefox, other Gecko */
   box-sizing: border-box; /* Opera/IE 8+ */
 
-  //cursor: none;
 }
 
 // RESPONSIVE ------------------------------------------------------------------

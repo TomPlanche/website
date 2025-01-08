@@ -17,7 +17,6 @@ table, form, label, input, textarea, select, button {
   padding: 0;
   border: 0;
   font: inherit;
-  //font-family: inherit;
   font-size: 100%;
 }
 ul {
@@ -42,7 +41,7 @@ button:focus {
 }
 input[type='submit']:hover,
 button:hover {
-  //cursor: pointer;
+  cursor: pointer;
 }
 input::-ms-clear {
   display: none; /*─ IE11 → remove cross to close ─*/
