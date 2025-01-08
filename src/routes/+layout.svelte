@@ -64,13 +64,13 @@
 
 <div id="noise"></div>
 
+<Header/>
 <main>
-  <Header />
 
   <slot></slot>
 
-  <Footer/>
 </main>
+<Footer/>
 
 <style lang="scss">
   @use '$lib/styles/variables';

@@ -3,7 +3,6 @@
   import {gsap} from 'gsap';
 
   // Bindings
-  let paragraph: HTMLParagraphElement;
 </script>
 
 <section>
@@ -11,23 +10,10 @@
     <ScrambleText
         duration={1000}
         scrambleSpeed={75}
-        text="Tom Planche © 2025"
-        onComplete={() => {
-          const tl = gsap.timeline();
-
-          tl.to(paragraph, {
-            opacity: 1,
-            duration: 0.5,
-            ease: "power2.out",
-            delay: 0.5
-          });
-        }}
+        text="Tom Planche"
     />
   </h1>
 
-  <p bind:this={paragraph}>
-    Website under construction, please come back later!
-  </p>
 </section>
 
 <style lang="scss">

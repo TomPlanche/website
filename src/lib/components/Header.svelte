@@ -4,6 +4,7 @@
 
   // Bindings
   let button: HTMLButtonElement;
+  let isAnimating = false;
 
   // Functions
   const handleToggleTheme = () => {
@@ -16,13 +17,42 @@
         rotate: 360,
         duration: 0.5,
         ease: "power2.out",
+        onStart: () => {
+          isAnimating = true;
+        },
         onComplete: () => {
           timeline.to(button, {
             rotate: 0,
             duration: 0,
+
+            onComplete: () => {
+              isAnimating = false;
+            },
           });
         },
       });
+  }
+
+  const handleMouseEnter = () => {
+    if (isAnimating) {
+      return;
+    }
+
+    gsap.to(button, {
+      rotate: 12,
+      duration: 0.2,
+    });
+  }
+
+  const handleMouseLeave = () => {
+    if (isAnimating) {
+      return;
+    }
+
+    gsap.to(button, {
+      rotate: 0,
+      duration: 0.2,
+    });
   }
 </script>
 
@@ -30,6 +60,8 @@
   <button
       bind:this={button}
       on:click={handleToggleTheme}
+      on:mouseenter={handleMouseEnter}
+      on:mouseleave={handleMouseLeave}
 
       aria-label="Toggle theme change"
   >
@@ -47,7 +79,7 @@
     right: 0;
     z-index: 1000;
 
-    padding: 2rem;
+    padding: 1rem;
 
     button {
       background: none;
