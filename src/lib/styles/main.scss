@@ -1,0 +1,14 @@
+@use "reset";
+@use "variables";
+@use "base";
+
+html[data-theme='3'] {
+  --background-color: #95ABC0;
+  --text-color: #2B303B;
+}
+
+body {
+  background-color: var(--background-color);
+  color: var(--text-color);
+  transition: background-color 0.5s ease-in-out;
+}
