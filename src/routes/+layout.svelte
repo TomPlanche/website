@@ -45,13 +45,6 @@
 
   // Lifecycle
   onMount(() => {
-    // Get theme from localStorage and apply it
-    const storedTheme = localStorage.getItem("selected-theme") as Theme;
-    if (storedTheme) {
-      theme.set(storedTheme);
-    }
-
-
     // Start the animation when the page loads
     initTitleScroll();
 

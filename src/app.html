@@ -17,6 +17,14 @@
 		<meta property="og:image:height" content="2136"/>
 		<meta property="og:image:alt" content="Tom Planche's ugly face"/>
 
+		<!-- Prevent theme flickering -->
+		<script>
+			const storedTheme = localStorage.getItem('selected-theme');
+			if (storedTheme) {
+				document.documentElement.dataset.theme = storedTheme;
+			}
+		</script>
+
 		%sveltekit.head%
 	</head>
 	<body data-sveltekit-preload-data="hover" class="dark">
