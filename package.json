@@ -5,10 +5,11 @@
 	"type": "module",
 	"scripts": {
 		"dev": "vite dev",
-		"build": "vite build",
+		"build": "node scripts/update-og-dimensions.js && vite build",
 		"preview": "vite preview",
 		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
-		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch"
+		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
+		"update-og": "node scripts/update-og-dimensions.js"
 	},
 	"devDependencies": {
 		"@biomejs/biome": "1.9.4",
@@ -16,6 +17,7 @@
 		"@sveltejs/adapter-static": "^3.0.8",
 		"@sveltejs/kit": "^2.0.0",
 		"@sveltejs/vite-plugin-svelte": "^4.0.0",
+		"image-size": "^1.0.2",
 		"sass-embedded": "^1.83.1",
 		"svelte": "^5.0.0",
 		"svelte-check": "^4.0.0",
