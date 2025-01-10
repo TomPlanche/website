@@ -1,0 +1,16 @@
+RewriteEngine On
+
+# Only handle GET requests
+RewriteCond %{REQUEST_METHOD} GET
+
+# Don't rewrite if already ends with .html
+RewriteCond %{REQUEST_URI} !\.(html?)$
+
+# Don't rewrite if it's the root path
+RewriteCond %{REQUEST_URI} !^/$
+
+# Don't rewrite if the file doesn't exist with .html but exists without it
+RewriteCond %{DOCUMENT_ROOT}%{REQUEST_URI}.html -f
+
+# Add .html to the end of the URL internally
+RewriteRule ^(.*)$ $1.html [L] 
