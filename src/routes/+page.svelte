@@ -34,17 +34,7 @@
       text-align: left;
     }
 
-    p {
-      font-family: "Departure Mono", monospace;
-      font-size: 3vw;
-      text-align: center;
-      font-kerning: none;
-      letter-spacing: -.1ch;
-
-      opacity: 0;
-    }
-
-    h1, p {
+    h1 {
       text-shadow: 0 0 5px var(--text-color);
     }
   }
