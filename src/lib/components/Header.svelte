@@ -1,6 +1,8 @@
 <script lang="ts">
   import {gsap} from "gsap";
-  import {theme, toggleTheme} from "$lib/stores/theme";
+  import {toggleTheme} from "$lib/stores/themeStore";
+  import {cursorEnter, cursorLeave} from '$lib/actions/cursor';
+
 
   // Bindings
   let button: HTMLButtonElement;
@@ -62,6 +64,9 @@
       on:click={handleToggleTheme}
       on:mouseenter={handleMouseEnter}
       on:mouseleave={handleMouseLeave}
+
+      use:cursorEnter={{ scale: 1.5, opacity: 0.8 }}
+      use:cursorLeave
 
       aria-label="Toggle theme change"
   >

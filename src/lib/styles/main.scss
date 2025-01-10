@@ -17,6 +17,11 @@ html[data-theme='3'] {
   --text-color: #6ACAC9;
 }
 
+html[data-theme='4'] {
+  --background-color: #88B7BD;
+  --text-color: #fff0b3;
+}
+
 body {
   background-color: var(--background-color);
   color: var(--text-color);

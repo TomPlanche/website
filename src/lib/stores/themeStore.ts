@@ -1,23 +1,23 @@
 import {writable, get} from 'svelte/store';
 
 // Valid theme values
-    export type Theme = '1' | '2' | '3';
+export type TTheme = '1' | '2' | '3' | '4';
 
 // Theme order for cycling
-const themeOrder: Theme[] = ['1', '2', '3'];
+const themeOrder: TTheme[] = ['1', '2', '3', '4'];
 
 // localStorage key for theme
 const THEME_STORAGE_KEY = 'selected-theme';
 
-function createThemeStore() {
+const createThemeStore = () => {
   // Initialize with default theme '1'
-  const {subscribe, set} = writable<Theme>('1');
+  const {subscribe, set} = writable<TTheme>('1');
 
   // If we're in the browser, initialize with stored/current theme
   if (typeof window !== 'undefined') {
     // Try localStorage first, then data-theme attribute, then default to '1'
-    const storedTheme = localStorage.getItem(THEME_STORAGE_KEY) as Theme;
-    const dataTheme = document.documentElement.dataset.theme as Theme;
+    const storedTheme = localStorage.getItem(THEME_STORAGE_KEY) as TTheme;
+    const dataTheme = document.documentElement.dataset.theme as TTheme;
     const initialTheme = storedTheme || dataTheme || '1';
 
     // Validate theme value
@@ -27,7 +27,7 @@ function createThemeStore() {
 
   return {
     subscribe,
-    set: (newTheme: Theme) => {
+    set: (newTheme: TTheme) => {
       // Update the store
       set(newTheme);
 
@@ -40,17 +40,17 @@ function createThemeStore() {
   };
 }
 
-export const theme = createThemeStore();
+export const themeStore = createThemeStore();
 
 // Convenience method to change theme
-export const changeTheme = (newTheme: Theme) => theme.set(newTheme);
+export const changeTheme = (newTheme: TTheme) => themeStore.set(newTheme);
 
 // Toggle through themes in order
 export const toggleTheme = () => {
-  const currentTheme = get(theme);
+  const currentTheme = get(themeStore);
 
   const currentIndex = themeOrder.indexOf(currentTheme);
   const nextIndex = (currentIndex + 1) % themeOrder.length;
 
-  theme.set(themeOrder[nextIndex]);
+  themeStore.set(themeOrder[nextIndex]);
 };

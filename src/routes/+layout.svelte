@@ -1,12 +1,16 @@
 <script lang="ts">
   // Imports
-  import {type Theme, theme} from "$lib/stores/theme";
   import "$lib/styles/main.scss";
-  import {onMount} from "svelte";
+  import {onMount, type SvelteComponent} from "svelte";
   import Header from "$lib/components/Header.svelte";
   import Footer from "$lib/components/Footer.svelte";
+  import Cursor from "$lib/components/Cursor.svelte";
+  import {refStore} from "$lib/stores/refStore";
 
   // Variables
+  // Bindings
+  let cursor: SvelteComponent;
+
   /**
    * Delay between each title update in milliseconds
    */
@@ -43,6 +47,11 @@
     }, DELAY_MS);
   }
 
+  // Watchers
+  $: if (cursor) {
+    $refStore.cursor = cursor;
+  }
+
   // Lifecycle
   onMount(() => {
     // Start the animation when the page loads
@@ -54,10 +63,11 @@
   });
 </script>
 
-
 <div id="noise"></div>
+<Cursor bind:this={cursor}/>
 
 <Header/>
+
 <main>
 
   <slot></slot>
