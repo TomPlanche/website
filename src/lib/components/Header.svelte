@@ -65,7 +65,7 @@
       on:mouseenter={handleMouseEnter}
       on:mouseleave={handleMouseLeave}
 
-      use:cursorEnter={{ scale: 1.5, opacity: 0.8 }}
+      use:cursorEnter
       use:cursorLeave
 
       aria-label="Toggle theme change"

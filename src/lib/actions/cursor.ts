@@ -7,16 +7,27 @@ import { get } from 'svelte/store';
 import { refStore } from '../stores/refStore';
 import type { TCursorOptions } from '../types';
 
+const defaultEnterOptions: TCursorOptions = {
+  isHover: true,
+  opacity: 0.75,
+  scale: 1.5,
+};
+
+const defaultLeaveOptions: TCursorOptions = {
+  isHover: false,
+  opacity: 1,
+  scale: 1,
+};
+
 /**
  * Action for handling cursor enter events
- * @param node - The element to attach the action to
- * @param options - Cursor options to apply on enter
+ * @param node {HTMLElement} - The element to attach the action to
+ * @param options {TCursorOptions} - Cursor options to apply on enter
  */
-export function cursorEnter(node: HTMLElement, options: TCursorOptions = { isHover: true }) {
+export const cursorEnter = (node: HTMLElement, options: TCursorOptions = defaultEnterOptions) => {
   const handleEnter = () => {
     const cursor = get(refStore).cursor;
     if (cursor) {
-      // @ts-ignore - we know setCursorParams exists on the cursor component
       cursor.setCursorParams({ ...options, isHover: true });
     }
   };
@@ -32,10 +43,10 @@ export function cursorEnter(node: HTMLElement, options: TCursorOptions = { isHov
 
 /**
  * Action for handling cursor leave events
- * @param node - The element to attach the action to
- * @param options - Cursor options to apply on leave
+ * @param node {HTMLElement} - The element to attach the action to
+ * @param options {TCursorOptions} - Cursor options to apply on leave
  */
-export function cursorLeave(node: HTMLElement, options: TCursorOptions = { isHover: false }) {
+export const cursorLeave = (node: HTMLElement, options: TCursorOptions = defaultLeaveOptions) => {
   const handleLeave = () => {
     const cursor = get(refStore).cursor;
     if (cursor) {

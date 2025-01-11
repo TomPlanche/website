@@ -7,6 +7,7 @@
   const cursor_base = {size: 15, background: 'color-mix(in srgb, var(--text-color) 50%, transparent)'};
   let scroll = {x: 0, y: 0};
 
+
   // Springs
   const opacity = spring(0);
   const coords = spring(

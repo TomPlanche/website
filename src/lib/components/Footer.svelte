@@ -1,5 +1,6 @@
 <script lang="ts">
   // Imports
+  import {cursorEnter, cursorLeave} from "$lib/actions/cursor";
 
   // Variables
   let e_m_a_i_l = "tom" + "planche" + "@" + "icloud.com";
@@ -11,8 +12,18 @@
   <span><span class="light">@2025</span> Paris</span>
   <span class="right">
     <span class="links">
-      <a href="mailto:{e_m_a_i_l}">email</a>
-      <a href="https://github.com/tomplanche">github</a>
+      <a
+          href="mailto:{e_m_a_i_l}"
+
+          use:cursorEnter
+          use:cursorLeave
+      >email</a>
+      <a
+          href="https://github.com/tomplanche"
+
+          use:cursorEnter
+          use:cursorLeave
+      >github</a>
     </span>
     <span class="name">
       Tom Planche
