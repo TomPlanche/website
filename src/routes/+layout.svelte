@@ -8,6 +8,8 @@
   import {refStore} from "$lib/stores/refStore";
 
   // Variables
+  let isTouchDevice = $state(false);
+  
   // Bindings
   let cursor: SvelteComponent;
 
@@ -48,12 +50,17 @@
   }
 
   // Watchers
-  $: if (cursor) {
-    $refStore.cursor = cursor;
-  }
+  $effect(() => {
+    if (cursor) {
+      $refStore.cursor = cursor;
+    }
+  });
 
   // Lifecycle
   onMount(() => {
+    // Check if device is touch-primary
+    isTouchDevice = window.matchMedia('(hover: none) and (pointer: coarse)').matches;
+    
     // Start the animation when the page loads
     initTitleScroll();
 
@@ -64,7 +71,9 @@
 </script>
 
 <div id="noise"></div>
-<Cursor bind:this={cursor}/>
+{#if !isTouchDevice}
+  <Cursor bind:this={cursor}/>
+{/if}
 
 <Header/>
 

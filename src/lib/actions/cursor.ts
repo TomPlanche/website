@@ -2,9 +2,8 @@
  * @file src/lib/actions/cursor.ts
  * @description Cursor actions for handling cursor interactions
  */
-
-import { get } from 'svelte/store';
 import { refStore } from '../stores/refStore';
+import { get } from 'svelte/store';
 import type { TCursorOptions } from '../types';
 
 const defaultEnterOptions: TCursorOptions = {
