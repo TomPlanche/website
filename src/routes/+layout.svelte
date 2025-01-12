@@ -1,7 +1,7 @@
 <script lang="ts">
   // Imports
   import "$lib/styles/main.scss";
-  import {onMount, type SvelteComponent} from "svelte";
+  import {type SvelteComponent} from "svelte";
   import Header from "$lib/components/Header.svelte";
   import Footer from "$lib/components/Footer.svelte";
   import Cursor from "$lib/components/Cursor.svelte";
@@ -9,9 +9,12 @@
 
   // Variables
   let isTouchDevice = $state(false);
-  
+
+  // Props
+  let {children} = $props();
+
   // Bindings
-  let cursor: SvelteComponent;
+  let cursor: SvelteComponent | null = $state(null);
 
   /**
    * Delay between each title update in milliseconds
@@ -37,8 +40,6 @@
    * Initializes the scrolling title animation
    */
   const initTitleScroll = (): void => {
-    console.log("initTitleScroll");
-
     // Store the original title
     let currentTitle = "Tom Planche's website ";
 
@@ -56,11 +57,13 @@
     }
   });
 
-  // Lifecycle
-  onMount(() => {
+  // Initialize
+  $effect(() => {
+    if (typeof window === 'undefined') return;
+
     // Check if device is touch-primary
     isTouchDevice = window.matchMedia('(hover: none) and (pointer: coarse)').matches;
-    
+
     // Start the animation when the page loads
     initTitleScroll();
 
@@ -78,9 +81,7 @@
 <Header/>
 
 <main>
-
-  <slot></slot>
-
+  {@render children()}
 </main>
 <Footer/>
 

@@ -1,6 +1,5 @@
 <script lang="ts">
   import {gsap} from 'gsap';
-  import {onMount} from "svelte";
 
   import ScrambleTextPlugin from "$lib/utils/ScrambleText";
   import SplitText from "$lib/utils/SplitText";
@@ -13,8 +12,10 @@
 
   let title = "Tom Planche";
 
-  // Functions
-  onMount(() => {
+  // Initialize animations
+  $effect(() => {
+    if (typeof window === 'undefined') return;
+    
     const tl = gsap.timeline({
       defaults: {
         duration: 1,
@@ -23,8 +24,6 @@
     });
 
     const splittedTitle = new SplitText(WIP, {type: "chars"});
-
-    console.log(splittedTitle.chars);
 
     tl
       .set(splittedTitle.chars, {opacity: 0})
@@ -51,8 +50,7 @@
           duration: 0.25
         }
       );
-
-  })
+  });
 </script>
 
 <section>
