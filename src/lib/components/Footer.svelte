@@ -49,16 +49,15 @@
     bottom: variables.$main-padding;
     left: variables.$main-padding;
 
-    border-radius: 0 0 1rem 1rem;
-
     outline: 1px solid $light-color;
+    border-radius: 0 0 1rem 1rem;
 
     display: flex;
     flex-direction: row;
     justify-content: space-between;
     align-items: center;
 
-
+    height: variables.$footer-height;
     width: calc(100% - #{$double-padding});
 
     padding: 1rem;

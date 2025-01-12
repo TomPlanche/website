@@ -82,11 +82,10 @@ $main-padding: 1rem;
 /**
  * Heights and Widths
  */
-$header-height: 10vh;
+$header-height: 5dvh;
 $footer-height: $header-height;
 
-$main-top-padding: calc($header-height + 2 * $main-padding);
-$main-min-height: calc(100vh - $main-top-padding * 2);
+$min-main-height: calc(100dvh - #{$header-height});
 
 /**
  * Fonts

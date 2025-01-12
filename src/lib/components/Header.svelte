@@ -59,6 +59,7 @@
 </script>
 
 <nav>
+  <span></span>
   <button
       bind:this={button}
       on:click={handleToggleTheme}
@@ -78,19 +79,38 @@
 </nav>
 
 <style lang="scss">
+  @use '$lib/styles/variables';
+
+  $double-padding: variables.$main-padding * 2;
+  $light-color: color-mix(in srgb, var(--text-color) 50%, transparent);
+
   nav {
+    height: variables.$header-height;
+    width: calc(100% - #{$double-padding});
+    
     position: fixed;
-    top: 0;
-    right: 0;
+    top: variables.$main-padding;
+    left: variables.$main-padding;
     z-index: 1000;
 
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+
+    outline: 1px solid $light-color;
+    border-radius: 1rem 1rem 0 0;
+
     padding: 1rem;
+
+    // Blurry background
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px); // Compatible with Safari
 
     button {
       background: none;
       border: none;
       cursor: pointer;
-      padding: 1rem;
 
       opacity: .75;
 

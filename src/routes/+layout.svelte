@@ -88,9 +88,9 @@
   @use '$lib/styles/variables';
 
   main {
-    padding: variables.$main-padding;
+    padding: calc(#{variables.$main-padding} + #{variables.$header-height}) variables.$main-padding variables.$main-padding;
 
-    min-height: 100dvh;
+    min-height: variables.$min-main-height;
     width: 100%;
 
     display: flex;
