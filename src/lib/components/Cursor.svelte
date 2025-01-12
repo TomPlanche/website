@@ -3,9 +3,17 @@
   import {spring} from 'svelte/motion';
   import type {TCursorOptions} from '../types';
 
+  // Props
+  const {
+    children
+  } = $props();
+
   // Variables
   const cursor_base = {size: 15, background: 'color-mix(in srgb, var(--text-color) 50%, transparent)'};
-  let scroll = {x: 0, y: 0};
+  let scroll = $state<{
+    x: number;
+    y: number;
+  }>({x: 0, y: 0});
 
 
   // Springs
@@ -20,11 +28,11 @@
   const size = spring(cursor_base.size);
   const blur = spring(0);
 
-  let background = cursor_base.background as string;
-  let hasMoved = false as boolean;
+  let background = $state(cursor_base.background as string);
+  let hasMoved = $state(false);
 
-  let innerSvg: string | null;
-  let innerText: string | null;
+  let innerSvg: string | null = $state(null);
+  let innerText: string | null = $state(null);
 
   // Functions
   export const setCursorParams = (params: TCursorOptions) => {
@@ -56,18 +64,20 @@
   };
 
   // if hasMoved is false, then the cursor is not visible
-  $: if (!hasMoved) {
-    opacity.set(0);
-  } else {
-    setTimeout(() => {
-      opacity.set(1);
-    }, 150);
-  }
+  $effect(() => {
+    if (!hasMoved) {
+      opacity.set(0);
+    } else {
+      setTimeout(() => {
+        opacity.set(1);
+      }, 150);
+    }
+  });
 </script>
 
 <!-- The window is used to get the mouse position -->
 <svelte:window
-    on:mousemove={(e) => {
+    onmousemove={(e) => {
     !hasMoved && (hasMoved = true);
 
     coords.set({
@@ -80,13 +90,13 @@
       y: window.scrollY
     };
   }}
-    on:mousedown={() => {
+    onmousedown={() => {
     size.update((s) => s * 1.5);
   }}
-    on:mouseup={() => {
+    onmouseup={() => {
     size.update((s) => s / 1.5);
   }}
-    on:scroll={() => {
+    onscroll={() => {
     scroll = {
       x: window.scrollX,
       y: window.scrollY
@@ -122,7 +132,7 @@
 {/if}
 
 <!-- If something is in the default slot, then we display it -->
-{#if $$slots.default || innerText}
+{#if children || innerText}
   <div
       class="html-container"
       style="
@@ -134,8 +144,8 @@
 			position: fixed;
 		"
   >
-    {#if $$slots.default}
-      <slot/>
+    {#if children}
+      {@render children()}
     {:else}
       {innerText}
     {/if}

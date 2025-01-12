@@ -15,6 +15,10 @@
 
     The SVG external link icon was cool to tweak in order to animate it on hover.
 
+- [Magnetik Component](./src/lib/components/Magnetik.svelte)
+
+    A configurable magnetic field effect that attracts elements towards the mouse cursor. Features adjustable field size and force, with a debug mode that visualizes the magnetic field boundaries.
+
 ## Acknowledgements
 ### Fonts
 - [iA Writer Duospace](https://github.com/iaolo/iA-Fonts)
