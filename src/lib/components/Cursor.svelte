@@ -98,7 +98,7 @@
     size.target = size.current * 1.5;
   }}
     onmouseup={() => {
-    size.target = cursor_base.size;
+    size.target = size.current / 1.5;
   }}
     onscroll={() => {
     scroll = {
