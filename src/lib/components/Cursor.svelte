@@ -1,17 +1,17 @@
 <script lang="ts">
   // Imports
-  import {spring} from 'svelte/motion';
+  import {Spring} from 'svelte/motion';
   import type {TCursorOptions} from '../types';
-  import type {Snippet} from "svelte";
+  import type {Snippet} from 'svelte';
 
   // Props
   type TCursorProps = {
-    children?: () => Snippet;
+    children?: Snippet<[]>;
   };
 
   const {
-    children = () => null
-  } = $props();
+    children
+  }: TCursorProps = $props();
 
   // Variables
   const cursor_base = {size: 15, background: 'color-mix(in srgb, var(--text-color) 50%, transparent)'};
@@ -20,18 +20,17 @@
     y: number;
   }>({x: 0, y: 0});
 
-
   // Springs
-  const opacity = spring(0);
-  const coords = spring(
+  const opacity = new Spring(0);
+  const coords = new Spring(
     {
       x: 0,
       y: 0
     },
     {stiffness: 0.3, damping: 0.8}
   );
-  const size = spring(cursor_base.size);
-  const blur = spring(0);
+  const size = new Spring(cursor_base.size);
+  const blur = new Spring(0);
 
   let background = $state(cursor_base.background as string);
   let hasMoved = $state(false);
@@ -51,7 +50,7 @@
         innerText = params.innerText;
       }
 
-      opacity.set(params.opacity ?? 0.5);
+      opacity.target = params.opacity ?? 0.5;
     } else {
       if (params.svg === undefined || params.svg === null) {
         innerSvg = null;
@@ -63,18 +62,18 @@
       }
     }
 
-    blur.set(params.blur ?? 0);
+    blur.target = params.blur ?? 0;
     background = params.backgroundColor ?? cursor_base.background;
-    size.set(params.scale ? cursor_base.size * params.scale : cursor_base.size);
+    size.target = params.scale ? cursor_base.size * params.scale : cursor_base.size;
   };
 
-  // if hasMoved is false, then the cursor is not visible
+  // If hasMoved is false, then the cursor is not visible
   $effect(() => {
     if (!hasMoved) {
-      opacity.set(0);
+      opacity.target = 0;
     } else {
       setTimeout(() => {
-        opacity.set(1);
+        opacity.target = 1;
       }, 150);
     }
   });
@@ -85,10 +84,10 @@
     onmousemove={(e) => {
     !hasMoved && (hasMoved = true);
 
-    coords.set({
+    coords.target = {
       x: e.clientX,
       y: e.clientY
-    });
+    };
 
     scroll = {
       x: window.scrollX,
@@ -96,10 +95,10 @@
     };
   }}
     onmousedown={() => {
-    size.update((s) => s * 1.5);
+    size.target = size.current * 1.5;
   }}
     onmouseup={() => {
-    size.update((s) => s / 1.5);
+    size.target = cursor_base.size;
   }}
     onscroll={() => {
     scroll = {
@@ -112,12 +111,12 @@
 <!-- The svg is always displayed -->
 <svg aria-hidden="true">
   <circle
-      cx={$coords.x}
-      cy={$coords.y}
-      r={$size}
+      cx={coords.current.x}
+      cy={coords.current.y}
+      r={size.current}
       style="
-			opacity: {$opacity};
-			filter: blur({$blur}px);
+			opacity: {opacity.current};
+			filter: blur({blur.current}px);
 			fill: {background};
 		"
   />
@@ -131,7 +130,7 @@
       style="
 			height: {$size * 2}px;
 			width: {$size * 2}px;
-			transform: translate({$coords.x + scroll.x - $size}px, {$coords.y + scroll.y - $size}px) ;
+			transform: translate({$coords.x + scroll.x - $size}px, {$coords.y + scroll.y - $size}px);
 		"
   />
 {/if}
