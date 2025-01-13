@@ -18,9 +18,22 @@ export type TCursorOptions = {
   [key in keyof TCursor]?: TCursor[key];
 };
 
-export type TOnEnter = (cursorOptions?: TCursorOptions) => void;
 
-export type TOnLeave = TOnEnter;
+export type ActionReturn<P> = {
+  update?: (newParams: P) => void;
+  destroy?: () => void;
+};
+
+export type Action<P = void> = (
+  node?: HTMLElement,
+  params?: P
+) => ActionReturn<P> | void;
+
+// For components that can accept actions
+export type UseProps = {
+  action: Action;
+  props?: Record<string, unknown>;
+};
 
 /**
  * End of file src/lib/types.ts

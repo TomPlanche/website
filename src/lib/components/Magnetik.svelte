@@ -20,6 +20,7 @@
     centered: boolean;
     block: boolean;
     debug: boolean;
+
     children?: Snippet;
   };
 
@@ -30,7 +31,8 @@
     centered = true,
     block = false,
     debug = false,
-    children
+
+    children,
   }: Partial<TProps> = $props();
 
   // Normal variables
@@ -108,16 +110,15 @@
 </script>
 
 <div
-    class="container{debug ? ' debug' : ''}"
-    bind:this={container_ref}
     aria-hidden="true"
+    class="container{debug ? ' debug' : ''}"
     onmouseleave={handleMagnetikFieldMouseLeave}
+    onmousemove={handleMagnetikFieldMouseMove}
+    bind:this={container_ref}
 >
   <div
       class="field-area"
-      onmousemove={handleMagnetikFieldMouseMove}
       aria-hidden="true"
-
   ></div>
   <div class="slot-container" bind:this={passed_slot_ref}>
     {@render children?.()}
@@ -135,25 +136,13 @@
     &.debug {
       border: 2px dotted blue;
 
-      &::before {
-        content: '';
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        width: var(--field-size);
-        height: var(--field-size);
+      .field-area {
         border: 2px dotted red;
-        pointer-events: none;
       }
 
       .slot-container {
         border: 2px dotted green;
       }
-    }
-
-    .slot-container {
-      pointer-events: none;
     }
 
     .field-area {
@@ -163,7 +152,6 @@
       transform: translate(-50%, -50%);
       width: var(--field-size);
       height: var(--field-size);
-      pointer-events: all;
     }
   }
 </style>
