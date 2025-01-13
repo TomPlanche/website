@@ -2,6 +2,7 @@
   // Imports
   import {gsap} from 'gsap';
   import type {Snippet} from "svelte";
+  import {mainStore} from "$lib/stores/mainStore";
 
   // Types
 
@@ -52,7 +53,7 @@
 
   // Methods
   const handleMagnetikFieldMouseMove = (e: MouseEvent) => {
-    if (!passed_slot_ref || block) return;
+    if (!passed_slot_ref || block || $mainStore.isMobileOrTablet) return;
 
     const {clientX, clientY} = e;
     const mainContainerRect = container_ref.getBoundingClientRect();
@@ -98,7 +99,7 @@
   };
 
   const handleMagnetikFieldMouseLeave = () => {
-    if (!container_ref || block || fieldSize === 'full') return;
+    if (!container_ref || block || fieldSize === 'full' || $mainStore.isMobileOrTablet) return;
 
     gsap.to(passed_slot_ref, {
       duration: 0.3,
