@@ -6,10 +6,10 @@
   import Footer from "$lib/components/Footer.svelte";
   import Cursor from "$lib/components/Cursor.svelte";
   import {refStore} from "$lib/stores/refStore";
+  import {mainStore} from "$lib/stores/mainStore";
+
 
   // Variables
-  let isTouchDevice = $state(false);
-
   // Props
   let {children} = $props();
 
@@ -62,7 +62,7 @@
     if (typeof window === 'undefined') return;
 
     // Check if device is touch-primary
-    isTouchDevice = window.matchMedia('(hover: none) and (pointer: coarse)').matches;
+    $mainStore.isMobileOrTablet = window.matchMedia('(hover: none) and (pointer: coarse)').matches;
 
     // Start the animation when the page loads
     initTitleScroll();
@@ -74,7 +74,7 @@
 </script>
 
 <div id="noise"></div>
-{#if !isTouchDevice}
+{#if !$mainStore.isMobileOrTablet}
   <Cursor bind:this={cursor}/>
 {/if}
 

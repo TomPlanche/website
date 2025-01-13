@@ -2,10 +2,15 @@
   // Imports
   import {spring} from 'svelte/motion';
   import type {TCursorOptions} from '../types';
+  import type {Snippet} from "svelte";
 
   // Props
+  type TCursorProps = {
+    children?: () => Snippet;
+  };
+
   const {
-    children
+    children = () => null
   } = $props();
 
   // Variables
