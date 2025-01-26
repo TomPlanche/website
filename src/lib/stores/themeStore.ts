@@ -1,10 +1,10 @@
 import {writable, get} from 'svelte/store';
 
 // Valid theme values
-export type TTheme = '1' | '2' | '3' | '4';
+export type TTheme = '1' | '2' | '3' | '4' | '5' | '6';
 
 // Theme order for cycling
-const themeOrder: TTheme[] = ['1', '2', '3', '4'];
+const themeOrder: TTheme[] = ['1', '2', '3', '4', '5', '6'];
 
 // localStorage key for theme
 const THEME_STORAGE_KEY = 'selected-theme';
