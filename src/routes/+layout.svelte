@@ -78,12 +78,18 @@
   <Cursor bind:this={cursor}/>
 {/if}
 
-<Header/>
+{#if !$mainStore.clearPage}
+  <Header/>
+{/if}
 
 <main>
   {@render children()}
 </main>
-<Footer/>
+
+
+{#if !$mainStore.clearPage}
+  <Footer/>
+{/if}
 
 <style lang="scss">
   @use '$lib/styles/variables';

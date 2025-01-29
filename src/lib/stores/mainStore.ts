@@ -8,10 +8,12 @@ import { writable } from "svelte/store";
 
 export type TState = {
   isMobileOrTablet?: boolean;
+  clearPage?: boolean;
 };
 
 export const mainStore = writable<TState>({
   isMobileOrTablet: undefined,
+  clearPage: false
 });
 
 /**

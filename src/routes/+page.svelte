@@ -1,8 +1,8 @@
 <script lang="ts">
   import {gsap} from 'gsap';
 
-  import ScrambleTextPlugin from "$lib/utils/ScrambleText";
-  import SplitText from "$lib/utils/SplitText";
+  import ScrambleTextPlugin from "$lib/utils/gsap/ScrambleText";
+  import SplitText from "$lib/utils/gsap/SplitText";
 
   gsap.registerPlugin(ScrambleTextPlugin);
   gsap.registerPlugin(SplitText);
@@ -10,7 +10,7 @@
   // Bindings
   let WIP: HTMLParagraphElement;
 
-  let title = "Tom Planche";
+  const title = "Tom Planche";
 
   // Initialize animations
   $effect(() => {
