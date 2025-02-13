@@ -26,8 +26,10 @@
 	},
 	"dependencies": {
 		"@sveltejs/adapter-node": "^5.2.12",
+		"axios": "^1.7.9",
 		"gsap": "^3.12.5",
 		"sass": "^1.83.1",
-		"svelte-preprocess": "^6.0.3"
+		"svelte-preprocess": "^6.0.3",
+		"zod": "^3.24.2"
 	}
 }
