@@ -29,11 +29,6 @@ export type Action<P = void> = (
   params?: P
 ) => ActionReturn<P> | void;
 
-// For components that can accept actions
-export type UseProps = {
-  action: Action;
-  props?: Record<string, unknown>;
-};
 
 /**
  * End of file src/lib/types.ts

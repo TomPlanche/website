@@ -1,7 +1,7 @@
 <script lang="ts">
   // Imports
   import {Spring} from 'svelte/motion';
-  import type {TCursorOptions} from '../types';
+  import type {TCursorOptions} from '../types/types';
   import type {Snippet} from 'svelte';
 
   // Props
