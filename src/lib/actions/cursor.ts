@@ -4,7 +4,7 @@
  */
 import { refStore } from '../stores/refStore';
 import { get } from 'svelte/store';
-import type {Action, ActionReturn, TCursorOptions} from '../types';
+import type {Action, ActionReturn, TCursorOptions} from '../types/';
 
 const defaultEnterOptions: TCursorOptions = {
   isHover: true,
