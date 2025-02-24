@@ -59,7 +59,11 @@
   </h1>
   <p
       bind:this={WIP}
-  >This website is a work in progress. Please check back later.</p>
+  >
+    This website is a work in progress. Please check back later. <br>
+    While waiting, you can check out what I've listened to recently <br>
+    <a href="/music">here</a>.
+  </p>
 
 </section>
 

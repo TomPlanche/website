@@ -31,3 +31,7 @@ vite.config.ts.timestamp-*
 commit_message.md
 
 src/lib/fonts
+
+# Package manager
+*.lock
+*-lock.*

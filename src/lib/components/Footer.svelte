@@ -9,7 +9,7 @@
 </script>
 
 <footer>
-  <span><span class="light">@2025</span> Paris</span>
+  <span><span class="light">©2025</span> Paris</span>
   <span class="right">
     <span class="links">
       <a

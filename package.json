@@ -5,11 +5,10 @@
 	"type": "module",
 	"scripts": {
 		"dev": "vite dev",
-		"build": "node scripts/update-og-dimensions.js && vite build",
+		"build": "vite build",
 		"preview": "vite preview",
 		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
-		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
-		"update-og": "node scripts/update-og-dimensions.js"
+		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch"
 	},
 	"devDependencies": {
 		"@biomejs/biome": "1.9.4",
@@ -25,8 +24,11 @@
 		"vite": "^5.4.11"
 	},
 	"dependencies": {
+		"@sveltejs/adapter-node": "^5.2.12",
+		"axios": "^1.7.9",
 		"gsap": "^3.12.5",
 		"sass": "^1.83.1",
-		"svelte-preprocess": "^6.0.3"
+		"svelte-preprocess": "^6.0.3",
+		"zod": "^3.24.2"
 	}
 }

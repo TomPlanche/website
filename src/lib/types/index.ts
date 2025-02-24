@@ -27,13 +27,8 @@ export type ActionReturn<P> = {
 export type Action<P = void> = (
   node: HTMLElement,
   params?: P
-) => ActionReturn<P> | void;
+) => ActionReturn<P> | undefined;
 
-// For components that can accept actions
-export type UseProps = {
-  action: Action;
-  props?: Record<string, unknown>;
-};
 
 /**
  * End of file src/lib/types.ts
