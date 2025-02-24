@@ -27,7 +27,7 @@ export type ActionReturn<P> = {
 export type Action<P = void> = (
   node: HTMLElement,
   params?: P
-) => ActionReturn<P> | void;
+) => ActionReturn<P> | undefined;
 
 
 /**
