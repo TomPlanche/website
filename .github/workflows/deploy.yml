@@ -2,23 +2,23 @@ name: Deploy Frontend
 
 on:
   push:
-    branches: [ main ]
+    branches:
+      - main
 
 jobs:
-  build:
+  deploy:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Deploy using ssh
-        uses: appleboy/ssh-action@master
-        with:
-          host: ${{ secrets.SSH_HOST }}
-          username: ${{ secrets.SSH_USER }}
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
-          script: |
-            cd ~/Desktop/website/front
-            git pull origin main
-            git status
-            npm install
-            npm run build
-            pm2 restart front
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Run all on VPS.
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+          SSH_HOST: ${{ secrets.SSH_HOST }}
+          SSH_USER: ${{ secrets.SSH_USER }}
+        run: |
+          echo "$SSH_PRIVATE_KEY" > key.pem
+          chmod 600 key.pem
+          ssh -i key.pem -o StrictHostKeyChecking=no $SSH_USER@$SSH_HOST "cd ~/Desktop/website/front && git pull origin main" && npm install" && npm run build" && pm2 restart front"
