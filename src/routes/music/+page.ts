@@ -5,18 +5,16 @@
  */
 
 import type {PageLoad} from "./$types";
-import {PUBLIC_API_ENDPOINT} from '$env/static/public';
-import axios, {type AxiosResponse} from "axios";
-import {CurrentlyPlayedSong, type TCurrentlyPlayedSong} from "$lib/types/song";
 import {songsStore} from "$lib/stores/songStore";
+import {RecentTrackSchema, type TRecentTrack, type TRecentTrackWithCount} from "$lib/types/lastfm";
 
-export const load: PageLoad = async () => {
+export const load: PageLoad = async ({fetch}) => {
   try {
-    const songs: AxiosResponse<TCurrentlyPlayedSong[]> = await axios.get(`${PUBLIC_API_ENDPOINT}/static/recent_play_counts.json`);
+    const songs = await fetch("/api/music", {
+      method: "GET",
+    }).then(async (res) => await res.json() as TRecentTrack[]);
 
-    if (songs.status === 200) {
-      songsStore.set(songs.data.map((song) => CurrentlyPlayedSong.parse(song)));
-    }
+    songsStore.set(songs.map((song) => RecentTrackSchema.parse(song)));
   } catch (e) {
     console.error(e);
 
