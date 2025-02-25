@@ -66,7 +66,7 @@
 
   const fetchNowPlaying = async () => {
     try {
-      const response = await fetch("/music/now-playing");
+      const response = await fetch("api/music/now-playing");
       currentTrack = await response.json();
     } catch (error) {
       console.error("Error fetching now playing:", error);
@@ -88,7 +88,7 @@
 
 <nav>
   <span class="now-playing">
-    {#if currentTrack}
+    {#if isLive}
       <div>
         <LiveIndicator size="small"/>
         <span class="text-sm">Live: </span>

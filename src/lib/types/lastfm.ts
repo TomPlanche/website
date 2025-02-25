@@ -16,8 +16,10 @@ const BaseObjectSchema = BaseObjectSchemaNoMbid.extend({
 });
 
 const DateSchema = z.object({
-  uts: z.coerce.number().transform((v) => new Date(v * 1000)),
-
+  uts: z.union([
+    z.coerce.date(),
+    z.coerce.number().transform((v) => new Date(v * 1000)),
+  ]),
   "#text": z.coerce.date(),
 });
 
@@ -25,7 +27,6 @@ const TrackImageSchema = z.object({
   size: z.string(),
   "#text": z.string(),
 });
-
 
 const RecentTrackArtistSchema = z.object({
   mbid: z.string(),
@@ -53,9 +54,12 @@ export const RecentTrackSchema = BaseObjectSchema.extend({
   }),
   "@attr": z
     .object({
-      nowplaying: z
-        .union([z.literal("true"), z.literal("false")])
-        .transform((v) => v === "true"),
+      nowplaying: z.union([
+        z.boolean(),
+        z
+          .union([z.literal("true"), z.literal("false")])
+          .transform((v) => v === "true"),
+      ]),
     })
     .optional(),
   date: DateSchema.optional(),
@@ -65,6 +69,7 @@ export const RecentTrackSchema = BaseObjectSchema.extend({
 });
 
 export type TRecentTrack = z.infer<typeof RecentTrackSchema>;
+export type TRecentTrackWithCount = z.infer<typeof RecentTrackSchema> & { count: number };
 
 export const BaseResponseSchema = z.object({
   user: z.string(),
