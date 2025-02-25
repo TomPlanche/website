@@ -10,16 +10,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v2
-
-      - name: Install dependencies
-        run: npm install
-
-      - name: Copy utils and fonts from VPS
+      - name: Pull code on server
         env:
           SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
           SSH_HOST: ${{ secrets.SSH_HOST }}
@@ -27,16 +18,18 @@ jobs:
         run: |
           echo "$SSH_PRIVATE_KEY" > key.pem
           chmod 600 key.pem
-          scp -i key.pem -o StrictHostKeyChecking=no -r $SSH_USER@$SSH_HOST:~/Desktop/website/front/src/lib/utils ./src/lib/utils
-          scp -i key.pem -o StrictHostKeyChecking=no -r $SSH_USER@$SSH_HOST:~/Desktop/website/front/src/lib/fonts ./src/lib/fonts
-
-      - name: List fonts directory
-        run: ls -R ./src/lib/fonts
+            ssh -i key.pem $SSH_USER@$SSH_HOST "cd ~/Desktop/website/front && git pull origin main"
+      - name: Install dependencies
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+          SSH_HOST: ${{ secrets.SSH_HOST }}
+          SSH_USER: ${{ secrets.SSH_USER }}
+        run: |
+          echo "$SSH_PRIVATE_KEY" > key.pem
+          chmod 600 key.pem
+          ssh -i key.pem $SSH_USER@$SSH_HOST "cd ~/Desktop/website/front && npm install"
 
       - name: Build
-        run: npm run build
-
-      - name: Deploy to VPS
         env:
           SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
           SSH_HOST: ${{ secrets.SSH_HOST }}
@@ -44,5 +37,14 @@ jobs:
         run: |
           echo "$SSH_PRIVATE_KEY" > key.pem
           chmod 600 key.pem
-          rsync -avz -e "ssh -i key.pem -o StrictHostKeyChecking=no" build/ $SSH_USER@$SSH_HOST:~/Desktop/website/front
-          ssh -i key.pem -o StrictHostKeyChecking=no $SSH_USER@$SSH_HOST "pm2 restart front"
+          ssh -i key.pem $SSH_USER@$SSH_HOST "cd ~/Desktop/website/front && npm run build"
+
+      - name: Deploy
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+          SSH_HOST: ${{ secrets.SSH_HOST }}
+          SSH_USER: ${{ secrets.SSH_USER }}
+        run: |
+          echo "$SSH_PRIVATE_KEY" > key.pem
+          chmod 600 key.pem
+          ssh -i key.pem $SSH_USER@$SSH_HOST "pm2 restart front"
