@@ -1,18 +1,19 @@
 <script lang="ts">
+  import {onMount} from "svelte";
   import {gsap} from "gsap";
-  import {toggleTheme} from "$lib/stores/themeStore";
   import {cursorEnter, cursorLeave} from '$lib/actions/cursor';
   import Magnetik from "$lib/components/Magnetik.svelte";
-  interface Props {
-    [key: string]: any
-  }
-
-  let { ...props }: Props = $props();
-
+  import {toggleTheme} from "$lib/stores/themeStore";
+  import type {TRecentTrack} from "$lib/types/lastfm";
+  import LiveIndicator from '$lib/components/LiveIndicator.svelte';
 
   // Bindings
   let button: HTMLButtonElement = $state();
   let isAnimating = false;
+
+  // State
+  let currentTrack: TRecentTrack | null = $state(null);
+  const isLive = $derived(!!currentTrack?.['@attr']?.nowplaying);
 
   // Functions
   const handleToggleTheme = () => {
@@ -62,10 +63,41 @@
       duration: 0.2,
     });
   }
+
+  const fetchNowPlaying = async () => {
+    try {
+      const response = await fetch("/music/now-playing");
+      currentTrack = await response.json();
+    } catch (error) {
+      console.error("Error fetching now playing:", error);
+    }
+  };
+
+  // Lifecycle
+  onMount(() => {
+    (async () => {
+      await fetchNowPlaying();
+    })();
+
+    // Refresh every 10 seconds
+    const interval = setInterval(fetchNowPlaying, 10000);
+
+    return () => clearInterval(interval);
+  });
 </script>
 
 <nav>
-  <span></span>
+  <span class="now-playing">
+    {#if currentTrack}
+      <div>
+        <LiveIndicator size="small"/>
+        <span class="text-sm">Live: </span>
+      </div>
+      <span class="track-info">
+        {currentTrack.name} - {currentTrack.artist['#text']}
+      </span>
+    {/if}
+  </span>
   <Magnetik>
     <button
         bind:this={button}
@@ -78,7 +110,7 @@
 
         aria-label="Toggle theme change"
     >
-      <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" {...props}>
+      <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24">
         <path fill="currentColor"
               d="M16 2h-2v2h2v2H4v2H2v5h2V8h12v2h-2v2h2v-2h2V8h2V6h-2V4h-2zM6 20h2v2h2v-2H8v-2h12v-2h2v-5h-2v5H8v-2h2v-2H8v2H6v2H4v2h2z"/>
       </svg>
@@ -132,6 +164,21 @@
         width: 1.5rem;
         height: 1.5rem;
       }
+    }
+  }
+
+  .now-playing {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.875rem;
+    opacity: 0.75;
+
+    .track-info {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 300px;
     }
   }
 </style>

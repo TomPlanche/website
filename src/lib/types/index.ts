@@ -4,6 +4,11 @@
  * @author Tom Planche
  */
 
+import {
+  type TGetRecentTracks,
+  getRecentTracksSchema
+} from "./lastfm";
+
 export type TCursor = {
   isHover: boolean;
   scale: number;
@@ -29,6 +34,10 @@ export type Action<P = void> = (
   params?: P
 ) => ActionReturn<P> | undefined;
 
+export {
+  type TGetRecentTracks,
+  getRecentTracksSchema,
+};
 
 /**
  * End of file src/lib/types.ts
