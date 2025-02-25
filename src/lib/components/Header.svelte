@@ -4,7 +4,7 @@
   import {cursorEnter, cursorLeave} from '$lib/actions/cursor';
   import Magnetik from "$lib/components/Magnetik.svelte";
   import {toggleTheme} from "$lib/stores/themeStore";
-  import type {TRecentTrack} from "$lib/types/lastfm";
+  import {RecentTrackSchema, type TRecentTrack} from "$lib/types/lastfm";
   import LiveIndicator from '$lib/components/LiveIndicator.svelte';
 
   // Bindings
@@ -67,7 +67,14 @@
   const fetchNowPlaying = async () => {
     try {
       const response = await fetch("api/music/now-playing");
-      currentTrack = await response.json();
+
+      const parse = RecentTrackSchema.safeParse(await response.json());
+
+      if (parse.success) {
+        currentTrack = parse.data;
+      } else {
+        throw new Error(`Failed to parse now playing response: ${JSON.stringify(parse.error)}`);
+      }
     } catch (error) {
       console.error("Error fetching now playing:", error);
     }
