@@ -1,4 +1,14 @@
 /**
+ * Functions
+ */
+@function default-value($value, $default) {
+  @if $value == null or $value == false {
+    @return $default;
+  }
+  @return $value;
+}
+
+/**
  * Mixins
  */
 @mixin no-user-select() {
