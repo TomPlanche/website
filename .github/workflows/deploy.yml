@@ -21,4 +21,4 @@ jobs:
         run: |
           echo "$SSH_PRIVATE_KEY" > key.pem
           chmod 600 key.pem
-          ssh -i key.pem -o StrictHostKeyChecking=no $SSH_USER@$SSH_HOST "cd ~/Desktop/website/front && git pull origin main && npm install && npm run build && pm2 restart front"
+          ssh -i key.pem -o StrictHostKeyChecking=no $SSH_USER@$SSH_HOST "bash -l -c 'cd ~/Desktop/website/front && git pull origin main && npm install && npm run build && pm2 restart front'"
