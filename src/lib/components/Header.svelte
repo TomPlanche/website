@@ -1,5 +1,6 @@
 <script lang="ts">
   import {onMount} from "svelte";
+  import {fade} from "svelte/transition";
   import {gsap} from "gsap";
   import {cursorEnter, cursorLeave} from '$lib/actions/cursor';
   import Magnetik from "$lib/components/Magnetik.svelte";
@@ -95,8 +96,11 @@
 
 <nav>
   <span class="now-playing">
-    {#if isLive}
-      <div>
+    {#if isLive && currentTrack}
+      <div
+          in:fade={{duration: 500}}
+          out:fade={{duration: 500}}
+      >
         <LiveIndicator size="small"/>
         <span class="text-sm">Live: </span>
       </div>

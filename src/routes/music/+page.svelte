@@ -78,8 +78,8 @@
       align-items: center;
       gap: $top-padding;
 
-      width: 80%;
-      max-width: 800px;
+      width: 90%;
+      max-width: 900px;
 
       .song-card {
         height: $line-height;
@@ -120,13 +120,14 @@
             align-items: flex-start;
 
             .song-name {
-              font-size: 1.25rem;
+              font-size: 1.125rem;
               font-family: "Supply Mono", monospace;
               margin-right: 1rem;
+              text-align: left;
             }
 
             .artist-name {
-              font-size: 1.125rem;
+              font-size: 1rem;
               font-family: "Supply Mono", monospace;
               margin-right: 1rem;
             }
@@ -135,7 +136,7 @@
       }
 
       .play-count {
-        font-size: 1rem;
+        font-size: .85rem;
         font-family: "Supply Mono", monospace;
         margin-right: 1rem;
       }
