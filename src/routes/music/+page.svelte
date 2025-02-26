@@ -21,8 +21,12 @@
 
   // Lifecycle
   onMount(() => {
-    // sort by play count
-    songs = $songsStore.sort((a, b) => b.count - a.count).splice(0, 25);
+    // sort by date (.date.uts) but date can be undefined
+    songs = $songsStore.sort((a: TRecentTrackWithCount, b: TRecentTrackWithCount) => {
+      if (a.date?.uts && b.date?.uts) {
+        return a.date.uts.getDate() - b.date.uts.getDate();
+      }
+    });
   });
 </script>
 
@@ -37,11 +41,22 @@
         <div class="left">
           <img
               src={song.image[song.image.length - 1]['#text']}
-              alt={song.name}
+              alt={song.album["#text"]}
+              title={song.album["#text"]}
           />
           <div class="infos">
-            <h2 class="song-name">{song.name}</h2>
-            <p class="artist-name">{song.artist["#text"]}</p>
+            <h2
+                class="song-name"
+                title={song.name}
+            >
+              {song.name}
+            </h2>
+            <p
+                class="artist-name"
+                title={song.artist["#text"]}
+            >
+              {song.artist["#text"]}
+            </p>
           </div>
         </div>
         <span class="play-count">{formatPlayCount(song.count)}&nbsp;play{song.count > 1 ? 's' : ''}</span>
@@ -119,17 +134,23 @@
             justify-content: center;
             align-items: flex-start;
 
-            .song-name {
-              font-size: 1.125rem;
+            .song-name, .artist-name {
+              // limit to 2 lines
+              display: -webkit-box;
+              -webkit-line-clamp: 2;
+              -webkit-box-orient: vertical;
+              overflow: hidden;
               font-family: "Supply Mono", monospace;
               margin-right: 1rem;
+            }
+
+            .song-name {
+              font-size: 1.125rem;
               text-align: left;
             }
 
             .artist-name {
               font-size: 1rem;
-              font-family: "Supply Mono", monospace;
-              margin-right: 1rem;
             }
           }
         }
