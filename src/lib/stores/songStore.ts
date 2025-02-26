@@ -14,15 +14,15 @@ const songStore = () => {
     subscribe,
     set: (value: TRecentTrack[]) => {
       // Filter out songs without an image URL or with default image
-      const filteredSongs = value.filter(song => {
-        return song.image[song.image.length - 1]["#text"]
-          && song.image[song.image.length - 1]["#text"] !== "https://lastfm.freetls.fastly.net/i/u/300x300/2a96cbd8b46e442fc41c2b86b821562f.png"
-      });
+      // const filteredSongs = value.filter(song => {
+      //   return song.image[song.image.length - 1]["#text"]
+      //     && song.image[song.image.length - 1]["#text"] !== "https://lastfm.freetls.fastly.net/i/u/300x300/2a96cbd8b46e442fc41c2b86b821562f.png"
+      // });
 
       // Create a map to count occurrences of each song
       const songMap = new Map<string, TRecentTrackWithCount>();
 
-      for (const song of filteredSongs) {
+      for (const song of value) {
         const key = `${song.name}-${song.artist["#text"]}`;
 
         if (songMap.has(key)) {
