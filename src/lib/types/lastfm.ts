@@ -69,7 +69,6 @@ export const RecentTrackSchema = BaseObjectSchema.extend({
 });
 
 export type TRecentTrack = z.infer<typeof RecentTrackSchema>;
-export type TRecentTrackWithCount = z.infer<typeof RecentTrackSchema> & { count: number };
 
 export const BaseResponseSchema = z.object({
   user: z.string(),
@@ -88,7 +87,33 @@ export const getRecentTracksSchema = z.object({
 
 export type TGetRecentTracks = z.infer<typeof getRecentTracksSchema>;
 
+/*
+[
+  {
+    "name": "Make You Move",
+    "play_count": 1,
+    "artist": "Carv",
+    "album": "Make You Move - Single",
+    "image_url": "https://lastfm.freetls.fastly.net/i/u/300x300/2a96cbd8b46e442fc41c2b86b821562f.png",
+    "currently_playing": true
+  }
+]
+ */
+export const BackendSongSchema = z.object({
+  name: z.string(),
+  play_count: z.number(),
+  artist: z.string(),
+  album: z.string(),
+  image_url: z.string(),
+  currently_playing: z.boolean(),
+  // date: 1740691900
+  date: z.union([
+    z.coerce.date(),
+    z.coerce.number().transform((v) => new Date(v * 1000)),
+  ]).optional()
+});
 
+export type TBackendSong = z.infer<typeof BackendSongSchema>;
 /**
  * End of file src/lib/types/lastfm.ts
  */

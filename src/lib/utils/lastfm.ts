@@ -4,51 +4,30 @@
  * @author Tom Planche
  */
 import axios, {type AxiosResponse} from "axios";
-import {getRecentTracksSchema, type TGetRecentTracks} from "$lib/types";
-import {error, json} from "@sveltejs/kit";
-import type {TRecentTrack} from "$lib/types/lastfm";
+import {error} from "@sveltejs/kit";
+import {BackendSongSchema, type TBackendSong} from "$lib/types/lastfm";
+import {PUBLIC_API_ENDPOINT} from "$env/static/public";
 
-type TMethod = "user.getRecentTracks";
 
-const baseOptions = {
-  page: 1,
-  limit: 1000,
-}
+export const getRecentTracks = async (): Promise<TBackendSong[]> => {
+  const response: AxiosResponse<TBackendSong[]> = await axios.get<TBackendSong[]>(`${PUBLIC_API_ENDPOINT}/static/recent_play_counts.json`);
 
-const fetchLastFM = async (
-  method: TMethod,
-  api_key: string,
-  params: Record<string, string | number> = {}
-) => {
-  return await axios.get("http://ws.audioscrobbler.com/2.0/", {
-    params: {
-      ...baseOptions,
-      ...params,
-      api_key,
-      format: "json",
-      user: "Tom_planche",
-      method,
-      limit: Math.min(+params.limit || 1, 1000),
-    }
-  });
-}
-
-export const getRecentTracks = async (limit: number, api_key: string): Promise<TRecentTrack[]> => {
-  if (limit < 1) {
-    throw error(400, "Limit must be greater than 0");
-  }
-
-  const response: AxiosResponse<TGetRecentTracks> = await fetchLastFM("user.getRecentTracks", api_key, {limit});
 
   if (response.status !== 200) {
     throw error(response.status, response.statusText);
   }
 
-  const {
-    recenttracks: {track},
-  } = getRecentTracksSchema.parse(response.data);
+  return response.data.map((song) => BackendSongSchema.parse(song));
+}
 
-  return track;
+export const getCurrentTrack = async (): Promise<TBackendSong> => {
+  const response: AxiosResponse<TBackendSong[]> = await axios.get<TBackendSong[]>(`${PUBLIC_API_ENDPOINT}/static/currently_listening.json`);
+
+  if (response.status !== 200) {
+    throw error(response.status, response.statusText);
+  }
+
+  return BackendSongSchema.parse(response.data[0]);
 }
 
 /**

@@ -2,10 +2,10 @@
   // Imports
   import {onMount} from "svelte";
   import {songsStore} from "$lib/stores/songStore";
-  import type {TRecentTrackWithCount} from "$lib/types/lastfm";
+  import type {TBackendSong} from "$lib/types/lastfm";
 
   // Variables
-  let songs = $state<TRecentTrackWithCount[]>([]);
+  let songs = $state<TBackendSong[]>([]);
 
   // Functions
   const formatPlayCount = (count: number): string => {
@@ -22,10 +22,12 @@
   // Lifecycle
   onMount(() => {
     // sort by date (.date.uts) but date can be undefined
-    songs = $songsStore.sort((a: TRecentTrackWithCount, b: TRecentTrackWithCount) => {
-      if (a.date?.uts && b.date?.uts) {
-        return a.date.uts.getDate() - b.date.uts.getDate();
+    songs = $songsStore.sort((a: TBackendSong, b: TBackendSong) => {
+      if (a.date && b.date) {
+        return a.date.getDate() - b.date.getDate();
       }
+
+      return 0;
     });
   });
 </script>
@@ -40,9 +42,9 @@
       >
         <div class="left">
           <img
-              src={song.image[song.image.length - 1]['#text']}
-              alt={song.album["#text"]}
-              title={song.album["#text"]}
+              src={song.image_url}
+              alt={song.album}
+              title={song.album}
           />
           <div class="infos">
             <h2
@@ -53,13 +55,13 @@
             </h2>
             <p
                 class="artist-name"
-                title={song.artist["#text"]}
+                title={song.artist}
             >
-              {song.artist["#text"]}
+              {song.artist}
             </p>
           </div>
         </div>
-        <span class="play-count">{formatPlayCount(song.count)}&nbsp;play{song.count > 1 ? 's' : ''}</span>
+        <span class="play-count">{formatPlayCount(song.play_count)}&nbsp;play{song.play_count > 1 ? 's' : ''}</span>
       </article>
     {/each}
   </div>

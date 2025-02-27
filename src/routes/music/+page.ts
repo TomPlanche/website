@@ -6,15 +6,15 @@
 
 import type {PageLoad} from "./$types";
 import {songsStore} from "$lib/stores/songStore";
-import {RecentTrackSchema, type TRecentTrack, type TRecentTrackWithCount} from "$lib/types/lastfm";
+import {BackendSongSchema, type TBackendSong} from "$lib/types/lastfm";
 
 export const load: PageLoad = async ({fetch}) => {
   try {
     const songs = await fetch("/api/music", {
       method: "GET",
-    }).then(async (res) => await res.json() as TRecentTrack[]);
+    }).then(async (res) => await res.json() as TBackendSong[]);
 
-    songsStore.set(songs.map((song) => RecentTrackSchema.parse(song)));
+    songsStore.set(songs.map((song) => BackendSongSchema.parse(song)));
   } catch (e) {
     console.error(e);
 

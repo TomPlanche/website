@@ -3,15 +3,14 @@
  * @description +server
  * @author Tom Planche
  */
-import {LASTFM_API_KEY} from "$env/static/private";
 import {error, json, type RequestHandler} from "@sveltejs/kit";
-import {getRecentTracks} from "$lib/utils/lastfm";
+import {getCurrentTrack} from "$lib/utils/lastfm";
 
 export const GET: RequestHandler = async () => {
   try {
-    const songs = await getRecentTracks(1, LASTFM_API_KEY);
+    const song = await getCurrentTrack();
 
-    return json(songs[0]);
+    return json(song);
   } catch (e: unknown) {
     return error(500, <App.Error>e)
   }
