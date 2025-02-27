@@ -4,6 +4,18 @@
 - [Svelte](https://svelte.dev/)
 - [SvelteKit](https://kit.svelte.dev/)
 - [Biome](https://biomejs.dev/)
+- [GSAP](https://greensock.com/gsap/) - For smooth animations
+- [Sass](https://sass-lang.com/) - For enhanced styling
+- [TypeScript](https://www.typescriptlang.org/) - For type safety
+- [Zod](https://zod.dev/) - For runtime type validation
+
+## Deployment
+The website is automatically deployed using GitHub Actions. On every push to the main branch:
+1. The code is checked out
+2. The changes are pulled on the VPS
+3. Dependencies are installed
+4. The application is built
+5. The PM2 process is restarted
 
 ## Cool things
 - [Header Theme Switcher](./src/lib/components/Header.svelte)
@@ -27,6 +39,27 @@
   and `use:cursorLeave`) for easily adding hover interactions to any element, with configurable parameters for
   scale, opacity, and content changes.
   It only appears on desktop devices and when the mouse has moved to avoid appearing on page load.
+
+## Backend Infrastructure
+The website is powered by two custom Rust services:
+
+### API Server ([vps-back](https://github.com/TomPlanche/vps-back))
+- Built with Rocket.rs framework
+- Provides RESTful API endpoints
+- Handles CORS and static file serving
+- Serves data for the music section
+
+### LastFM Integration ([vps-lastfm](https://github.com/TomPlanche/vps-lastfm))
+A dedicated service that:
+- Fetches real-time LastFM listening data
+- Tracks currently playing song (5-second intervals)
+- Stores last 100 played tracks (1-minute intervals)
+- Outputs structured JSON data consumed by the API server
+
+## Architecture Diagram
+The architecture diagram is generated using [D2](https://d2lang.com/).
+
+![Architecture Diagram](./static/architecture.png)
 
 ## Acknowledgements
 ### Fonts
