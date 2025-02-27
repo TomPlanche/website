@@ -1,0 +1,72 @@
+direction: right
+
+# Frontend (SvelteKit Application)
+Frontend: {
+  style: {
+    stroke: "#6ACAC9"
+  }
+
+  Routes: {
+    Home: "/+"
+    Music: "/music"
+    API: "/api/music"
+  }
+}
+
+# Backend Services
+Backend: {
+  style: {
+    stroke: "#ff6542"
+    fill: "#f4f2ed"
+  }
+
+  API: "Rocket.rs Server" {
+    Endpoints: {
+      static: "/static/*"
+      music: "/*"
+    }
+  }
+
+  LastFM: "LastFM Service" {
+    Intervals: {
+      current: "5s intervals"
+      history: "1min intervals"
+    }
+    Files: {
+      now: "currently_listening.json"
+      recent: "recent_play_counts.json"
+    }
+  }
+}
+
+# Deployment (Compact)
+Deployment: {
+  style: {
+    stroke: "#009bce"
+    fill: "#f1f1ff"
+  }
+
+  explanation: |md
+    # Website Deployment
+    On every push to the main branch:
+    1. The code is checked out
+    2. The changes are pulled on the VPS
+    3. Dependencies are installed
+    4. The application is built
+    5. The PM2 process is restarted
+  | {
+    style: {
+      font-size: 12
+      italic: true
+    }
+  }
+}
+
+# Connections
+Frontend.Routes.API -> Backend.API.Endpoints.music: "Fetch music data"
+Backend.LastFM.Files <- Backend.API.Endpoints.static: "Serve JSON files"
+Backend.LastFM -> LastFM: "Fetch user data"
+Frontend -> Deployment
+LastFM: {
+  style.multiple: true
+}
