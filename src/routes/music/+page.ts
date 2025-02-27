@@ -10,7 +10,7 @@ import {BackendSongSchema, type TBackendSong} from "$lib/types/lastfm";
 
 export const load: PageLoad = async ({fetch}) => {
   try {
-    const songs = await fetch("/api/music", {
+    const songs = await fetch("/music", {
       method: "GET",
     }).then(async (res) => await res.json() as TBackendSong[]);
 
