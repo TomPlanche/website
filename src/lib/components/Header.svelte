@@ -5,16 +5,16 @@
   import {cursorEnter, cursorLeave} from '$lib/actions/cursor';
   import Magnetik from "$lib/components/Magnetik.svelte";
   import {toggleTheme} from "$lib/stores/themeStore";
-  import {RecentTrackSchema, type TRecentTrack} from "$lib/types/lastfm";
   import LiveIndicator from '$lib/components/LiveIndicator.svelte';
+  import {BackendSongSchema, type TBackendSong} from "$lib/types/lastfm";
 
   // Bindings
   let button: HTMLButtonElement = $state();
   let isAnimating = false;
 
-  // State
-  let currentTrack: TRecentTrack | null = $state(null);
-  const isLive = $derived(!!currentTrack?.['@attr']?.nowplaying);
+  // Statee
+  let currentTrack: TBackendSong | null = $state(null);
+  const isLive = $derived(() => currentTrack?.currently_playing);
 
   // Functions
   const handleToggleTheme = () => {
@@ -69,7 +69,7 @@
     try {
       const response = await fetch("api/music/now-playing");
 
-      const parse = RecentTrackSchema.safeParse(await response.json());
+      const parse = BackendSongSchema.safeParse(await response.json());
 
       if (parse.success) {
         currentTrack = parse.data;
@@ -96,7 +96,7 @@
 
 <nav>
   <span class="now-playing">
-    {#if isLive && currentTrack}
+    {#if isLive() && currentTrack}
       <div
           in:fade={{duration: 500}}
           out:fade={{duration: 500}}
@@ -105,7 +105,7 @@
         <span class="text-sm">Live: </span>
       </div>
       <span class="track-info">
-        {currentTrack.name} - {currentTrack.artist['#text']}
+        {currentTrack.name} - {currentTrack.artist}
       </span>
     {/if}
   </span>
