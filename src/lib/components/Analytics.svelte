@@ -2,7 +2,7 @@
   import {onMount} from 'svelte';
 
   // Replace with your Stats server URL
-  const STATS_URL = "http://localhost:5775"; // or your production URL
+  const STATS_URL = "https://tomplanche.com/stats";
 
   onMount(() => {
     const script = document.createElement('script');
