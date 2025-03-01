@@ -7,6 +7,7 @@
   import Cursor from "$lib/components/Cursor.svelte";
   import {refStore} from "$lib/stores/refStore";
   import {mainStore} from "$lib/stores/mainStore";
+  import Analytics from "$lib/components/Analytics.svelte";
 
 
   // Variables
@@ -73,6 +74,8 @@
   });
 </script>
 
+<Analytics/>
+
 <div id="noise"></div>
 {#if !$mainStore.isMobileOrTablet}
   <Cursor bind:this={cursor}/>
@@ -90,6 +93,7 @@
 {#if !$mainStore.clearPage}
   <Footer/>
 {/if}
+
 
 <style lang="scss">
   @use '$lib/styles/variables';
