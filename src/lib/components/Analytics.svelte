@@ -19,7 +19,7 @@
     console.log('IP:', ip);
 
     const script = document.createElement("script");
-    script.setAttribute("src", `${STATS_URL}/stats.js`);
+    script.setAttribute("src", `${STATS_URL}/stats.js?ip=${ip}`);
     script.setAttribute("onload", () => window.collectStats());
     script.setAttribute("type", "text/javascript");
     script.setAttribute("charset", "utf8");
