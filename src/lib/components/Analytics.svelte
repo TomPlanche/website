@@ -16,8 +16,6 @@
       console.error('Erreur lors de la récupération de l\'IP:', error);
     }
 
-    console.log('IP:', ip);
-
     const script = document.createElement("script");
     script.setAttribute("src", `${STATS_URL}/stats.js?ip=${ip}`);
     script.setAttribute("onload", () => window.collectStats());
