@@ -6,7 +6,6 @@
   const STATS_URL = "http://127.0.0.1:5775";
   const isProd = PUBLIC_PROD === 'true';
 
-
   onMount(async () => {
     const head = document.head || document.getElementsByTagName("head")[0];
     let ip = '';
@@ -34,6 +33,7 @@
     script.setAttribute("type", "text/javascript");
     script.setAttribute("charset", "utf8");
     script.setAttribute("async", "");
+    
     head.appendChild(script);
   });
 </script>
