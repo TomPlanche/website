@@ -1,6 +1,6 @@
 <script lang="ts">
   export let size = 'small';
-  export let color = '#2ea043';
+  export let color = '#35d151';
 
 </script>
 
