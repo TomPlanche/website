@@ -7,10 +7,9 @@
   gsap.registerPlugin(ScrambleTextPlugin);
   gsap.registerPlugin(SplitText);
 
-  import {cursorEnter, cursorLeave} from "$lib/actions/cursor";
-
   // Bindings
-  let WIP: HTMLParagraphElement;
+  let titleRef: HTMLHeadingElement;
+  let WIPRef: HTMLParagraphElement;
 
   const title = "Tom Planche";
 
@@ -18,7 +17,7 @@
   $effect(() => {
     if (typeof window === 'undefined') return;
 
-    const splittedTitle = new SplitText(WIP, {type: "chars"});
+    const splittedTitle = new SplitText(WIPRef, {type: "chars"});
 
     const tl = gsap.timeline({
       defaults: {
@@ -31,7 +30,7 @@
 
     tl
       .set(splittedTitle.chars, {opacity: 0})
-      .to("h1",
+      .to(titleRef,
         {
           scrambleText: {
             text: title,
@@ -61,17 +60,15 @@
 </script>
 
 <section>
-  <h1>
+  <h1
+      bind:this={titleRef}
+  >
     Tom Planche
   </h1>
   <p
-      bind:this={WIP}
+      bind:this={WIPRef}
   >
-    This website is a work in progress. Please check back later. <br>
-    <span>
-      While waiting, you can check out what I've listened to recently <a use:cursorEnter
-                                                                         use:cursorLeave href="/music">here</a>.
-    </span>
+    French Software Engineer
   </p>
 
 </section>
@@ -99,11 +96,11 @@
     }
 
     p {
-      font-family: "Monorama", sans-serif;
+      font-family: "Mondwest", sans-serif;
       font-size: 3vw;
       text-align: justify;
-      padding: 1rem;
       line-height: 1.5;
+      font-kerning: none;
 
       span {
         display: block;

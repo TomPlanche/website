@@ -110,7 +110,8 @@ export const BackendSongSchema = z.object({
   date: z.union([
     z.coerce.date(),
     z.coerce.number().transform((v) => new Date(v * 1000)),
-  ]).optional()
+  ]).optional(),
+  url: z.string(),
 });
 
 export type TBackendSong = z.infer<typeof BackendSongSchema>;

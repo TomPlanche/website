@@ -95,29 +95,37 @@
 </script>
 
 <nav>
-  <span class="now-playing">
-    {#if isLive() && currentTrack}
-      <div
-          in:fade={{duration: 500}}
-          out:fade={{duration: 500}}
-      >
+  <div class="left">
+    <h1>Tom Planche</h1>
+    <span
+        class="now-playing"
+        in:fade={{duration: 500}}
+        out:fade={{duration: 500}}
+    >
+      {#if isLive() && currentTrack}
         <LiveIndicator size="small"/>
-        <span class="text-sm">Live: </span>
-      </div>
-      <span class="track-info">
-        {currentTrack.name} - {currentTrack.artist}
-      </span>
-    {/if}
-  </span>
+        Live:
+        <a
+            class="track-info"
+            href={currentTrack.url}
+            target="_blank"
+            rel="noopener noreferrer"
+        >
+          {currentTrack.name} - {currentTrack.artist}
+        </a>
+      {/if}
+    </span>
+  </div>
   <Magnetik>
     <button
         bind:this={button}
+        use:cursorEnter
+        use:cursorLeave
+
         onclick={handleToggleTheme}
         onmouseenter={handleMouseEnter}
         onmouseleave={handleMouseLeave}
 
-        use:cursorEnter
-        use:cursorLeave
 
         aria-label="Toggle theme change"
     >
@@ -158,6 +166,45 @@
     backdrop-filter: blur(16px);
     -webkit-backdrop-filter: blur(16px); // Compatible with Safari
 
+    .left {
+      display: flex;
+      flex-direction: row;
+      justify-content: center;
+      align-items: center;
+
+      h1 {
+        font-family: "Mondwest", monospace;
+        font-size: 2rem;
+        font-weight: 900;
+        text-align: left;
+        text-shadow: 0 0 5px var(--text-color);
+        margin-right: 1rem;
+
+        @media (max-width: 768px) {
+          font-size: 1.5rem;
+        }
+      }
+
+      .now-playing {
+        display: flex;
+        align-items: baseline;
+        gap: 0.5rem;
+        font-size: 1rem;
+        opacity: 0.95;
+
+        text-shadow: 0 0 1px var(--text-color);
+
+        .track-info {
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          max-width: 300px;
+          cursor: pointer;
+        }
+      }
+
+    }
+
     button {
       background: none;
       border: none;
@@ -178,18 +225,5 @@
     }
   }
 
-  .now-playing {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    font-size: 0.875rem;
-    opacity: 0.75;
 
-    .track-info {
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      max-width: 300px;
-    }
-  }
 </style>
