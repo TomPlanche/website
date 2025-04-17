@@ -96,7 +96,12 @@
 
 <nav>
   <div class="left">
-    <h1>Tom Planche</h1>
+    <a
+        class="title"
+        href="/"
+        use:cursorEnter
+        use:cursorLeave
+    >Tom Planche</a>
     <span
         class="now-playing"
         in:fade={{duration: 500}}
@@ -146,7 +151,7 @@
   nav {
     height: variables.$header-height;
     width: calc(100% - #{$double-padding});
-    
+
     position: fixed;
     top: variables.$main-padding;
     left: variables.$main-padding;
@@ -172,7 +177,7 @@
       justify-content: center;
       align-items: center;
 
-      h1 {
+      .title {
         font-family: "Mondwest", monospace;
         font-size: 2rem;
         font-weight: 900;
