@@ -225,11 +225,3 @@ $min-main-height: calc(100dvh - #{$header-height});
   font-weight: bold;
   font-style: normal;
 }
-
-// Berkley Mono
-@font-face {
-  font-family: 'Berkley Mono';
-  src: url('$lib/fonts/BerkeleyMonoVariable-Regular.woff2') format('woff2');
-  font-weight: normal;
-  font-style: normal;
-}
