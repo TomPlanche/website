@@ -101,17 +101,6 @@
       text-align: justify;
       line-height: 1.5;
       font-kerning: none;
-
-      span {
-        display: block;
-        font-size: 1.5rem;
-        margin-top: 1rem;
-        text-align: center;
-
-        a {
-          text-decoration: underline !important;
-        }
-      }
     }
   }
 </style>
