@@ -179,7 +179,7 @@
 
       .title {
         font-family: "Mondwest", monospace;
-        font-size: 2rem;
+        font-size: 1.5rem;
         font-weight: 900;
         text-align: left;
         text-shadow: 0 0 5px var(--text-color);
