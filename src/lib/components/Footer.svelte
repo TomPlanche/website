@@ -3,7 +3,7 @@
   import {cursorEnter, cursorLeave} from "$lib/actions/cursor";
 
   // Variables
-  let e_m_a_i_l = "tom" + "planche" + "@" + "icloud.com";
+  const e_m_a_i_l = "tom" + "planche" + "@" + "icloud.com";
 
   // Functions
 </script>

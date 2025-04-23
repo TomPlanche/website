@@ -106,6 +106,9 @@
         class="now-playing"
         in:fade={{duration: 500}}
         out:fade={{duration: 500}}
+
+        use:cursorEnter
+        use:cursorLeave
     >
       {#if isLive() && currentTrack}
         <LiveIndicator size="small"/>
@@ -115,6 +118,8 @@
             href={currentTrack.url}
             target="_blank"
             rel="noopener noreferrer"
+
+            title="{currentTrack.name} - {currentTrack.artist}"
         >
           {currentTrack.name} - {currentTrack.artist}
         </a>
@@ -196,6 +201,7 @@
         gap: 0.5rem;
         font-size: 1rem;
         opacity: 0.95;
+        font-family: "Mondwest", monospace;
 
         text-shadow: 0 0 1px var(--text-color);
 
@@ -215,8 +221,6 @@
       border: none;
       cursor: pointer;
 
-      opacity: .75;
-
       transition: opacity .2s ease-in-out;
 
       &:hover {
@@ -226,6 +230,11 @@
       svg {
         width: 1.5rem;
         height: 1.5rem;
+
+        * {
+          fill: var(--text-color);
+          color: var(--text-color);
+        }
       }
     }
   }
