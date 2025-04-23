@@ -1,7 +1,7 @@
 <script lang="ts">
   // Imports
   import "$lib/styles/main.scss";
-  import {type SvelteComponent} from "svelte";
+  import type {SvelteComponent} from "svelte";
   import Header from "$lib/components/Header.svelte";
   import Footer from "$lib/components/Footer.svelte";
   import Cursor from "$lib/components/Cursor.svelte";
@@ -98,9 +98,13 @@
 <style lang="scss">
   @use '$lib/styles/variables';
 
-  main {
-    padding: calc(#{variables.$main-padding} + #{variables.$header-height}) variables.$main-padding variables.$main-padding;
+  $spacing-between-dots: 20px;
+  :global(body) {
+    background-image: radial-gradient(color-mix(in srgb, var(--text-color) 10%, transparent), 1px, transparent 0);
+    background-size: $spacing-between-dots $spacing-between-dots;
+  }
 
+  main {
     min-height: variables.$min-main-height;
     width: 100%;
 

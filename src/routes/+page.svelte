@@ -59,7 +59,9 @@
   });
 </script>
 
-<section>
+<section
+    id="intro"
+>
   <h1
       bind:this={titleRef}
   >
@@ -68,39 +70,47 @@
   <p
       bind:this={WIPRef}
   >
-    French Software Engineer
+    French Software Engineer based in Paris.
   </p>
-
 </section>
 
 <style lang="scss">
+  @use '$lib/styles/variables';
+
   section {
+    min-height: variables.$min-main-height;
     height: 100%;
     width: 100%;
+
+    padding: variables.$main-elem-padding;
 
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
+    flex: 1;
 
-    h1 {
-      font-family: "Mondwest", monospace;
-      font-size: 9vw;
-      text-shadow: 0 0 5px var(--text-color);
-      font-weight: 900;
-      text-align: left;
-    }
 
-    h1, p {
-      text-shadow: 0 0 5px var(--text-color);
-    }
+    &#intro {
+      h1 {
+        font-family: "Mondwest", monospace;
+        font-size: 9vw;
+        text-shadow: 0 0 5px var(--text-color);
+        font-weight: 900;
+        text-align: left;
+      }
 
-    p {
-      font-family: "Mondwest", sans-serif;
-      font-size: 3vw;
-      text-align: justify;
-      line-height: 1.5;
-      font-kerning: none;
+      h1, p {
+        text-shadow: 0 0 5px var(--text-color);
+      }
+
+      p {
+        font-family: "Mondwest", sans-serif;
+        font-size: 3vw;
+        text-align: justify;
+        line-height: 1.5;
+        font-kerning: none;
+      }
     }
   }
 </style>
