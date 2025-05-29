@@ -101,7 +101,7 @@
 
   $spacing-between-dots: 20px;
   :global(body) {
-    background-image: radial-gradient(color-mix(in srgb, var(--text-color) 10%, transparent), 1px, transparent 0);
+    background-image: radial-gradient(color-mix(in srgb, var(--text-color) 25%, transparent), 1px, transparent 0);
     background-size: $spacing-between-dots $spacing-between-dots;
   }
 
