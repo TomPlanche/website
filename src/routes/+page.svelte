@@ -1,8 +1,7 @@
 <script lang="ts">
   import {gsap} from 'gsap';
-
-  import ScrambleTextPlugin from "$lib/utils/gsap/ScrambleText";
-  import SplitText from "$lib/utils/gsap/SplitText";
+  import {ScrambleTextPlugin} from 'gsap/ScrambleTextPlugin';
+  import {SplitText} from 'gsap/SplitText';
 
   gsap.registerPlugin(ScrambleTextPlugin);
   gsap.registerPlugin(SplitText);
