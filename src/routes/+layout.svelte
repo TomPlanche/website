@@ -1,7 +1,6 @@
 <script lang="ts">
   // Imports
   import "$lib/styles/main.scss";
-  import Analytics from "$lib/components/Analytics.svelte";
   import Cursor from "$lib/components/Cursor.svelte";
   import Footer from "$lib/components/Footer.svelte";
   import Header from "$lib/components/Header.svelte";
@@ -74,8 +73,6 @@
     };
   });
 </script>
-
-<Analytics/>
 
 <div id="noise"></div>
 {#if !$mainStore.isMobileOrTablet}
