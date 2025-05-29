@@ -4,8 +4,6 @@
 
   // Variables
   const e_m_a_i_l = "tom" + "planche" + "@" + "icloud.com";
-
-  // Functions
 </script>
 
 <footer>
@@ -27,11 +25,11 @@
     </span>
     <span class="name">
       Tom Planche
-      <svg class="arrow" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-        <path fill="currentColor" class="arrow-tip"
-              d="M21 11V3h-8v2h4v2h-2v2h-2v2h-2v2H9v2h2v-2h2v-2h2V9h2V7h2v4z"/>
-        <path fill="currentColor"
-              d="M 19 5 z M 11 5 H 3 v 16 h 16 v -8 h -2 v 6 H 5 V 7 h 6 z"/>
+      <svg class="arrow" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <path class="arrow-tip" d="M21 11V3h-8v2h4v2h-2v2h-2v2h-2v2H9v2h2v-2h2v-2h2V9h2V7h2v4z"
+              fill="currentColor"/>
+        <path d="M 19 5 z M 11 5 H 3 v 16 h 16 v -8 h -2 v 6 H 5 V 7 h 6 z"
+              fill="currentColor"/>
       </svg>
     </span>
   </span>

@@ -1,7 +1,6 @@
 <script lang="ts">
-  export let size = 'small';
-  export let color = '#35d151';
-
+  export const size = "small";
+  export const color = "#35d151";
 </script>
 
 <div class="live-indicator {size}" style="--indicator-color: {color}">

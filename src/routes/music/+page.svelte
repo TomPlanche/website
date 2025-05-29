@@ -1,8 +1,8 @@
 <script lang="ts">
+  import { songsStore } from "$lib/stores/songStore";
+  import type { TBackendSong } from "$lib/types/lastfm";
   // Imports
-  import {onMount} from "svelte";
-  import {songsStore} from "$lib/stores/songStore";
-  import type {TBackendSong} from "$lib/types/lastfm";
+  import { onMount } from "svelte";
 
   // Variables
   let songs = $state<TBackendSong[]>([]);

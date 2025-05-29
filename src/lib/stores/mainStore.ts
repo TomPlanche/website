@@ -13,7 +13,7 @@ export type TState = {
 
 export const mainStore = writable<TState>({
   isMobileOrTablet: undefined,
-  clearPage: false
+  clearPage: false,
 });
 
 /**
