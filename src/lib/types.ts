@@ -18,7 +18,6 @@ export type TCursorOptions = {
   [key in keyof TCursor]?: TCursor[key];
 };
 
-
 export type ActionReturn<P> = {
   update?: (newParams: P) => void;
   destroy?: () => void;
@@ -26,7 +25,7 @@ export type ActionReturn<P> = {
 
 export type Action<P = void> = (
   node: HTMLElement,
-  params?: P
+  params?: P,
 ) => ActionReturn<P> | void;
 
 // For components that can accept actions

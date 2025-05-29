@@ -8,7 +8,7 @@ import type {TBackendSong} from "$lib/types/lastfm";
 
 const songStore = () => {
   // Initialize with default theme '1'
-  const {subscribe, set} = writable<TBackendSong[]>([]);
+  const { subscribe, set } = writable<TBackendSong[]>([]);
 
   return {
     subscribe,
@@ -22,7 +22,7 @@ const songStore = () => {
       set(values);
     },
   };
-}
+};
 
 export const songsStore = songStore();
 

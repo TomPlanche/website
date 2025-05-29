@@ -4,15 +4,15 @@
  * @author Tom Planche
  */
 
-import type {PageLoad} from "./$types";
-import {songsStore} from "$lib/stores/songStore";
-import {BackendSongSchema, type TBackendSong} from "$lib/types/lastfm";
+import { songsStore } from "$lib/stores/songStore";
+import { BackendSongSchema, type TBackendSong } from "$lib/types/lastfm";
+import type { PageLoad } from "./$types";
 
-export const load: PageLoad = async ({fetch}) => {
+export const load: PageLoad = async ({ fetch }) => {
   try {
     const songs = await fetch("/music", {
       method: "GET",
-    }).then(async (res) => await res.json() as TBackendSong[]);
+    }).then(async (res) => (await res.json()) as TBackendSong[]);
 
     songsStore.set(songs.map((song) => BackendSongSchema.parse(song)));
   } catch (e) {
@@ -20,8 +20,7 @@ export const load: PageLoad = async ({fetch}) => {
 
     songsStore.set([]);
   }
-}
-
+};
 
 /**
  * End of file src/routes/music/+page.ts

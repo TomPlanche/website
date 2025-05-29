@@ -1,12 +1,12 @@
 <script lang="ts">
-  import {onMount} from "svelte";
-  import {fade} from "svelte/transition";
-  import {gsap} from "gsap";
-  import {cursorEnter, cursorLeave} from '$lib/actions/cursor';
+  import {cursorEnter, cursorLeave} from "$lib/actions/cursor";
+  import LiveIndicator from "$lib/components/LiveIndicator.svelte";
   import Magnetik from "$lib/components/Magnetik.svelte";
   import {toggleTheme} from "$lib/stores/themeStore";
-  import LiveIndicator from '$lib/components/LiveIndicator.svelte';
   import {BackendSongSchema, type TBackendSong} from "$lib/types/lastfm";
+  import {gsap} from "gsap";
+  import {onMount} from "svelte";
+  import {fade} from "svelte/transition";
 
   // Bindings
   let button: HTMLButtonElement = $state();
@@ -22,26 +22,25 @@
 
     const timeline = gsap.timeline();
 
-    timeline
-      .to(button, {
-        rotate: 360,
-        duration: 0.5,
-        ease: "power2.out",
-        onStart: () => {
-          isAnimating = true;
-        },
-        onComplete: () => {
-          timeline.to(button, {
-            rotate: 0,
-            duration: 0,
+    timeline.to(button, {
+      rotate: 360,
+      duration: 0.5,
+      ease: "power2.out",
+      onStart: () => {
+        isAnimating = true;
+      },
+      onComplete: () => {
+        timeline.to(button, {
+          rotate: 0,
+          duration: 0,
 
-            onComplete: () => {
-              isAnimating = false;
-            },
-          });
-        },
-      });
-  }
+          onComplete: () => {
+            isAnimating = false;
+          },
+        });
+      },
+    });
+  };
 
   const handleMouseEnter = () => {
     if (isAnimating) {
@@ -52,7 +51,7 @@
       rotate: 12,
       duration: 0.2,
     });
-  }
+  };
 
   const handleMouseLeave = () => {
     if (isAnimating) {
@@ -63,7 +62,7 @@
       rotate: 0,
       duration: 0.2,
     });
-  }
+  };
 
   const fetchNowPlaying = async () => {
     try {
@@ -74,7 +73,9 @@
       if (parse.success) {
         currentTrack = parse.data;
       } else {
-        throw new Error(`Failed to parse now playing response: ${JSON.stringify(parse.error)}`);
+        throw new Error(
+          `Failed to parse now playing response: ${JSON.stringify(parse.error)}`,
+        );
       }
     } catch (error) {
       console.error("Error fetching now playing:", error);
@@ -128,20 +129,21 @@
   </div>
   <Magnetik>
     <button
+        aria-label="Toggle theme change"
         bind:this={button}
-        use:cursorEnter
-        use:cursorLeave
-
         onclick={handleToggleTheme}
+
         onmouseenter={handleMouseEnter}
         onmouseleave={handleMouseLeave}
+        use:cursorEnter
 
 
-        aria-label="Toggle theme change"
+        use:cursorLeave
     >
-      <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24">
-        <path fill="currentColor"
-              d="M16 2h-2v2h2v2H4v2H2v5h2V8h12v2h-2v2h2v-2h2V8h2V6h-2V4h-2zM6 20h2v2h2v-2H8v-2h12v-2h2v-5h-2v5H8v-2h2v-2H8v2H6v2H4v2h2z"/>
+      <svg height="1em" viewBox="0 0 24 24" width="1em" xmlns="http://www.w3.org/2000/svg">
+        <path
+            d="M16 2h-2v2h2v2H4v2H2v5h2V8h12v2h-2v2h2v-2h2V8h2V6h-2V4h-2zM6 20h2v2h2v-2H8v-2h12v-2h2v-5h-2v5H8v-2h2v-2H8v2H6v2H4v2h2z"
+            fill="currentColor"/>
       </svg>
     </button>
   </Magnetik>

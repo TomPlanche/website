@@ -1,10 +1,10 @@
+import { get } from "svelte/store";
 /**
  * @file src/lib/actions/cursor.ts
  * @description Cursor actions for handling cursor interactions
  */
-import { refStore } from '../stores/refStore';
-import { get } from 'svelte/store';
-import type {Action, ActionReturn, TCursorOptions} from '../types/';
+import { refStore } from "../stores/refStore";
+import type { Action, ActionReturn, TCursorOptions } from "../types/";
 
 const defaultEnterOptions: TCursorOptions = {
   isHover: true,
@@ -23,42 +23,48 @@ const defaultLeaveOptions: TCursorOptions = {
  * @param node {HTMLElement} - The element to attach the action to
  * @param params {TCursorOptions} - Cursor options to apply on enter
  */
-export const cursorEnter: Action<TCursorOptions> = (node: HTMLElement, params: TCursorOptions = defaultEnterOptions): ActionReturn<TCursorOptions> => {
+export const cursorEnter: Action<TCursorOptions> = (
+  node: HTMLElement,
+  params: TCursorOptions = defaultEnterOptions,
+): ActionReturn<TCursorOptions> => {
   const handleEnter = () => {
     const cursor = get(refStore).cursor;
     if (cursor) {
-      cursor.setCursorParams({...params, isHover: true});
+      cursor.setCursorParams({ ...params, isHover: true });
     }
   };
 
-  node.addEventListener('mouseenter', handleEnter);
+  node.addEventListener("mouseenter", handleEnter);
 
   return {
     destroy() {
-      node.removeEventListener('mouseenter', handleEnter);
-    }
+      node.removeEventListener("mouseenter", handleEnter);
+    },
   };
-}
+};
 
 /**
  * Action for handling cursor leave events
  * @param node {HTMLElement} - The element to attach the action to
  * @param params {TCursorOptions} - Cursor options to apply on leave
  */
-export const cursorLeave: Action<TCursorOptions> = (node: HTMLElement, params: TCursorOptions = defaultLeaveOptions): ActionReturn<TCursorOptions> => {
+export const cursorLeave: Action<TCursorOptions> = (
+  node: HTMLElement,
+  params: TCursorOptions = defaultLeaveOptions,
+): ActionReturn<TCursorOptions> => {
   const handleLeave = () => {
     const cursor = get(refStore).cursor;
     if (cursor) {
       // @ts-ignore - we know setCursorParams exists on the cursor component
-      cursor.setCursorParams({...params, isHover: false});
+      cursor.setCursorParams({ ...params, isHover: false });
     }
   };
 
-  node.addEventListener('mouseleave', handleLeave);
+  node.addEventListener("mouseleave", handleLeave);
 
   return {
     destroy() {
-      node.removeEventListener('mouseleave', handleLeave);
-    }
+      node.removeEventListener("mouseleave", handleLeave);
+    },
   };
-} 
+};

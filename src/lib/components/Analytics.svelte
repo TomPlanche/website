@@ -1,27 +1,27 @@
 <script lang="ts">
-  import {onMount} from 'svelte';
   import {PUBLIC_PROD} from "$env/static/public";
+  import {onMount} from "svelte";
 
   // Replace with your Stats server URL
   const STATS_URL = "http://127.0.0.1:5775";
-  const isProd = PUBLIC_PROD === 'true';
+  const isProd = PUBLIC_PROD === "true";
 
   onMount(async () => {
     const head = document.head || document.getElementsByTagName("head")[0];
-    let ip = '';
+    let ip = "";
 
     if (isProd) {
       try {
-        const response = await fetch('/ip');
+        const response = await fetch("/ip");
         const data = await response.json();
 
         if (!data.ip) {
-          throw new Error('No IP found');
+          throw new Error("No IP found");
         }
 
         ip = data.ip;
       } catch (error) {
-        console.error('Erreur lors de la récupération de l\'IP:', error);
+        console.error("Erreur lors de la récupération de l'IP:", error);
       }
     } else {
       ip = "2001:818:da57:6100:d152:17c3:e8f5:fe75";
@@ -33,7 +33,7 @@
     script.setAttribute("type", "text/javascript");
     script.setAttribute("charset", "utf8");
     script.setAttribute("async", "");
-    
+
     head.appendChild(script);
   });
 </script>

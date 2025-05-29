@@ -3,8 +3,7 @@
  * @description lastfm
  * @author Tom Planche
  */
-import {z} from "zod";
-
+import { z } from "zod";
 
 const BaseObjectSchemaNoMbid = z.object({
   url: z.string(),
@@ -107,10 +106,12 @@ export const BackendSongSchema = z.object({
   image_url: z.string(),
   currently_playing: z.boolean(),
   // date: 1740691900
-  date: z.union([
-    z.coerce.date(),
-    z.coerce.number().transform((v) => new Date(v * 1000)),
-  ]).optional(),
+  date: z
+    .union([
+      z.coerce.date(),
+      z.coerce.number().transform((v) => new Date(v * 1000)),
+    ])
+    .optional(),
   url: z.string(),
 });
 

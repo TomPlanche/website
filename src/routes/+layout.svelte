@@ -1,18 +1,17 @@
 <script lang="ts">
   // Imports
   import "$lib/styles/main.scss";
-  import type {SvelteComponent} from "svelte";
-  import Header from "$lib/components/Header.svelte";
-  import Footer from "$lib/components/Footer.svelte";
-  import Cursor from "$lib/components/Cursor.svelte";
-  import {refStore} from "$lib/stores/refStore";
-  import {mainStore} from "$lib/stores/mainStore";
   import Analytics from "$lib/components/Analytics.svelte";
-
+  import Cursor from "$lib/components/Cursor.svelte";
+  import Footer from "$lib/components/Footer.svelte";
+  import Header from "$lib/components/Header.svelte";
+  import {mainStore} from "$lib/stores/mainStore";
+  import {refStore} from "$lib/stores/refStore";
+  import type {SvelteComponent} from "svelte";
 
   // Variables
   // Props
-  let {children} = $props();
+  const {children} = $props();
 
   // Bindings
   let cursor: SvelteComponent | null = $state(null);
@@ -32,10 +31,10 @@
    */
   const getNextTitle = (currentTitle: string): string => {
     if (!currentTitle) {
-      throw new Error('Title cannot be empty');
+      throw new Error("Title cannot be empty");
     }
     return currentTitle.slice(1) + currentTitle[0];
-  }
+  };
 
   /**
    * Initializes the scrolling title animation
@@ -49,7 +48,7 @@
       currentTitle = getNextTitle(currentTitle);
       document.title = currentTitle;
     }, DELAY_MS);
-  }
+  };
 
   // Watchers
   $effect(() => {
@@ -60,10 +59,12 @@
 
   // Initialize
   $effect(() => {
-    if (typeof window === 'undefined') return;
+    if (typeof window === "undefined") return;
 
     // Check if device is touch-primary
-    $mainStore.isMobileOrTablet = window.matchMedia('(hover: none) and (pointer: coarse)').matches;
+    $mainStore.isMobileOrTablet = window.matchMedia(
+      "(hover: none) and (pointer: coarse)",
+    ).matches;
 
     // Start the animation when the page loads
     initTitleScroll();

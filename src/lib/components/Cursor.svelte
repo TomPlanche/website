@@ -1,20 +1,21 @@
 <script lang="ts">
+  import type {Snippet} from "svelte";
   // Imports
-  import {Spring} from 'svelte/motion';
-  import type {TCursorOptions} from '../types/types';
-  import type {Snippet} from 'svelte';
+  import {Spring} from "svelte/motion";
+  import type {TCursorOptions} from "../types/types";
 
   // Props
   type TCursorProps = {
     children?: Snippet<[]>;
   };
 
-  const {
-    children
-  }: TCursorProps = $props();
+  const {children}: TCursorProps = $props();
 
   // Variables
-  const cursor_base = {size: 15, background: 'color-mix(in srgb, var(--text-color) 50%, transparent)'};
+  const cursor_base = {
+    size: 15,
+    background: "color-mix(in srgb, var(--text-color) 50%, transparent)",
+  };
   let scroll = $state<{
     x: number;
     y: number;
@@ -25,9 +26,9 @@
   const coords = new Spring(
     {
       x: 0,
-      y: 0
+      y: 0,
     },
-    {stiffness: 0.3, damping: 0.8}
+    {stiffness: 0.3, damping: 0.8},
   );
   const size = new Spring(cursor_base.size);
   const blur = new Spring(0);
@@ -64,7 +65,9 @@
 
     blur.target = params.blur ?? 0;
     background = params.backgroundColor ?? cursor_base.background;
-    size.target = params.scale ? cursor_base.size * params.scale : cursor_base.size;
+    size.target = params.scale
+      ? cursor_base.size * params.scale
+      : cursor_base.size;
   };
 
   // If hasMoved is false, then the cursor is not visible
