@@ -10,7 +10,7 @@ import type { PageLoad } from "./$types";
 
 export const load: PageLoad = async ({ fetch }) => {
   try {
-    const songs = await fetch("/music", {
+    const songs = await fetch("/api/music", {
       method: "GET",
     }).then(async (res) => (await res.json()) as TBackendSong[]);
 

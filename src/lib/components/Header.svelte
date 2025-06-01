@@ -66,7 +66,7 @@
 
   const fetchNowPlaying = async () => {
     try {
-      const response = await fetch("/music/now-playing");
+      const response = await fetch("/api/music/now-playing");
 
       const parse = BackendSongSchema.safeParse(await response.json());
 
