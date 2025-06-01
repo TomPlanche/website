@@ -1,6 +1,6 @@
-import { getRecentTracks } from "$lib/utils/lastfm";
+import { getCurrentTrack } from "$lib/utils/lastfm";
 /**
- * @file src/routes/music/+server.ts
+ * @file src/routes/api/music/now-playing/+server.ts
  * @description +server
  * @author Tom Planche
  */
@@ -8,14 +8,14 @@ import { type RequestHandler, error, json } from "@sveltejs/kit";
 
 export const GET: RequestHandler = async () => {
   try {
-    const songs = await getRecentTracks();
+    const song = await getCurrentTrack();
 
-    return json(songs);
+    return json(song);
   } catch (e: unknown) {
     return error(500, <App.Error>e);
   }
 };
 
 /**
- * End of file src/routes/music/+server.ts
+ * End of file src/routes/api/music/now-playing/+server.ts
  */

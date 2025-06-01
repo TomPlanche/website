@@ -1,5 +1,5 @@
 /**
- * @file src/routes/ip/+server.ts
+ * @file src/routes/api/ip/+server.ts
  * @description +server
  * @author Tom Planche
  */
@@ -18,5 +18,5 @@ export const GET: RequestHandler = ({ request }) => {
 };
 
 /**
- * End of file src/routes/ip/+server.ts
+ * End of file src/routes/api/ip/+server.ts
  */
