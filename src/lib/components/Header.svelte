@@ -1,98 +1,98 @@
 <script lang="ts">
-  import {cursorEnter, cursorLeave} from "$lib/actions/cursor";
-  import LiveIndicator from "$lib/components/LiveIndicator.svelte";
-  import Magnetik from "$lib/components/Magnetik.svelte";
-  import {toggleTheme} from "$lib/stores/themeStore";
-  import {BackendSongSchema, type TBackendSong} from "$lib/types/lastfm";
-  import {gsap} from "gsap";
-  import {onMount} from "svelte";
-  import {fade} from "svelte/transition";
+import { cursorEnter, cursorLeave } from "$lib/actions/cursor";
+import LiveIndicator from "$lib/components/LiveIndicator.svelte";
+import Magnetik from "$lib/components/Magnetik.svelte";
+import { toggleTheme } from "$lib/stores/themeStore";
+import { BackendSongSchema, type TBackendSong } from "$lib/types/lastfm";
+import { gsap } from "gsap";
+import { onMount } from "svelte";
+import { fade } from "svelte/transition";
 
-  // Bindings
-  let button: HTMLButtonElement = $state();
-  let isAnimating = false;
+// Bindings
+let button: HTMLButtonElement = $state();
+let isAnimating = false;
 
-  // Statee
-  let currentTrack: TBackendSong | null = $state(null);
-  const isLive = $derived(() => currentTrack?.currently_playing);
+// Statee
+let currentTrack: TBackendSong | null = $state(null);
+const isLive = $derived(() => currentTrack?.currently_playing);
 
-  // Functions
-  const handleToggleTheme = () => {
-    toggleTheme();
+// Functions
+const handleToggleTheme = () => {
+  toggleTheme();
 
-    const timeline = gsap.timeline();
+  const timeline = gsap.timeline();
 
-    timeline.to(button, {
-      rotate: 360,
-      duration: 0.5,
-      ease: "power2.out",
-      onStart: () => {
-        isAnimating = true;
-      },
-      onComplete: () => {
-        timeline.to(button, {
-          rotate: 0,
-          duration: 0,
+  timeline.to(button, {
+    rotate: 360,
+    duration: 0.5,
+    ease: "power2.out",
+    onStart: () => {
+      isAnimating = true;
+    },
+    onComplete: () => {
+      timeline.to(button, {
+        rotate: 0,
+        duration: 0,
 
-          onComplete: () => {
-            isAnimating = false;
-          },
-        });
-      },
-    });
-  };
-
-  const handleMouseEnter = () => {
-    if (isAnimating) {
-      return;
-    }
-
-    gsap.to(button, {
-      rotate: 12,
-      duration: 0.2,
-    });
-  };
-
-  const handleMouseLeave = () => {
-    if (isAnimating) {
-      return;
-    }
-
-    gsap.to(button, {
-      rotate: 0,
-      duration: 0.2,
-    });
-  };
-
-  const fetchNowPlaying = async () => {
-    try {
-      const response = await fetch("/api/music/now-playing");
-
-      const parse = BackendSongSchema.safeParse(await response.json());
-
-      if (parse.success) {
-        currentTrack = parse.data;
-      } else {
-        throw new Error(
-          `Failed to parse now playing response: ${JSON.stringify(parse.error)}`,
-        );
-      }
-    } catch (error) {
-      console.error("Error fetching now playing:", error);
-    }
-  };
-
-  // Lifecycle
-  onMount(() => {
-    (async () => {
-      await fetchNowPlaying();
-    })();
-
-    // Refresh every 10 seconds
-    const interval = setInterval(fetchNowPlaying, 10000);
-
-    return () => clearInterval(interval);
+        onComplete: () => {
+          isAnimating = false;
+        },
+      });
+    },
   });
+};
+
+const handleMouseEnter = () => {
+  if (isAnimating) {
+    return;
+  }
+
+  gsap.to(button, {
+    rotate: 12,
+    duration: 0.2,
+  });
+};
+
+const handleMouseLeave = () => {
+  if (isAnimating) {
+    return;
+  }
+
+  gsap.to(button, {
+    rotate: 0,
+    duration: 0.2,
+  });
+};
+
+const fetchNowPlaying = async () => {
+  try {
+    const response = await fetch("/api/music/now-playing");
+
+    const parse = BackendSongSchema.safeParse(await response.json());
+
+    if (parse.success) {
+      currentTrack = parse.data;
+    } else {
+      throw new Error(
+        `Failed to parse now playing response: ${JSON.stringify(parse.error)}`,
+      );
+    }
+  } catch (error) {
+    console.error("Error fetching now playing:", error);
+  }
+};
+
+// Lifecycle
+onMount(() => {
+  (async () => {
+    await fetchNowPlaying();
+  })();
+
+  // Refresh every 10 seconds
+  const interval = setInterval(fetchNowPlaying, 10000);
+
+  return () => clearInterval(interval);
+});
 </script>
 
 <nav>

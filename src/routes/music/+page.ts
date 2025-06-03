@@ -4,9 +4,9 @@
  * @author Tom Planche
  */
 
-import {songsStore} from "$lib/stores/songStore";
-import {BackendSongSchema, type TBackendSong} from "$lib/types/lastfm";
-import type {PageLoad} from "./$types";
+import { songsStore } from "$lib/stores/songStore";
+import { BackendSongSchema, type TBackendSong } from "$lib/types/lastfm";
+import type { PageLoad } from "./$types";
 
 export const load: PageLoad = async ({ fetch }) => {
   try {

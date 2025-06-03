@@ -1,0 +1,3 @@
+pre-commit:
+  commands:
+    - npx biome check --fix --no-errors-on-unmatched --staged src/
