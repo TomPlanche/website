@@ -2,6 +2,7 @@
 import { gsap } from "gsap";
 import { ScrambleTextPlugin } from "gsap/ScrambleTextPlugin";
 import { SplitText } from "gsap/SplitText";
+import { onMount } from "svelte";
 
 gsap.registerPlugin(ScrambleTextPlugin);
 gsap.registerPlugin(SplitText);
@@ -13,43 +14,48 @@ let WIPRef: HTMLParagraphElement;
 const title = "Tom Planche";
 
 // Initialize animations
-$effect(() => {
-  if (typeof window === "undefined") return;
+onMount(() => {
+  if (!titleRef || !WIPRef) {
+    console.error("Title or WIP reference is not set");
+    return;
+  }
 
-  const splittedTitle = new SplitText(WIPRef, { type: "chars" });
+  document.fonts.ready.then(() => {
+    const splittedTitle = new SplitText(WIPRef, { type: "chars" });
 
-  const tl = gsap.timeline({
-    defaults: {
-      duration: 1,
-      ease: "power2.out",
-    },
-  });
-
-  tl.set(splittedTitle.chars, { opacity: 0 })
-    .to(titleRef, {
-      scrambleText: {
-        text: title,
-        chars: title.replace(/a/g, "4").replace(/e/g, "3").replace(/o/g, "O"),
-        revealDelay: 0.625,
+    const tl = gsap.timeline({
+      defaults: {
+        duration: 1,
+        ease: "power2.out",
       },
-      duration: 1,
-    })
-    .fromTo(
-      splittedTitle.chars,
-      {
-        opacity: 0,
-        translateY: "1rem",
-      },
-      {
-        opacity: 1,
-        translateY: 0,
-        stagger: 0.01,
-        duration: 0.25,
-        onComplete: () => {
-          splittedTitle.revert();
+    });
+
+    tl.set(splittedTitle.chars, { opacity: 0 })
+      .to(titleRef, {
+        scrambleText: {
+          text: title,
+          chars: title.replace(/a/g, "4").replace(/e/g, "3").replace(/o/g, "O"),
+          revealDelay: 0.625,
         },
-      },
-    );
+        duration: 1,
+      })
+      .fromTo(
+        splittedTitle.chars,
+        {
+          opacity: 0,
+          translateY: "1rem",
+        },
+        {
+          opacity: 1,
+          translateY: 0,
+          stagger: 0.01,
+          duration: 0.25,
+          onComplete: () => {
+            splittedTitle.revert();
+          },
+        },
+      );
+  });
 });
 </script>
 

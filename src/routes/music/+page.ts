@@ -1,16 +1,10 @@
-/**
- * @file src/routes/music/+page.ts
- * @description +page
- * @author Tom Planche
- */
-
 import { songsStore } from "$lib/stores/songStore";
 import { BackendSongSchema, type TBackendSong } from "$lib/types/lastfm";
 import type { PageLoad } from "./$types";
 
 export const load: PageLoad = async ({ fetch }) => {
   try {
-    const songs = await fetch("/api/music", {
+    const songs = await fetch("/api-front/music", {
       method: "GET",
     }).then(async (res) => (await res.json()) as TBackendSong[]);
 
@@ -23,7 +17,3 @@ export const load: PageLoad = async ({ fetch }) => {
     songsStore.set([]);
   }
 };
-
-/**
- * End of file src/routes/music/+page.ts
- */

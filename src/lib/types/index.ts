@@ -1,9 +1,3 @@
-/**
- * @file src/lib/types.ts
- * @description types
- * @author Tom Planche
- */
-
 import { type TGetRecentTracks, getRecentTracksSchema } from "./lastfm";
 
 export type TCursor = {
@@ -31,7 +25,3 @@ export type Action<P = void> = (
 ) => ActionReturn<P> | undefined;
 
 export { type TGetRecentTracks, getRecentTracksSchema };
-
-/**
- * End of file src/lib/types.ts
- */
