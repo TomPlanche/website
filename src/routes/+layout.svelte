@@ -1,14 +1,14 @@
 <script lang="ts">
-  // Imports
-  import "$lib/styles/main.scss";
-  import Cursor from "$lib/components/Cursor.svelte";
-  import Footer from "$lib/components/Footer.svelte";
-  import Header from "$lib/components/Header.svelte";
-  import {mainStore} from "$lib/stores/mainStore";
-  import {refStore} from "$lib/stores/refStore";
-  import type {SvelteComponent} from "svelte";
+// Imports
+import "$lib/styles/main.scss";
+import Cursor from "$lib/components/Cursor.svelte";
+import Footer from "$lib/components/Footer.svelte";
+import Header from "$lib/components/Header.svelte";
+import { mainStore } from "$lib/stores/mainStore";
+import { refStore } from "$lib/stores/refStore";
+import type { SvelteComponent } from "svelte";
 
-  /**
+/**
  * Variables
  */
 // Props

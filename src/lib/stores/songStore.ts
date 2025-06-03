@@ -1,10 +1,10 @@
+import type { TBackendSong } from "$lib/types/lastfm";
 /**
  * @file src/lib/stores/songStore.ts
  * @description songStore
  * @author Tom Planche
  */
-import {writable} from "svelte/store";
-import type {TBackendSong} from "$lib/types/lastfm";
+import { writable } from "svelte/store";
 
 const songStore = () => {
   // Initialize with default theme '1'

@@ -1,56 +1,56 @@
 <script lang="ts">
-  import {gsap} from "gsap";
-  import {ScrambleTextPlugin} from "gsap/ScrambleTextPlugin";
-  import {SplitText} from "gsap/SplitText";
+import { gsap } from "gsap";
+import { ScrambleTextPlugin } from "gsap/ScrambleTextPlugin";
+import { SplitText } from "gsap/SplitText";
 
-  gsap.registerPlugin(ScrambleTextPlugin);
-  gsap.registerPlugin(SplitText);
+gsap.registerPlugin(ScrambleTextPlugin);
+gsap.registerPlugin(SplitText);
 
-  // Bindings
-  let titleRef: HTMLHeadingElement;
-  let WIPRef: HTMLParagraphElement;
+// Bindings
+let titleRef: HTMLHeadingElement;
+let WIPRef: HTMLParagraphElement;
 
-  const title = "Tom Planche";
+const title = "Tom Planche";
 
-  // Initialize animations
-  $effect(() => {
-    if (typeof window === "undefined") return;
+// Initialize animations
+$effect(() => {
+  if (typeof window === "undefined") return;
 
-    const splittedTitle = new SplitText(WIPRef, { type: "chars" });
+  const splittedTitle = new SplitText(WIPRef, { type: "chars" });
 
-    const tl = gsap.timeline({
-      defaults: {
-        duration: 1,
-        ease: "power2.out",
-      },
-    });
-
-    tl.set(splittedTitle.chars, { opacity: 0 })
-      .to(titleRef, {
-        scrambleText: {
-          text: title,
-          chars: title.replace(/a/g, "4").replace(/e/g, "3").replace(/o/g, "O"),
-          revealDelay: 0.625,
-        },
-        duration: 1,
-      })
-      .fromTo(
-        splittedTitle.chars,
-        {
-          opacity: 0,
-          translateY: "1rem",
-        },
-        {
-          opacity: 1,
-          translateY: 0,
-          stagger: 0.01,
-          duration: 0.25,
-          onComplete: () => {
-            splittedTitle.revert();
-          },
-        },
-      );
+  const tl = gsap.timeline({
+    defaults: {
+      duration: 1,
+      ease: "power2.out",
+    },
   });
+
+  tl.set(splittedTitle.chars, { opacity: 0 })
+    .to(titleRef, {
+      scrambleText: {
+        text: title,
+        chars: title.replace(/a/g, "4").replace(/e/g, "3").replace(/o/g, "O"),
+        revealDelay: 0.625,
+      },
+      duration: 1,
+    })
+    .fromTo(
+      splittedTitle.chars,
+      {
+        opacity: 0,
+        translateY: "1rem",
+      },
+      {
+        opacity: 1,
+        translateY: 0,
+        stagger: 0.01,
+        duration: 0.25,
+        onComplete: () => {
+          splittedTitle.revert();
+        },
+      },
+    );
+});
 </script>
 
 <section

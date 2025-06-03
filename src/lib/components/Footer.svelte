@@ -1,9 +1,9 @@
 <script lang="ts">
-  // Imports
-  import {cursorEnter, cursorLeave} from "$lib/actions/cursor";
+// Imports
+import { cursorEnter, cursorLeave } from "$lib/actions/cursor";
 
-  // Variables
-  const e_m_a_i_l = "tom" + "planche" + "@" + "icloud.com";
+// Variables
+const e_m_a_i_l = "tom" + "planche" + "@" + "icloud.com";
 </script>
 
 <footer>
