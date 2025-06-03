@@ -1,16 +1,17 @@
-import { sveltekit } from '@sveltejs/kit/vite';
-import { defineConfig } from 'vite';
+import {sveltekit} from '@sveltejs/kit/vite';
+import {defineConfig} from 'vite';
+import {enhancedImages} from "@sveltejs/enhanced-img";
 
 export default defineConfig({
-	plugins: [sveltekit()],
-	css: {
-		preprocessorOptions: {
-			scss: {
-				api: 'modern-compiler' // or "modern"
-			}
-		}
-	},
-	server: {
-		host: '0.0.0.0'
-	}
+  plugins: [enhancedImages(), sveltekit()],
+  css: {
+    preprocessorOptions: {
+      scss: {
+        api: "modern-compiler", // or "modern"
+      },
+    },
+  },
+  server: {
+    host: "0.0.0.0",
+  },
 });
