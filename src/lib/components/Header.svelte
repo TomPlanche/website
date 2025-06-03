@@ -8,8 +8,7 @@ import { gsap } from "gsap";
 import { onMount } from "svelte";
 import { fade } from "svelte/transition";
 
-// Bindings
-let button: HTMLButtonElement = $state();
+let button = $state<HTMLButtonElement>();
 let isAnimating = false;
 
 // Statee
@@ -18,6 +17,10 @@ const isLive = $derived(() => currentTrack?.currently_playing);
 
 // Functions
 const handleToggleTheme = () => {
+  if (!button || button === undefined) {
+    return;
+  }
+
   toggleTheme();
 
   const timeline = gsap.timeline();
@@ -43,7 +46,7 @@ const handleToggleTheme = () => {
 };
 
 const handleMouseEnter = () => {
-  if (isAnimating) {
+  if (isAnimating || !button) {
     return;
   }
 
@@ -54,7 +57,7 @@ const handleMouseEnter = () => {
 };
 
 const handleMouseLeave = () => {
-  if (isAnimating) {
+  if (isAnimating || !button) {
     return;
   }
 
@@ -66,7 +69,7 @@ const handleMouseLeave = () => {
 
 const fetchNowPlaying = async () => {
   try {
-    const response = await fetch("/api/music/now-playing");
+    const response = await fetch("/api-front/music/now-playing");
 
     const parse = BackendSongSchema.safeParse(await response.json());
 

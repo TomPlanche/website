@@ -1,11 +1,6 @@
 import { PUBLIC_API_ENDPOINT } from "$env/static/public";
 import { BackendSongSchema, type TBackendSong } from "$lib/types/lastfm";
 import { error } from "@sveltejs/kit";
-/**
- * @file src/lib/utils/lastfm.ts
- * @description lastfm
- * @author Tom Planche
- */
 import axios, { type AxiosResponse } from "axios";
 
 export const getRecentTracks = async (): Promise<TBackendSong[]> => {
@@ -31,7 +26,3 @@ export const getCurrentTrack = async (): Promise<TBackendSong> => {
 
   return BackendSongSchema.parse(response.data[0]);
 };
-
-/**
- * End of file src/lib/utils/lastfm.ts
- */

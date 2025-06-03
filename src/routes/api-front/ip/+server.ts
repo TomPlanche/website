@@ -1,8 +1,3 @@
-/**
- * @file src/routes/api/ip/+server.ts
- * @description +server
- * @author Tom Planche
- */
 import type { RequestHandler } from "@sveltejs/kit";
 
 export const GET: RequestHandler = ({ request }) => {
@@ -16,7 +11,3 @@ export const GET: RequestHandler = ({ request }) => {
     },
   });
 };
-
-/**
- * End of file src/routes/api/ip/+server.ts
- */

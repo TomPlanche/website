@@ -1,8 +1,3 @@
-/**
- * @file src/lib/types/lastfm.ts
- * @description lastfm
- * @author Tom Planche
- */
 import { z } from "zod";
 
 const BaseObjectSchemaNoMbid = z.object({
@@ -116,6 +111,3 @@ export const BackendSongSchema = z.object({
 });
 
 export type TBackendSong = z.infer<typeof BackendSongSchema>;
-/**
- * End of file src/lib/types/lastfm.ts
- */
