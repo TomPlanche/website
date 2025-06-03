@@ -1,72 +1,126 @@
 <script lang="ts">
-  import { songsStore } from "$lib/stores/songStore";
-  import type { TBackendSong } from "$lib/types/lastfm";
-  // Imports
-  import { onMount } from "svelte";
+  import {songsStore} from "$lib/stores/songStore";
+  import type {TBackendSong} from "$lib/types/lastfm";
+  import {onMount} from "svelte";
 
-  // Variables
-  let songs = $state<TBackendSong[]>([]);
+  /**
+ * Variables
+ */
+let fetchingSongs = $state(true);
+let songs = $state<TBackendSong[]>([]);
+let grid: HTMLDivElement | null = $state(null);
+let imageLoadStates = $state<Map<string, { loaded: boolean; error: boolean }>>(
+  new Map(),
+);
 
-  // Functions
-  const formatPlayCount = (count: number): string => {
-    if (count >= 1000000) {
-      return `${(count / 1000000).toFixed(1)}M`;
-    }
-
-    if (count >= 1000) {
-      return `${(count / 1000).toFixed(1)}K`;
-    }
-    return count.toString();
+/**
+ * Functions
+ */
+const handleImageLoad = (songId: string) => {
+  const currentState = imageLoadStates.get(songId) || {
+    loaded: false,
+    error: false,
   };
+  imageLoadStates.set(songId, { ...currentState, loaded: true });
+  // Trigger reactivity
+  imageLoadStates = new Map(imageLoadStates);
+};
 
-  // Lifecycle
-  onMount(() => {
-    // sort by date (.date.uts) but date can be undefined
-    songs = $songsStore.sort((a: TBackendSong, b: TBackendSong) => {
-      if (a.date && b.date) {
-        return a.date.getDate() - b.date.getDate();
-      }
+const handleImageError = (songId: string) => {
+  const currentState = imageLoadStates.get(songId) || {
+    loaded: false,
+    error: false,
+  };
+  imageLoadStates.set(songId, { ...currentState, error: true });
+  // Trigger reactivity
+  imageLoadStates = new Map(imageLoadStates);
+};
 
-      return 0;
-    });
+const getImageState = (songId: string) => {
+  return imageLoadStates.get(songId) || { loaded: false, error: false };
+};
+
+/**
+ * Lifecycle
+ */
+onMount(() => {
+  // Filter out songs without a proper image URL
+  songs = $songsStore.filter((song: TBackendSong) => {
+    return (
+      song.image_url &&
+      song.image_url.length > 0 &&
+      !song.image_url?.includes("2a96cbd8b46e442fc41c2b86b821562f")
+    );
   });
+
+  // Initialize loading states for all songs
+  for (const song of songs) {
+    const songId = `${song.artist}-${song.name}`;
+    imageLoadStates.set(songId, { loaded: false, error: false });
+  }
+  imageLoadStates = new Map(imageLoadStates);
+
+  setTimeout(() => {
+    if (!grid) {
+      console.warn("Grid element is not defined.");
+      return;
+    }
+
+    const gridStyles = window.getComputedStyle(grid);
+    const columnsRaw = gridStyles.getPropertyValue("grid-template-columns");
+
+    const numColumns = columnsRaw.split(" ").filter(Boolean).length;
+
+    // slice the songs array to match the number of columns for modulo
+    songs = songs.slice(0, songs.length - (songs.length % numColumns));
+
+    fetchingSongs = false;
+  }, 0);
+});
 </script>
 
 <section class="music-section">
-  <h1>Recently Played (last 100 songs)</h1>
+  <h1>Recently Played (last {songs.length} songs)</h1>
 
-  <div class="song-container">
-    {#each songs as song}
-      <article
-          class="song-card"
-      >
-        <div class="left">
+  <div bind:this={grid} class="song-container">
+    {#if (fetchingSongs)}
+      <div class="song-container__item">Loading...</div>
+    {:else if songs.length === 0}
+      <div class="song-container__item">No songs found</div>
+    {:else}
+      {#each songs as song}
+        {@const songId = `${song.artist}-${song.name}`}
+        {@const imageState = getImageState(songId)}
+        <div class="song-container__item">
+          <!-- Loading placeholder -->
+          {#if !imageState.loaded && !imageState.error}
+            <div class="image-placeholder">
+              <div class="skeleton-loader"></div>
+            </div>
+          {/if}
+
+          <!-- Error placeholder -->
+          {#if imageState.error}
+            <div class="image-error">
+              <span>♪</span>
+            </div>
+          {/if}
+
+          <!-- Actual image -->
           <img
+              alt=""
               src={song.image_url}
-              alt={song.album}
-              title={song.album}
+              title={`${song.name} by ${song.artist}`}
+              class:loaded={imageState.loaded}
+              class:error={imageState.error}
+              onload={() => handleImageLoad(songId)}
+              onerror={() => handleImageError(songId)}
           />
-          <div class="infos">
-            <h2
-                class="song-name"
-                title={song.name}
-            >
-              {song.name}
-            </h2>
-            <p
-                class="artist-name"
-                title={song.artist}
-            >
-              {song.artist}
-            </p>
-          </div>
         </div>
-        <span class="play-count">{formatPlayCount(song.play_count)}&nbsp;play{song.play_count > 1 ? 's' : ''}</span>
-      </article>
-    {/each}
+      {/each}
+    {/if}
   </div>
 </section>
-
 
 <style lang="scss">
   @use '$lib/styles/variables';
@@ -81,7 +135,8 @@
     align-items: center;
 
     width: 100%;
-    padding-bottom: calc(variables.$footer-height + $top-padding);
+    margin: variables.$main-elem-padding;
+    padding: variables.$main-padding;
 
     h1 {
       align-self: flex-start;
@@ -89,81 +144,115 @@
     }
 
     .song-container {
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      gap: $top-padding;
+      $page-padding: 5vw;
+      $c-gap: 1vmin;
+      $r-gap: $c-gap;
+      $column-size: 80px;
+      --column-count: 3;
 
-      width: 90%;
-      max-width: 900px;
+      width: 100%;
 
-      .song-card {
-        height: $line-height;
+      display: grid;
+      grid-template-columns: repeat(var(--column-count), minmax($column-size, 1fr));
+      grid-column-gap: $c-gap;
+      grid-row-gap: $r-gap;
+
+      @media screen and (min-width: 768px) {
+        --column-count: 7;
+      }
+
+      .song-container__item {
+        height: 100%;
         width: 100%;
 
-        display: flex;
-        flex-direction: row;
-        justify-content: space-between;
-        align-items: center;
+        margin: 0;
+        overflow: hidden;
 
-        padding: .5rem;
-        border: 1px solid var(--text-color);
-        border-radius: 6px;
+        position: relative;
+        aspect-ratio: 1 / 1;
 
-        transition: background-color 0.3s, padding-left 0.3s;
+        &:hover {
+          img.loaded {
+            transform: scale(1.75);
+          }
+        }
 
-        .left {
-          height: 100%;
+        // Loading placeholder
+        .image-placeholder {
+          position: absolute;
+          top: 0;
+          left: 0;
           width: 100%;
-          
+          height: 100%;
           display: flex;
-          flex-direction: row;
-          justify-content: flex-start;
           align-items: center;
+          justify-content: center;
+          background-color: rgba(128, 128, 128, 0.1);
+          border-radius: 4px;
 
-
-          img {
+          .skeleton-loader {
+            width: 100%;
             height: 100%;
-            width: auto;
-            border-radius: 2px;
-            margin-right: 1rem;
+            background: linear-gradient(
+                            90deg,
+                            rgba(128, 128, 128, 0.1) 25%,
+                            rgba(128, 128, 128, 0.2) 50%,
+                            rgba(128, 128, 128, 0.1) 75%
+            );
+            background-size: 200% 100%;
+            animation: skeleton-loading 2s infinite;
+          }
+        }
+
+        // Error placeholder
+        .image-error {
+          position: absolute;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          background-color: rgba(128, 128, 128, 0.1);
+          border-radius: 4px;
+          color: rgba(128, 128, 128, 0.6);
+          font-size: 1.5rem;
+        }
+
+        img {
+          position: absolute;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+          aspect-ratio: 1 / 1;
+          object-fit: cover;
+
+          // Hide by default
+          opacity: 0;
+          transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out;
+
+          // Show when loaded
+          &.loaded {
+            opacity: 1;
           }
 
-          .infos {
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: flex-start;
-
-            .song-name, .artist-name {
-              // limit to 2 lines
-              display: -webkit-box;
-              -webkit-line-clamp: 2;
-              -webkit-box-orient: vertical;
-              overflow: hidden;
-              font-family: "Supply Mono", monospace;
-              margin-right: 1rem;
-            }
-
-            .song-name {
-              font-size: 1.125rem;
-              text-align: left;
-            }
-
-            .artist-name {
-              font-size: 1rem;
-            }
+          // Hide when error
+          &.error {
+            display: none;
           }
         }
       }
+    }
+  }
 
-      .play-count {
-        font-size: .85rem;
-        font-family: "Supply Mono", monospace;
-        margin-right: 1rem;
-      }
-
+  @keyframes skeleton-loading {
+    0% {
+      background-position: -200% 0;
+    }
+    100% {
+      background-position: 200% 0;
     }
   }
 </style>
