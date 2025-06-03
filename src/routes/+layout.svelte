@@ -8,70 +8,69 @@
   import {refStore} from "$lib/stores/refStore";
   import type {SvelteComponent} from "svelte";
 
-  // Variables
-  // Props
-  const {children} = $props();
-
-  // Bindings
-  let cursor: SvelteComponent | null = $state(null);
-
   /**
-   * Delay between each title update in milliseconds
-   */
-  const DELAY_MS: number = 200;
+ * Variables
+ */
+// Props
+const { children } = $props();
 
-  let titleScrollInterval: number;
+// Bindings
+let cursor: SvelteComponent | null = $state(null);
 
-  // Functions
-  /**
-   * Returns the next state of the title by moving the first character to the end
-   * @param currentTitle - The current title string
-   * @returns The next state of the title
-   */
-  const getNextTitle = (currentTitle: string): string => {
-    if (!currentTitle) {
-      throw new Error("Title cannot be empty");
-    }
-    return currentTitle.slice(1) + currentTitle[0];
+//Delay between each title update in milliseconds
+const DELAY_MS: number = 200;
+let titleScrollInterval: number;
+
+// Functions
+/**
+ * Returns the next state of the title by moving the first character to the end
+ * @param currentTitle - The current title string
+ * @returns The next state of the title
+ */
+const getNextTitle = (currentTitle: string): string => {
+  if (!currentTitle) {
+    throw new Error("Title cannot be empty");
+  }
+  return currentTitle.slice(1) + currentTitle[0];
+};
+
+/**
+ * Initializes the scrolling title animation
+ */
+const initTitleScroll = (): void => {
+  // Store the original title
+  let currentTitle = "Tom Planche's website ";
+
+  // Start the scroll animation
+  titleScrollInterval = setInterval((): void => {
+    currentTitle = getNextTitle(currentTitle);
+    document.title = currentTitle;
+  }, DELAY_MS);
+};
+
+// Watchers
+$effect(() => {
+  if (cursor) {
+    $refStore.cursor = cursor;
+  }
+});
+
+// Initialize
+$effect(() => {
+  if (typeof window === "undefined") return;
+
+  // Check if device is touch-primary
+  $mainStore.isMobileOrTablet = window.matchMedia(
+    "(hover: none) and (pointer: coarse)",
+  ).matches;
+
+  // Start the animation when the page loads
+  initTitleScroll();
+
+  return () => {
+    clearInterval(titleScrollInterval);
   };
-
-  /**
-   * Initializes the scrolling title animation
-   */
-  const initTitleScroll = (): void => {
-    // Store the original title
-    let currentTitle = "Tom Planche's website ";
-
-    // Start the scroll animation
-    titleScrollInterval = setInterval((): void => {
-      currentTitle = getNextTitle(currentTitle);
-      document.title = currentTitle;
-    }, DELAY_MS);
-  };
-
-  // Watchers
-  $effect(() => {
-    if (cursor) {
-      $refStore.cursor = cursor;
-    }
-  });
-
-  // Initialize
-  $effect(() => {
-    if (typeof window === "undefined") return;
-
-    // Check if device is touch-primary
-    $mainStore.isMobileOrTablet = window.matchMedia(
-      "(hover: none) and (pointer: coarse)",
-    ).matches;
-
-    // Start the animation when the page loads
-    initTitleScroll();
-
-    return () => {
-      clearInterval(titleScrollInterval);
-    };
-  });
+});
 </script>
 
 <div id="noise"></div>
@@ -82,6 +81,7 @@
 {#if !$mainStore.clearPage}
   <Header/>
 {/if}
+
 
 <main>
   {@render children()}

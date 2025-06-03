@@ -96,7 +96,8 @@ $header-height: 5dvh;
 $footer-height: $header-height;
 
 $min-main-height: calc(100dvh);
-$main-elem-padding: calc(#{$main-padding} + #{$header-height}) $main-padding;
+$main-vertical-padding: calc(#{$main-padding} + #{$header-height});
+$main-elem-padding: $main-vertical-padding $main-padding;
 
 /**
  * Fonts
