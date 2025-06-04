@@ -28,4 +28,4 @@ jobs:
             && npm install \
             && npm run build \
             && pm2 restart front \
-            && pm2 save \'"
+            && pm2 save'"
