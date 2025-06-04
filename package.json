@@ -25,6 +25,7 @@
     "vite": "^6.3.5"
   },
   "dependencies": {
+    "@pm2/io": "^6.1.0",
     "@sveltejs/adapter-node": "^5.2.12",
     "@unpic/svelte": "^1.0.0",
     "axios": "^1.9.0",
