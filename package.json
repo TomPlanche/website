@@ -22,7 +22,7 @@
     "svelte": "^5.33.10",
     "svelte-check": "^4.2.1",
     "typescript": "^5.8.3",
-    "vite": "npm:rolldown-vite@latest"
+    "vite": "^6.3.5"
   },
   "dependencies": {
     "@sveltejs/adapter-node": "^5.2.12",
