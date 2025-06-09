@@ -21,30 +21,27 @@ let cursor: SvelteComponent | null = $state(null);
 const DELAY_MS: number = 200;
 let titleScrollInterval: number;
 
+// Title configuration
+const TITLE = "TomPlanche";
+let currentIndex = $state(0);
+
 // Functions
 /**
- * Returns the next state of the title by moving the first character to the end
- * @param currentTitle - The current title string
+ * Returns the next state of the title by rotating through the characters
  * @returns The next state of the title
  */
-const getNextTitle = (currentTitle: string): string => {
-  if (!currentTitle) {
-    throw new Error("Title cannot be empty");
-  }
-  return currentTitle.slice(1) + currentTitle[0];
+const getNextTitle = (): string => {
+  currentIndex = (currentIndex + 1) % TITLE.length;
+  return TITLE.slice(currentIndex) + TITLE.slice(0, currentIndex);
 };
 
 /**
  * Initializes the scrolling title animation
  */
 const initTitleScroll = (): void => {
-  // Store the original title
-  let currentTitle = "Tom Planche's website ";
-
   // Start the scroll animation
   titleScrollInterval = setInterval((): void => {
-    currentTitle = getNextTitle(currentTitle);
-    document.title = currentTitle;
+    document.title = getNextTitle();
   }, DELAY_MS);
 };
 
