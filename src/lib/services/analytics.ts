@@ -1,5 +1,9 @@
 import { PUBLIC_API_ENDPOINT } from "$env/static/public";
-import type { TGetSourcesResponse, TLogSourceResponse } from "$lib/types/";
+import type {
+  TGetSourcesResponse,
+  TLogSourceResponse,
+  TSources,
+} from "$lib/types/";
 import type { TBackendResponse } from "$lib/types/back";
 import axios, { type AxiosResponse } from "axios";
 
@@ -41,11 +45,9 @@ export const logSource = async (
  *
  * @param apiKey {string} - The API key for authentication.
  *
- * @return {Promise<Record<string, number>>} - A promise that resolves to an object containing sources and their counts.
+ * @return {Promise<TSources>} - A promise that resolves to an object containing sources and their counts.
  */
-export const getSources = async (
-  apiKey: string,
-): Promise<Record<string, number>> => {
+export const getSources = async (apiKey: string): Promise<TSources> => {
   const response: AxiosResponse<TBackendResponse<TGetSourcesResponse>> =
     await axios.get(`${PUBLIC_API_ENDPOINT}/api/source`, {
       headers: {

@@ -1,6 +1,7 @@
 import type {
   TGetSourcesResponse,
   TLogSourceResponse,
+  TSources,
 } from "$lib/types/analytics";
 import type { TBackendResponse } from "./back";
 import { type TGetRecentTracks, getRecentTracksSchema } from "./lastfm";
@@ -30,6 +31,7 @@ export type Action<P = void> = (
 ) => ActionReturn<P> | undefined;
 
 export type {
+  TSources,
   TGetSourcesResponse,
   TLogSourceResponse,
   TGetRecentTracks,
