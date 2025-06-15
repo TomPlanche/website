@@ -1,6 +1,7 @@
 <script lang="ts">
 // Imports
 import "$lib/styles/main.scss";
+import BackgroundCanvas from "$lib/components/BackgroundCanvas.svelte";
 import Cursor from "$lib/components/Cursor.svelte";
 import Footer from "$lib/components/Footer.svelte";
 import Header from "$lib/components/Header.svelte";
@@ -70,7 +71,9 @@ $effect(() => {
 });
 </script>
 
+<BackgroundCanvas/>
 <div id="noise"></div>
+
 {#if !$mainStore.isMobileOrTablet}
   <Cursor bind:this={cursor}/>
 {/if}
@@ -79,11 +82,9 @@ $effect(() => {
   <Header/>
 {/if}
 
-
 <main>
   {@render children()}
 </main>
-
 
 {#if !$mainStore.clearPage}
   <Footer/>
@@ -94,10 +95,6 @@ $effect(() => {
   @use '$lib/styles/variables';
 
   $spacing-between-dots: 20px;
-  :global(body) {
-    background-image: radial-gradient(color-mix(in srgb, var(--text-color) 25%, transparent), 1px, transparent 0);
-    background-size: $spacing-between-dots $spacing-between-dots;
-  }
 
   main {
     min-height: variables.$min-main-height;

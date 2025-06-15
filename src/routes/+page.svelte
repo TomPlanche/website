@@ -1,17 +1,21 @@
 <script lang="ts">
 import { gsap } from "gsap";
+import { Flip } from "gsap/Flip";
 import { ScrambleTextPlugin } from "gsap/ScrambleTextPlugin";
 import { SplitText } from "gsap/SplitText";
 import { onMount } from "svelte";
 
 gsap.registerPlugin(ScrambleTextPlugin);
 gsap.registerPlugin(SplitText);
+gsap.registerPlugin(Flip);
+
+const title = "Tom Planche";
 
 // Bindings
 let titleRef: HTMLHeadingElement;
 let WIPRef: HTMLParagraphElement;
 
-const title = "Tom Planche";
+let introAnimationIsOver = $state(false);
 
 // Initialize animations
 onMount(() => {
@@ -52,6 +56,8 @@ onMount(() => {
           duration: 0.25,
           onComplete: () => {
             splittedTitle.revert();
+
+            introAnimationIsOver = true;
           },
         },
       );
@@ -62,55 +68,53 @@ onMount(() => {
 <section
     id="intro"
 >
-  <h1
-      bind:this={titleRef}
-  >
-    Tom Planche
-  </h1>
-  <p
+  <div class="title">
+    <h1
+        bind:this={titleRef}
+    >
+      Tom Planche
+    </h1>
+    <h2
       bind:this={WIPRef}
-  >
-    French Software Engineer based in Paris.
-  </p>
+    >
+      French Software Engineer based in Paris.
+    </h2>
+  </div>
 </section>
+
 
 <style lang="scss">
   @use '$lib/styles/variables';
 
-  section {
-    min-height: variables.$min-main-height;
+  #intro {
+    min-height: 100svh;
     height: 100%;
     width: 100%;
 
-    padding: variables.$main-elem-padding;
+    padding: variables.$main-padding;
 
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    flex: 1;
 
+    h1, h2 {
+      text-shadow: 0 0 5px var(--text-color);
+      font-family: "Mondwest", sans-serif;
+    }
 
-    &#intro {
-      h1 {
+    h1 {
         font-family: "Mondwest", monospace;
         font-size: 9vw;
         text-shadow: 0 0 5px var(--text-color);
         font-weight: 900;
-        text-align: left;
+      text-align: center;
       }
 
-      h1, p {
-        text-shadow: 0 0 5px var(--text-color);
-      }
-
-      p {
-        font-family: "Mondwest", sans-serif;
-        font-size: 3vw;
-        text-align: justify;
-        line-height: 1.5;
-        font-kerning: none;
-      }
+    h2 {
+      font-family: "PP Supply Mono", sans-serif;
+      font-kerning: none;
+      font-size: 3vw;
     }
   }
 </style>
