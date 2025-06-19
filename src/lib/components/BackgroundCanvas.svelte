@@ -197,9 +197,9 @@ const handleMouseDown = (e: MouseEvent): void => {
 /**
  * Handle mouse up to stop wave simulation.
  *
- * @param e {MouseEvent} - The mouse event
+ * @param _e {MouseEvent} - The mouse event
  */
-const handleMouseUp = (e: MouseEvent): void => {
+const handleMouseUp = (_e: MouseEvent): void => {
   isMouseDown = false;
 };
 
@@ -352,35 +352,34 @@ const animate = (): void => {
  * Set up the main and offscreen canvases, contexts, and start the animation.
  */
 const initialize = (): void => {
-  try {
-    const context = canvas.getContext("2d");
-    if (!context) throw new Error("Failed to get canvas context");
-
-    // Get contexts
-    ctx = context;
-    ctx.imageSmoothingEnabled = false;
-
-    // Create offscreen canvas
-    offCanvas = document.createElement("canvas");
-    offCanvas.width = GRID_SIZE.columns;
-    offCanvas.height = GRID_SIZE.rows;
-
-    const offCanvasContext = offCanvas.getContext("2d");
-    if (!offCanvasContext)
-      throw new Error("Failed to create offscreen canvas context");
-
-    offCtx = offCanvasContext;
-    offCtx.imageSmoothingEnabled = false;
-
-    // Initialize simulation buffers
-    current = new Float32Array(GRID_SIZE.columns * GRID_SIZE.rows);
-    previous = new Float32Array(GRID_SIZE.columns * GRID_SIZE.rows);
-
-    // Start animation
-    animate();
-  } catch (error) {
-    console.error("Failed to initialize canvas:", error);
+  const context = canvas.getContext("2d");
+  if (!context) {
+    console.error("Failed to get canvas context.");
+    return;
   }
+
+  // Get contexts
+  ctx = context;
+  ctx.imageSmoothingEnabled = false;
+
+  // Create offscreen canvas
+  offCanvas = document.createElement("canvas");
+  offCanvas.width = GRID_SIZE.columns;
+  offCanvas.height = GRID_SIZE.rows;
+
+  const offCanvasContext = offCanvas.getContext("2d");
+  if (!offCanvasContext)
+    throw new Error("Failed to create offscreen canvas context");
+
+  offCtx = offCanvasContext;
+  offCtx.imageSmoothingEnabled = false;
+
+  // Initialize simulation buffers
+  current = new Float32Array(GRID_SIZE.columns * GRID_SIZE.rows);
+  previous = new Float32Array(GRID_SIZE.columns * GRID_SIZE.rows);
+
+  // Start animation
+  animate();
 };
 
 onMount(() => {

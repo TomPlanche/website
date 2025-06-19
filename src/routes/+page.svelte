@@ -106,7 +106,7 @@ onMount(() => {
     h1 {
         font-family: "Mondwest", monospace;
         font-size: 9vw;
-        text-shadow: 0 0 5px var(--text-color);
+      text-shadow: 0 0 8px var(--text-color);
         font-weight: 900;
       text-align: center;
       }
