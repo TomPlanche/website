@@ -2,11 +2,11 @@
 import type { Snippet } from "svelte";
 // Imports
 import { Spring } from "svelte/motion";
-import type { TCursorOptions } from "../types/types";
+import type { TCursorOptions } from "../types/";
 
 // Props
 type TCursorProps = {
-  children?: Snippet<[]>;
+  children?: Snippet;
 };
 
 const { children }: TCursorProps = $props();
@@ -40,7 +40,7 @@ let innerSvg: string | null = $state(null);
 let innerText: string | null = $state(null);
 
 // Functions
-export const setCursorParams = (params: TCursorOptions) => {
+export function setCursorParams(params: TCursorOptions) {
   if (params.isHover) {
     // params.svg can be undefined, a svg string or a boolean
     if (params.svg) {
@@ -68,7 +68,7 @@ export const setCursorParams = (params: TCursorOptions) => {
   size.target = params.scale
     ? cursor_base.size * params.scale
     : cursor_base.size;
-};
+}
 
 // If hasMoved is false, then the cursor is not visible
 $effect(() => {
@@ -98,10 +98,10 @@ $effect(() => {
     };
   }}
     onmousedown={() => {
-    size.target = size.current * 1.5;
+    size.target = size.current * 0.90;
   }}
     onmouseup={() => {
-    size.target = size.current / 1.5;
+    size.target = size.current / .9;
   }}
     onscroll={() => {
     scroll = {
