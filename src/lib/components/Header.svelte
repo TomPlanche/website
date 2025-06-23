@@ -1,72 +1,15 @@
 <script lang="ts">
 import { cursorEnter, cursorLeave } from "$lib/actions/cursor";
 import LiveIndicator from "$lib/components/LiveIndicator.svelte";
-import Magnetik from "$lib/components/Magnetik.svelte";
-import { toggleTheme } from "$lib/stores/themeStore";
 import { BackendSongSchema, type TBackendSong } from "$lib/types/lastfm";
-import { gsap } from "gsap";
 import { onMount } from "svelte";
-import { fade } from "svelte/transition";
-
-let button = $state<HTMLButtonElement>();
-let isAnimating = false;
+import { fade } from "svelte/transition"; // Statee
 
 // Statee
 let currentTrack: TBackendSong | null = $state(null);
 const isLive = $derived(() => currentTrack?.currently_playing);
 
 // Functions
-const handleToggleTheme = () => {
-  if (!button || button === undefined) {
-    return;
-  }
-
-  toggleTheme();
-
-  const timeline = gsap.timeline();
-
-  timeline.to(button, {
-    rotate: 360,
-    duration: 0.5,
-    ease: "power2.out",
-    onStart: () => {
-      isAnimating = true;
-    },
-    onComplete: () => {
-      timeline.to(button, {
-        rotate: 0,
-        duration: 0,
-
-        onComplete: () => {
-          isAnimating = false;
-        },
-      });
-    },
-  });
-};
-
-const handleMouseEnter = () => {
-  if (isAnimating || !button) {
-    return;
-  }
-
-  gsap.to(button, {
-    rotate: 12,
-    duration: 0.2,
-  });
-};
-
-const handleMouseLeave = () => {
-  if (isAnimating || !button) {
-    return;
-  }
-
-  gsap.to(button, {
-    rotate: 0,
-    duration: 0.2,
-  });
-};
-
 const fetchNowPlaying = async () => {
   try {
     const response = await fetch("/api-front/music/now-playing");
@@ -99,7 +42,6 @@ onMount(() => {
 </script>
 
 <nav>
-  <div class="left">
     <a
         class="title"
         href="/"
@@ -129,27 +71,6 @@ onMount(() => {
         </a>
       {/if}
     </span>
-  </div>
-  <Magnetik>
-    <button
-        aria-label="Toggle theme change"
-        bind:this={button}
-        onclick={handleToggleTheme}
-
-        onmouseenter={handleMouseEnter}
-        onmouseleave={handleMouseLeave}
-        use:cursorEnter
-
-
-        use:cursorLeave
-    >
-      <svg height="1em" viewBox="0 0 24 24" width="1em" xmlns="http://www.w3.org/2000/svg">
-        <path
-            d="M16 2h-2v2h2v2H4v2H2v5h2V8h12v2h-2v2h2v-2h2V8h2V6h-2V4h-2zM6 20h2v2h2v-2H8v-2h12v-2h2v-5h-2v5H8v-2h2v-2H8v2H6v2H4v2h2z"
-            fill="currentColor"/>
-      </svg>
-    </button>
-  </Magnetik>
 </nav>
 
 <style lang="scss">
@@ -181,68 +102,36 @@ onMount(() => {
     backdrop-filter: blur(16px);
     -webkit-backdrop-filter: blur(16px); // Compatible with Safari
 
-    .left {
-      display: flex;
-      flex-direction: row;
-      justify-content: center;
-      align-items: center;
+    .title {
+      font-family: "Mondwest", monospace;
+      font-size: 1.5rem;
+      font-weight: 900;
+      text-align: left;
+      text-shadow: 0 0 5px var(--text-color);
+      margin-right: 1rem;
 
-      .title {
-        font-family: "Mondwest", monospace;
+      @media (max-width: 768px) {
         font-size: 1.5rem;
-        font-weight: 900;
-        text-align: left;
-        text-shadow: 0 0 5px var(--text-color);
-        margin-right: 1rem;
-
-        @media (max-width: 768px) {
-          font-size: 1.5rem;
-        }
       }
-
-      .now-playing {
-        display: flex;
-        align-items: baseline;
-        gap: 0.5rem;
-        font-size: 1rem;
-        opacity: 0.95;
-        font-family: "Mondwest", monospace;
-
-        text-shadow: 0 0 1px var(--text-color);
-
-        .track-info {
-          white-space: nowrap;
-          overflow: hidden;
-          text-overflow: ellipsis;
-          max-width: 300px;
-          cursor: pointer;
-        }
-      }
-
     }
 
-    button {
-      background: none;
-      border: none;
-      cursor: pointer;
+    .now-playing {
+      display: flex;
+      align-items: baseline;
+      gap: 0.5rem;
+      font-size: 1rem;
+      opacity: 0.95;
+      font-family: "Mondwest", monospace;
 
-      transition: opacity .2s ease-in-out;
+      text-shadow: 0 0 1px var(--text-color);
 
-      &:hover {
-        opacity: 1;
-      }
-
-      svg {
-        width: 1.5rem;
-        height: 1.5rem;
-
-        * {
-          fill: var(--text-color);
-          color: var(--text-color);
-        }
+      .track-info {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        max-width: 300px;
+        cursor: pointer;
       }
     }
   }
-
-
 </style>
