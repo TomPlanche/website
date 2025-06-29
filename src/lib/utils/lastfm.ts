@@ -6,7 +6,7 @@ import axios, { type AxiosResponse } from "axios";
 export const getRecentTracks = async (): Promise<TBackendSong[]> => {
   const response: AxiosResponse<TBackendSong[]> = await axios.get<
     TBackendSong[]
-  >(`${PUBLIC_API_ENDPOINT}/api/static/recent_play_counts.json`);
+  >(`${PUBLIC_API_ENDPOINT}/static/recent_play_counts.json`);
 
   if (response.status !== 200) {
     throw error(response.status, response.statusText);
@@ -18,7 +18,7 @@ export const getRecentTracks = async (): Promise<TBackendSong[]> => {
 export const getCurrentTrack = async (): Promise<TBackendSong> => {
   const response: AxiosResponse<TBackendSong[]> = await axios.get<
     TBackendSong[]
-  >(`${PUBLIC_API_ENDPOINT}/api/static/currently_listening.json`);
+  >(`${PUBLIC_API_ENDPOINT}/static/currently_listening.json`);
 
   if (response.status !== 200) {
     throw error(response.status, response.statusText);

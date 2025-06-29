@@ -21,7 +21,7 @@ export const logSource = async (
 ): Promise<TLogSourceResponse> => {
   const response: AxiosResponse<TBackendResponse<TLogSourceResponse>> =
     await axios.post(
-      `${PUBLIC_API_ENDPOINT}/api/source`,
+      `${PUBLIC_API_ENDPOINT}/source`,
       { source },
       {
         headers: {
@@ -49,7 +49,7 @@ export const logSource = async (
  */
 export const getSources = async (apiKey: string): Promise<TSources> => {
   const response: AxiosResponse<TBackendResponse<TGetSourcesResponse>> =
-    await axios.get(`${PUBLIC_API_ENDPOINT}/api/source`, {
+    await axios.get(`${PUBLIC_API_ENDPOINT}/source`, {
       headers: {
         Authorization: `Bearer ${apiKey}`,
         "Content-Type": "application/json",
