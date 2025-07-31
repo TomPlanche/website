@@ -4,8 +4,8 @@ import { onMount } from "svelte";
 /**
  * CONSTANTS
  */
-const MAX_CLICKS = 10;
-const PIXEL_SIZE = 6.0;
+const MAX_CLICKS = 100;
+const PIXEL_SIZE = 8.0;
 
 /**
  * VARIABLES
@@ -23,6 +23,9 @@ let startTime: number;
 let clickIndex = 0;
 let clickPositions = new Float32Array(MAX_CLICKS * 2); // x, y pairs
 let clickTimes = new Float32Array(MAX_CLICKS);
+
+// Touch/drag state
+let isHolding = false;
 
 // Uniforms
 let uniforms: {
@@ -345,10 +348,12 @@ const resizeCanvas = (): void => {
 };
 
 /**
- * Handle mouse/touch clicks
+ * Handle mouse/touch clicks with throttling for continuous effects
  */
 const handleClick = (clientX: number, clientY: number): void => {
   if (!canvas) return;
+
+  const currentTime = performance.now();
 
   const rect = canvas.getBoundingClientRect();
   const cssX = clientX - rect.left;
@@ -362,7 +367,7 @@ const handleClick = (clientX: number, clientY: number): void => {
   // Store click position and time
   clickPositions[clickIndex * 2] = fragX;
   clickPositions[clickIndex * 2 + 1] = fragY;
-  clickTimes[clickIndex] = (performance.now() - startTime) / 1000;
+  clickTimes[clickIndex] = (currentTime - startTime) / 1000;
 
   clickIndex = (clickIndex + 1) % MAX_CLICKS;
 };
@@ -371,7 +376,18 @@ const handleClick = (clientX: number, clientY: number): void => {
  * Mouse event handlers
  */
 const handleMouseDown = (e: MouseEvent): void => {
-  handleClick(e.clientX, e.clientY);
+  isHolding = true;
+  handleClick(e.clientX, e.clientY); // Force first click
+};
+
+const handleMouseMove = (e: MouseEvent): void => {
+  if (isHolding) {
+    handleClick(e.clientX, e.clientY);
+  }
+};
+
+const handleMouseUp = (_e: MouseEvent): void => {
+  isHolding = false;
 };
 
 /**
@@ -380,9 +396,23 @@ const handleMouseDown = (e: MouseEvent): void => {
 const handleTouchStart = (e: TouchEvent): void => {
   e.preventDefault();
   if (e.touches.length > 0) {
+    isHolding = true;
+    const touch = e.touches[0];
+    handleClick(touch.clientX, touch.clientY); // Force first click
+  }
+};
+
+const handleTouchMove = (e: TouchEvent): void => {
+  e.preventDefault();
+  if (isHolding && e.touches.length > 0) {
     const touch = e.touches[0];
     handleClick(touch.clientX, touch.clientY);
   }
+};
+
+const handleTouchEnd = (e: TouchEvent): void => {
+  e.preventDefault();
+  isHolding = false;
 };
 
 /**
@@ -446,14 +476,28 @@ onMount(() => {
 
   initialize();
 
+  // Mouse events
   window.addEventListener("resize", resizeCanvas);
   canvas.addEventListener("mousedown", handleMouseDown);
+  window.addEventListener("mousemove", handleMouseMove);
+  window.addEventListener("mouseup", handleMouseUp);
+
+  // Touch events
   canvas.addEventListener("touchstart", handleTouchStart, { passive: false });
+  canvas.addEventListener("touchmove", handleTouchMove, { passive: false });
+  canvas.addEventListener("touchend", handleTouchEnd, { passive: false });
 
   return () => {
+    // Clean up mouse events
     window.removeEventListener("resize", resizeCanvas);
     canvas.removeEventListener("mousedown", handleMouseDown);
+    window.removeEventListener("mousemove", handleMouseMove);
+    window.removeEventListener("mouseup", handleMouseUp);
+
+    // Clean up touch events
     canvas.removeEventListener("touchstart", handleTouchStart);
+    canvas.removeEventListener("touchmove", handleTouchMove);
+    canvas.removeEventListener("touchend", handleTouchEnd);
 
     if (animationId) {
       cancelAnimationFrame(animationId);
