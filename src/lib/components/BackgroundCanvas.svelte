@@ -5,7 +5,7 @@ import { onMount } from "svelte";
  * CONSTANTS
  */
 const MAX_CLICKS = 10;
-const PIXEL_SIZE = 4.0;
+const PIXEL_SIZE = 6.0;
 
 /**
  * VARIABLES
@@ -63,10 +63,10 @@ uniform float uClickTimes[${MAX_CLICKS}];
 const int MAX_CLICKS = ${MAX_CLICKS};
 
 // fBm constants
-const int FBM_OCTAVES = 5;
-const float FBM_LACUNARITY = 1.25;
+const int FBM_OCTAVES = 6;
+const float FBM_LACUNARITY = 1.125;
 const float FBM_GAIN = 1.0;
-const float FBM_SCALE = 4.0;
+const float FBM_SCALE = 2.0;
 
 // Bayer matrix helpers
 float Bayer2(vec2 a) {
@@ -157,7 +157,7 @@ void main() {
     vec2 uv = cellCoord / uResolution * vec2(aspectRatio, 1.0);
 
     // Animated fbm feed
-    float feed = fbm2(uv, uTime * 0.05);
+    float feed = fbm2(uv, uTime * 0.1);
     feed = feed * 0.5 - 0.65;
 
     // Ripple clicks
@@ -245,7 +245,15 @@ const createProgram = (
  * Initialize WebGL and shaders
  */
 const initializeWebGL = (): boolean => {
-  const context = canvas.getContext("webgl2") || canvas.getContext("webgl");
+  const context =
+    canvas.getContext("webgl2", {
+      alpha: true,
+      premultipliedAlpha: false,
+    }) ||
+    canvas.getContext("webgl", {
+      alpha: true,
+      premultipliedAlpha: false,
+    });
   if (!context) {
     console.error("WebGL not supported");
 
@@ -274,6 +282,10 @@ const initializeWebGL = (): boolean => {
 
   program = createdProgram;
   gl.useProgram(program);
+
+  // Enable alpha blending for transparency
+  gl.enable(gl.BLEND);
+  gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
 
   // Set up geometry (fullscreen quad)
   const vertices = new Float32Array([-1, -1, 1, -1, -1, 1, 1, 1]);
@@ -312,17 +324,22 @@ const initializeWebGL = (): boolean => {
 const resizeCanvas = (): void => {
   if (!canvas || !gl) return;
 
+  const devicePixelRatio = window.devicePixelRatio || 1;
   const displayWidth = canvas.clientWidth;
   const displayHeight = canvas.clientHeight;
 
-  if (canvas.width !== displayWidth || canvas.height !== displayHeight) {
-    canvas.width = displayWidth;
-    canvas.height = displayHeight;
-    gl.viewport(0, 0, displayWidth, displayHeight);
+  // Account for device pixel ratio for consistent sizing across browsers
+  const bufferWidth = Math.floor(displayWidth * devicePixelRatio);
+  const bufferHeight = Math.floor(displayHeight * devicePixelRatio);
 
-    // Update resolution uniform
+  if (canvas.width !== bufferWidth || canvas.height !== bufferHeight) {
+    canvas.width = bufferWidth;
+    canvas.height = bufferHeight;
+    gl.viewport(0, 0, bufferWidth, bufferHeight);
+
+    // Update resolution uniform with buffer dimensions
     if (uniforms.uResolution) {
-      gl.uniform2f(uniforms.uResolution, displayWidth, displayHeight);
+      gl.uniform2f(uniforms.uResolution, bufferWidth, bufferHeight);
     }
   }
 };
@@ -337,9 +354,10 @@ const handleClick = (clientX: number, clientY: number): void => {
   const cssX = clientX - rect.left;
   const cssY = clientY - rect.top;
 
-  // Convert to frame-buffer pixels
-  const fragX = (cssX * canvas.width) / rect.width;
-  const fragY = ((rect.height - cssY) * canvas.height) / rect.height;
+  // Convert to frame-buffer pixels accounting for device pixel ratio
+  const devicePixelRatio = window.devicePixelRatio || 1;
+  const fragX = cssX * devicePixelRatio;
+  const fragY = (rect.height - cssY) * devicePixelRatio;
 
   // Store click position and time
   clickPositions[clickIndex * 2] = fragX;
@@ -396,8 +414,8 @@ const animate = (): void => {
     gl.uniform1f(uniforms.uPixelSize, PIXEL_SIZE);
   }
 
-  // Clear and draw
-  gl.clearColor(0, 0, 0, 1);
+  // Clear and draw with blue background color
+  gl.clearColor(0.027, 0.318, 0.812, 1.0); // #0751cf blue background
   gl.clear(gl.COLOR_BUFFER_BIT);
   gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
 
