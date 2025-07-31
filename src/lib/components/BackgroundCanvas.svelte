@@ -1,415 +1,445 @@
 <script lang="ts">
-/**
- * TODO: Fix resizing issues with the canvas.
- */
 import { onMount } from "svelte";
-
-/**
- * TYPES
- */
-interface ColorStop {
-  threshold: number;
-  color: string;
-}
-
-interface SimulationConfig {
-  damping: number;
-  waveSpeedMultiplier: number;
-  neighborInfluence: number;
-  minWaveValue: number;
-  maxWaveValue: number;
-}
 
 /**
  * CONSTANTS
  */
-const GRID_SIZE = {
-  columns: 100,
-  rows: 100,
-} as const;
-
-const SCANLINES = {
-  enabled: false,
-  opacity: 0.1,
-  spacing: 2,
-} as const;
-
-const SIMULATION_CONFIG: SimulationConfig = {
-  damping: 0.975,
-  waveSpeedMultiplier: 0.02,
-  neighborInfluence: 0.01,
-  minWaveValue: 0.01,
-  maxWaveValue: 1.0,
-} as const;
-
-const PALETTE: ColorStop[] = [
-  { threshold: 0.0, color: "#002b36" },
-  { threshold: 0.2, color: "#45c6ff" },
-  { threshold: 0.4, color: "#8a4df8" },
-  { threshold: 0.6, color: "#ff3ca5" },
-  { threshold: 0.8, color: "#ff7e4f" },
-];
+const MAX_CLICKS = 10;
+const PIXEL_SIZE = 4.0;
 
 /**
  * VARIABLES
  */
-// Canvas references
+// Canvas and WebGL context
 let canvas: HTMLCanvasElement;
-let ctx: CanvasRenderingContext2D;
-let offCanvas: HTMLCanvasElement;
-let offCtx: CanvasRenderingContext2D;
-
-// Typed arrays for simulation buffers
-let current = new Float32Array(GRID_SIZE.columns * GRID_SIZE.rows);
-let previous = new Float32Array(GRID_SIZE.columns * GRID_SIZE.rows);
-
-// Mouse/touch tracking variables
-let mouseX = $state(0);
-let mouseY = $state(0);
-let lastMouseX = $state(0);
-let lastMouseY = $state(0);
-let isMouseDown = $state(false);
+let gl: WebGLRenderingContext | WebGL2RenderingContext;
+let program: WebGLProgram;
 
 // Animation frame ID for cleanup
 let animationId: number;
+let startTime: number;
+
+// Click tracking
+let clickIndex = 0;
+let clickPositions = new Float32Array(MAX_CLICKS * 2); // x, y pairs
+let clickTimes = new Float32Array(MAX_CLICKS);
+
+// Uniforms
+let uniforms: {
+  uResolution: WebGLUniformLocation | null;
+  uTime: WebGLUniformLocation | null;
+  uClickPos: WebGLUniformLocation | null;
+  uClickTimes: WebGLUniformLocation | null;
+  uColor: WebGLUniformLocation | null;
+  uPixelSize: WebGLUniformLocation | null;
+};
+
+/**
+ * SHADERS
+ */
+const vertexShaderSource = `
+attribute vec2 a_position;
+
+void main() {
+  gl_Position = vec4(a_position, 0.0, 1.0);
+}
+`;
+
+const fragmentShaderSource = `
+#ifdef GL_OES_standard_derivatives
+#extension GL_OES_standard_derivatives : enable
+#endif
+
+precision highp float;
+
+uniform vec3 uColor;
+uniform vec2 uResolution;
+uniform float uTime;
+uniform float uPixelSize;
+
+uniform vec2 uClickPos[${MAX_CLICKS}];
+uniform float uClickTimes[${MAX_CLICKS}];
+
+const int MAX_CLICKS = ${MAX_CLICKS};
+
+// fBm constants
+const int FBM_OCTAVES = 5;
+const float FBM_LACUNARITY = 1.25;
+const float FBM_GAIN = 1.0;
+const float FBM_SCALE = 4.0;
+
+// Bayer matrix helpers
+float Bayer2(vec2 a) {
+    a = floor(a);
+    return fract(a.x / 2.0 + a.y * a.y * 0.75);
+}
+
+float Bayer4(vec2 a) {
+    return Bayer2(0.5 * a) * 0.25 + Bayer2(a);
+}
+
+float Bayer8(vec2 a) {
+    return Bayer4(0.5 * a) * 0.25 + Bayer2(a);
+}
+
+// 1-D hash and 3-D value-noise helpers
+float hash11(float n) { 
+    return fract(sin(n) * 43758.5453); 
+}
+
+float vnoise(vec3 p) {
+    vec3 ip = floor(p);
+    vec3 fp = fract(p);
+
+    float n000 = hash11(dot(ip + vec3(0.0,0.0,0.0), vec3(1.0,57.0,113.0)));
+    float n100 = hash11(dot(ip + vec3(1.0,0.0,0.0), vec3(1.0,57.0,113.0)));
+    float n010 = hash11(dot(ip + vec3(0.0,1.0,0.0), vec3(1.0,57.0,113.0)));
+    float n110 = hash11(dot(ip + vec3(1.0,1.0,0.0), vec3(1.0,57.0,113.0)));
+    float n001 = hash11(dot(ip + vec3(0.0,0.0,1.0), vec3(1.0,57.0,113.0)));
+    float n101 = hash11(dot(ip + vec3(1.0,0.0,1.0), vec3(1.0,57.0,113.0)));
+    float n011 = hash11(dot(ip + vec3(0.0,1.0,1.0), vec3(1.0,57.0,113.0)));
+    float n111 = hash11(dot(ip + vec3(1.0,1.0,1.0), vec3(1.0,57.0,113.0)));
+
+    vec3 w = fp*fp*fp*(fp*(fp*6.0-15.0)+10.0);
+
+    float x00 = mix(n000, n100, w.x);
+    float x10 = mix(n010, n110, w.x);
+    float x01 = mix(n001, n101, w.x);
+    float x11 = mix(n011, n111, w.x);
+
+    float y0 = mix(x00, x10, w.y);
+    float y1 = mix(x01, x11, w.y);
+
+    return mix(y0, y1, w.z) * 2.0 - 1.0;
+}
+
+// Stable fBm
+float fbm2(vec2 uv, float t) {
+    vec3 p = vec3(uv * FBM_SCALE, t);
+    float amp = 1.0;
+    float freq = 1.0;
+    float sum = 1.0;
+
+    for (int i = 0; i < FBM_OCTAVES; ++i) {
+        sum += amp * vnoise(p * freq);
+        freq *= FBM_LACUNARITY;
+        amp *= FBM_GAIN;
+    }
+    
+    return sum * 0.5 + 0.5;
+}
+
+// Circle mask
+float maskCircle(vec2 p, float cov) {
+    float r = sqrt(cov) * 0.25;
+    float d = length(p - 0.5) - r;
+    #ifdef GL_OES_standard_derivatives
+        float aa = 0.5 * fwidth(d);
+        return cov * (1.0 - smoothstep(-aa, aa, d * 2.0));
+    #else
+        return cov * (1.0 - step(0.0, d * 2.0));
+    #endif
+}
+
+void main() {
+    float pixelSize = uPixelSize;
+    vec2 fragCoord = gl_FragCoord.xy - uResolution * 0.5;
+
+    float aspectRatio = uResolution.x / uResolution.y;
+
+    vec2 pixelId = floor(fragCoord / pixelSize);
+    vec2 pixelUV = fract(fragCoord / pixelSize);
+
+    float cellPixelSize = 8.0 * pixelSize;
+    vec2 cellId = floor(fragCoord / cellPixelSize);
+    vec2 cellCoord = cellId * cellPixelSize;
+
+    vec2 uv = cellCoord / uResolution * vec2(aspectRatio, 1.0);
+
+    // Animated fbm feed
+    float feed = fbm2(uv, uTime * 0.05);
+    feed = feed * 0.5 - 0.65;
+
+    // Ripple clicks
+    const float speed = 0.30;
+    const float thickness = 0.10;
+    const float dampT = 1.0;
+    const float dampR = 10.0;
+
+    for (int i = 0; i < MAX_CLICKS; ++i) {
+        vec2 pos = uClickPos[i];
+        if (pos.x < 0.0) continue;
+
+        vec2 cuv = (((pos - uResolution * 0.5 - cellPixelSize * 0.5) / uResolution)) * vec2(aspectRatio, 1.0);
+
+        float t = max(uTime - uClickTimes[i], 0.0);
+        float r = distance(uv, cuv);
+
+        float waveR = speed * t;
+        float ring = exp(-pow((r - waveR) / thickness, 2.0));
+        float atten = exp(-dampT * t) * exp(-dampR * r);
+        feed = max(feed, ring * atten);
+    }
+
+    float bayer = Bayer8(fragCoord / uPixelSize) - 0.5;
+    float bw = step(0.5, feed + bayer);
+
+    // Apply circle mask
+    float M = maskCircle(pixelUV, bw);
+
+    gl_FragColor = vec4(uColor, M);
+}
+`;
 
 /**
  * FUNCTIONS
  */
 /**
- * Get 8-bit color based on value
- *
- * @param value {number} - Value between 0 and 1
- * @return {string} - Hex color string
+ * Create and compile a shader
  */
-const get8bitColor = (value: number): string => {
-  const clampedValue = Math.min(Math.max(value, 0), 1);
+const createShader = (
+  gl: WebGLRenderingContext,
+  type: number,
+  source: string,
+): WebGLShader | null => {
+  const shader = gl.createShader(type);
+  if (!shader) return null;
 
-  for (let i = PALETTE.length - 1; i >= 0; i--) {
-    if (clampedValue >= PALETTE[i].threshold) {
-      return PALETTE[i].color;
-    }
+  gl.shaderSource(shader, source);
+  gl.compileShader(shader);
+
+  if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
+    console.error("Shader compilation error:", gl.getShaderInfoLog(shader));
+    gl.deleteShader(shader);
+    return null;
   }
 
-  return PALETTE[0].color;
+  return shader;
 };
 
 /**
- * Resize the canvas to fill the window.
+ * Create shader program
+ */
+const createProgram = (
+  gl: WebGLRenderingContext,
+  vertexShader: WebGLShader,
+  fragmentShader: WebGLShader,
+): WebGLProgram | null => {
+  const program = gl.createProgram();
+  if (!program) return null;
+
+  gl.attachShader(program, vertexShader);
+  gl.attachShader(program, fragmentShader);
+  gl.linkProgram(program);
+
+  if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
+    console.error("Program linking error:", gl.getProgramInfoLog(program));
+
+    return null;
+  }
+
+  return program;
+};
+
+/**
+ * Initialize WebGL and shaders
+ */
+const initializeWebGL = (): boolean => {
+  const context = canvas.getContext("webgl2") || canvas.getContext("webgl");
+  if (!context) {
+    console.error("WebGL not supported");
+
+    return false;
+  }
+
+  gl = context;
+
+  // Create shaders
+  const vertexShader = createShader(gl, gl.VERTEX_SHADER, vertexShaderSource);
+  const fragmentShader = createShader(
+    gl,
+    gl.FRAGMENT_SHADER,
+    fragmentShaderSource,
+  );
+
+  if (!vertexShader || !fragmentShader) {
+    return false;
+  }
+
+  // Create program
+  const createdProgram = createProgram(gl, vertexShader, fragmentShader);
+  if (!createdProgram) {
+    return false;
+  }
+
+  program = createdProgram;
+  gl.useProgram(program);
+
+  // Set up geometry (fullscreen quad)
+  const vertices = new Float32Array([-1, -1, 1, -1, -1, 1, 1, 1]);
+
+  const buffer = gl.createBuffer();
+  gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
+  gl.bufferData(gl.ARRAY_BUFFER, vertices, gl.STATIC_DRAW);
+
+  const positionLocation = gl.getAttribLocation(program, "a_position");
+  gl.enableVertexAttribArray(positionLocation);
+  gl.vertexAttribPointer(positionLocation, 2, gl.FLOAT, false, 0, 0);
+
+  // Get uniform locations
+  uniforms = {
+    uResolution: gl.getUniformLocation(program, "uResolution"),
+    uTime: gl.getUniformLocation(program, "uTime"),
+    uClickPos: gl.getUniformLocation(program, "uClickPos"),
+    uClickTimes: gl.getUniformLocation(program, "uClickTimes"),
+    uColor: gl.getUniformLocation(program, "uColor"),
+    uPixelSize: gl.getUniformLocation(program, "uPixelSize"),
+  };
+
+  // Initialize click arrays with invalid positions
+  for (let i = 0; i < MAX_CLICKS; i++) {
+    clickPositions[i * 2] = -1;
+    clickPositions[i * 2 + 1] = -1;
+    clickTimes[i] = 0;
+  }
+
+  return true;
+};
+
+/**
+ * Resize canvas and update WebGL viewport
  */
 const resizeCanvas = (): void => {
+  if (!canvas || !gl) return;
+
+  const displayWidth = canvas.clientWidth;
+  const displayHeight = canvas.clientHeight;
+
+  if (canvas.width !== displayWidth || canvas.height !== displayHeight) {
+    canvas.width = displayWidth;
+    canvas.height = displayHeight;
+    gl.viewport(0, 0, displayWidth, displayHeight);
+
+    // Update resolution uniform
+    if (uniforms.uResolution) {
+      gl.uniform2f(uniforms.uResolution, displayWidth, displayHeight);
+    }
+  }
+};
+
+/**
+ * Handle mouse/touch clicks
+ */
+const handleClick = (clientX: number, clientY: number): void => {
   if (!canvas) return;
 
-  canvas.width = window.innerWidth;
-  canvas.height = window.innerHeight;
-};
-
-/**
- * Convert client coordinates to simulation coordinates.
- *
- * @param clientX {number} - X coordinate in client space
- * @param clientY {number} - Y coordinate in client space
- * @return {Object} - Object containing simX and simY
- * @property {number} simX - X coordinate in simulation space
- * @property {number} simY - Y coordinate in simulation space
- */
-const getSimCoords = (
-  clientX: number,
-  clientY: number,
-): { simX: number; simY: number } => {
   const rect = canvas.getBoundingClientRect();
+  const cssX = clientX - rect.left;
+  const cssY = clientY - rect.top;
 
-  const x = clientX - rect.left;
-  const y = clientY - rect.top;
+  // Convert to frame-buffer pixels
+  const fragX = (cssX * canvas.width) / rect.width;
+  const fragY = ((rect.height - cssY) * canvas.height) / rect.height;
 
-  const simX = Math.floor((x / canvas.width) * GRID_SIZE.columns);
-  const simY = Math.floor((y / canvas.height) * GRID_SIZE.rows);
+  // Store click position and time
+  clickPositions[clickIndex * 2] = fragX;
+  clickPositions[clickIndex * 2 + 1] = fragY;
+  clickTimes[clickIndex] = (performance.now() - startTime) / 1000;
 
-  return { simX, simY };
+  clickIndex = (clickIndex + 1) % MAX_CLICKS;
 };
 
 /**
- * Handle mouse movement to update wave simulation.
- *
- * @param e {MouseEvent} - The mouse event containing client coordinates
- */
-const handleMouseMove = (e: MouseEvent): void => {
-  lastMouseX = mouseX;
-  lastMouseY = mouseY;
-  mouseX = e.clientX;
-  mouseY = e.clientY;
-
-  const { simX, simY } = getSimCoords(e.clientX, e.clientY);
-  if (
-    simX >= 0 &&
-    simX < GRID_SIZE.columns &&
-    simY >= 0 &&
-    simY < GRID_SIZE.rows
-  ) {
-    const index = simY * GRID_SIZE.columns + simX;
-    const speed = Math.sqrt(
-      (mouseX - lastMouseX) ** 2 + (mouseY - lastMouseY) ** 2,
-    );
-
-    if (speed > 0) {
-      current[index] = Math.min(
-        SIMULATION_CONFIG.maxWaveValue,
-        current[index] + speed * SIMULATION_CONFIG.waveSpeedMultiplier,
-      );
-
-      // Affect neighboring cells
-      if (simX > 0)
-        current[index - 1] = Math.min(
-          SIMULATION_CONFIG.maxWaveValue,
-          current[index - 1] + speed * SIMULATION_CONFIG.neighborInfluence,
-        );
-      if (simX < GRID_SIZE.columns - 1)
-        current[index + 1] = Math.min(
-          SIMULATION_CONFIG.maxWaveValue,
-          current[index + 1] + speed * SIMULATION_CONFIG.neighborInfluence,
-        );
-      if (simY > 0)
-        current[index - GRID_SIZE.columns] = Math.min(
-          SIMULATION_CONFIG.maxWaveValue,
-          current[index - GRID_SIZE.columns] +
-            speed * SIMULATION_CONFIG.neighborInfluence,
-        );
-      if (simY < GRID_SIZE.rows - 1)
-        current[index + GRID_SIZE.columns] = Math.min(
-          SIMULATION_CONFIG.maxWaveValue,
-          current[index + GRID_SIZE.columns] +
-            speed * SIMULATION_CONFIG.neighborInfluence,
-        );
-    }
-  }
-};
-
-/**
- * Handle mouse down to start wave simulation.
- *
- * @param e {MouseEvent} - The mouse event
+ * Mouse event handlers
  */
 const handleMouseDown = (e: MouseEvent): void => {
-  isMouseDown = true;
-  handleMouseMove(e);
+  handleClick(e.clientX, e.clientY);
 };
 
 /**
- * Handle mouse up to stop wave simulation.
- *
- * @param e {MouseEvent} - The mouse event
- */
-const handleMouseUp = (e: MouseEvent): void => {
-  isMouseDown = false;
-};
-
-/**
- * Handle touch movement to update wave simulation.
- *
- * @param e {TouchEvent} - The touch event containing client coordinates
- */
-const handleTouchMove = (e: TouchEvent): void => {
-  e.preventDefault();
-  if (e.touches.length > 0) {
-    const touch = e.touches[0];
-    lastMouseX = mouseX;
-    lastMouseY = mouseY;
-    mouseX = touch.clientX;
-    mouseY = touch.clientY;
-    isMouseDown = true;
-  }
-};
-
-/**
- * Handle touch start to initialize wave simulation.
- *
- * @param e {TouchEvent} - The touch event containing client coordinates
+ * Touch event handlers
  */
 const handleTouchStart = (e: TouchEvent): void => {
+  e.preventDefault();
   if (e.touches.length > 0) {
     const touch = e.touches[0];
-    mouseX = touch.clientX;
-    mouseY = touch.clientY;
-    isMouseDown = true;
+    handleClick(touch.clientX, touch.clientY);
   }
 };
 
 /**
- * Handle touch end to stop wave simulation.
- *
- * @param e {TouchEvent} - The touch event
- */
-const handleTouchEnd = (e: TouchEvent): void => {
-  e.preventDefault();
-  isMouseDown = false;
-};
-
-/**
- * Update the wave simulation by calculating new wave values.
- * Uses a simple wave equation to propagate waves through the grid.
- */
-const updateWaves = (): void => {
-  for (let i = 1; i < GRID_SIZE.rows - 1; i++) {
-    for (let j = 1; j < GRID_SIZE.columns - 1; j++) {
-      const index = i * GRID_SIZE.columns + j;
-      const north = current[index - GRID_SIZE.columns];
-      const south = current[index + GRID_SIZE.columns];
-      const east = current[index + 1];
-      const west = current[index - 1];
-
-      previous[index] =
-        ((north + south + east + west) / 2 - previous[index]) *
-        SIMULATION_CONFIG.damping;
-    }
-  }
-
-  // Dampen boundaries
-  for (let i = 0; i < GRID_SIZE.rows; i++) {
-    const leftIndex = i * GRID_SIZE.columns;
-    const rightIndex = i * GRID_SIZE.columns + (GRID_SIZE.columns - 1);
-    current[leftIndex] *= SIMULATION_CONFIG.damping;
-    current[rightIndex] *= SIMULATION_CONFIG.damping;
-  }
-  for (let j = 0; j < GRID_SIZE.columns; j++) {
-    current[j] *= SIMULATION_CONFIG.damping;
-    current[(GRID_SIZE.rows - 1) * GRID_SIZE.columns + j] *=
-      SIMULATION_CONFIG.damping;
-  }
-
-  [current, previous] = [previous, current];
-};
-
-/**
- * Render the current state of the wave simulation to the offscreen canvas.
- * Converts wave values to colors using the palette and adds mouse interaction effects.
- */
-const renderSimulation = (): void => {
-  offCtx.fillStyle = PALETTE[0].color;
-  offCtx.fillRect(0, 0, GRID_SIZE.columns, GRID_SIZE.rows);
-
-  for (let i = 0; i < GRID_SIZE.rows; i++) {
-    for (let j = 0; j < GRID_SIZE.columns; j++) {
-      const index = i * GRID_SIZE.columns + j;
-      let value = Math.abs(current[index]);
-      if (value > SIMULATION_CONFIG.minWaveValue) {
-        offCtx.fillStyle = get8bitColor(
-          Math.min(value, SIMULATION_CONFIG.maxWaveValue),
-        );
-        offCtx.fillRect(j, i, 1, 1);
-      }
-    }
-  }
-
-  if (isMouseDown) {
-    const { simX, simY } = getSimCoords(mouseX, mouseY);
-    if (
-      simX >= 0 &&
-      simX < GRID_SIZE.columns &&
-      simY >= 0 &&
-      simY < GRID_SIZE.rows
-    ) {
-      offCtx.strokeStyle = "white";
-      offCtx.lineWidth = 1;
-      offCtx.strokeRect(simX, simY, 1, 1);
-      const index = simY * GRID_SIZE.columns + simX;
-      current[index] = SIMULATION_CONFIG.maxWaveValue;
-    }
-  }
-};
-
-/**
- * Draw the simulation to the main canvas.
- * Includes scanlines effect for a retro look.
- */
-const drawScreen = (): void => {
-  ctx.drawImage(offCanvas, 0, 0, canvas.width, canvas.height);
-
-  if (SCANLINES.enabled) {
-    ctx.fillStyle = `rgba(0, 0, 0, ${SCANLINES.opacity})`;
-    for (let i = 0; i < canvas.height; i += SCANLINES.spacing) {
-      ctx.fillRect(0, i, canvas.width, 1);
-    }
-  }
-};
-
-/**
- * Main animation loop.
- * Updates the wave simulation and renders it to the screen.
+ * Main animation loop
  */
 const animate = (): void => {
-  updateWaves();
-  renderSimulation();
+  if (!gl || !program) return;
 
-  ctx.fillStyle = "#000";
-  ctx.fillRect(0, 0, canvas.width, canvas.height);
-  drawScreen();
+  const currentTime = (performance.now() - startTime) / 1000;
+
+  // Update uniforms
+  if (uniforms.uTime) {
+    gl.uniform1f(uniforms.uTime, currentTime);
+  }
+
+  if (uniforms.uClickPos) {
+    gl.uniform2fv(uniforms.uClickPos, clickPositions);
+  }
+
+  if (uniforms.uClickTimes) {
+    gl.uniform1fv(uniforms.uClickTimes, clickTimes);
+  }
+
+  if (uniforms.uColor) {
+    gl.uniform3f(uniforms.uColor, 0.925, 0.918, 0.875); // #eceadf cream color
+  }
+
+  if (uniforms.uPixelSize) {
+    gl.uniform1f(uniforms.uPixelSize, PIXEL_SIZE);
+  }
+
+  // Clear and draw
+  gl.clearColor(0, 0, 0, 1);
+  gl.clear(gl.COLOR_BUFFER_BIT);
+  gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
 
   animationId = requestAnimationFrame(animate);
 };
 
 /**
- * Initialize the canvas and simulation.
- * Set up the main and offscreen canvases, contexts, and start the animation.
+ * Initialize everything
  */
 const initialize = (): void => {
   try {
-    const context = canvas.getContext("2d");
-    if (!context) throw new Error("Failed to get canvas context");
+    if (!initializeWebGL()) {
+      throw new Error("Failed to initialize WebGL");
+    }
 
-    // Get contexts
-    ctx = context;
-    ctx.imageSmoothingEnabled = false;
-
-    // Create offscreen canvas
-    offCanvas = document.createElement("canvas");
-    offCanvas.width = GRID_SIZE.columns;
-    offCanvas.height = GRID_SIZE.rows;
-
-    const offCanvasContext = offCanvas.getContext("2d");
-    if (!offCanvasContext)
-      throw new Error("Failed to create offscreen canvas context");
-
-    offCtx = offCanvasContext;
-    offCtx.imageSmoothingEnabled = false;
-
-    // Initialize simulation buffers
-    current = new Float32Array(GRID_SIZE.columns * GRID_SIZE.rows);
-    previous = new Float32Array(GRID_SIZE.columns * GRID_SIZE.rows);
-
-    // Start animation
+    startTime = performance.now();
+    resizeCanvas();
     animate();
   } catch (error) {
-    console.error("Failed to initialize canvas:", error);
+    console.error(
+      `[BackgroundCanvas] failed to initialize WebGL object. Error: ${error}`,
+    );
   }
 };
 
 onMount(() => {
   if (typeof window === "undefined") return;
 
-  // Initialize canvas
-  resizeCanvas();
   initialize();
 
-  // Add event listeners
   window.addEventListener("resize", resizeCanvas);
-  window.addEventListener("mousemove", handleMouseMove);
-  window.addEventListener("mousedown", handleMouseDown);
-  window.addEventListener("mouseup", handleMouseUp);
-  window.addEventListener("touchmove", handleTouchMove);
-  window.addEventListener("touchstart", handleTouchStart);
-  window.addEventListener("touchend", handleTouchEnd);
+  canvas.addEventListener("mousedown", handleMouseDown);
+  canvas.addEventListener("touchstart", handleTouchStart, { passive: false });
 
-  // Cleanup
   return () => {
     window.removeEventListener("resize", resizeCanvas);
-    window.removeEventListener("mousemove", handleMouseMove);
-    window.removeEventListener("mousedown", handleMouseDown);
-    window.removeEventListener("mouseup", handleMouseUp);
-    window.removeEventListener("touchmove", handleTouchMove);
-    window.removeEventListener("touchstart", handleTouchStart);
-    window.removeEventListener("touchend", handleTouchEnd);
+    canvas.removeEventListener("mousedown", handleMouseDown);
+    canvas.removeEventListener("touchstart", handleTouchStart);
 
-    cancelAnimationFrame(animationId);
+    if (animationId) {
+      cancelAnimationFrame(animationId);
+    }
   };
 });
 </script>
@@ -426,7 +456,9 @@ onMount(() => {
     left: 0;
     width: 100%;
     height: 100%;
-    z-index: -1;
-    pointer-events: none;
+    background-color: #0751cf; // Blue background
+
+    pointer-events: auto;
+    cursor: pointer;
   }
 </style> 
