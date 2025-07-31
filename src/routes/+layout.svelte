@@ -107,6 +107,34 @@ $effect(() => {
 
     overflow: hidden;
     position: relative;
+    
+    // Allow clicks to pass through to background canvas
+    pointer-events: none;
+    
+    // Re-enable pointer events for interactive elements
+    :global(a) {
+      pointer-events: auto;
+    }
+    
+    :global(button) {
+      pointer-events: auto;
+    }
+    
+    :global(input) {
+      pointer-events: auto;
+    }
+    
+    :global(textarea) {
+      pointer-events: auto;
+    }
+    
+    :global(select) {
+      pointer-events: auto;
+    }
+    
+    :global([tabindex]:not([tabindex="-1"])) {
+      pointer-events: auto;
+    }
   }
 
   #noise {

@@ -40,6 +40,12 @@ The website is automatically deployed using GitHub Actions. On every push to the
   scale, opacity, and content changes.
   It only appears on desktop devices and when the mouse has moved to avoid appearing on page load.
 
+- [Interactive Background Canvas](./src/lib/components/BackgroundCanvas.svelte)
+
+  A WebGL-powered interactive background featuring Bayer dithering effects. Click anywhere on the background to generate expanding wave rings with retro pixelated aesthetics. Uses fragment shaders for GPU-accelerated rendering and supports up to 10 simultaneous wave effects with configurable speed, thickness, and attenuation parameters.
+  
+  *Inspired by the techniques described in [Interactive WebGL Backgrounds: A Quick Guide to Bayer Dithering](https://tympanus.net/codrops/2025/07/30/interactive-webgl-backgrounds-a-quick-guide-to-bayer-dithering/) on Codrops.*
+
 ## Backend Infrastructure
 The website is powered by two custom Rust services:
 
