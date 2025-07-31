@@ -30,6 +30,8 @@ let uniforms: {
   uTime: WebGLUniformLocation | null;
   uClickPos: WebGLUniformLocation | null;
   uClickTimes: WebGLUniformLocation | null;
+  uColor: WebGLUniformLocation | null;
+  uPixelSize: WebGLUniformLocation | null;
 };
 
 /**
@@ -44,15 +46,27 @@ void main() {
 `;
 
 const fragmentShaderSource = `
-precision mediump float;
+#ifdef GL_OES_standard_derivatives
+#extension GL_OES_standard_derivatives : enable
+#endif
 
+precision highp float;
+
+uniform vec3 uColor;
 uniform vec2 uResolution;
 uniform float uTime;
+uniform float uPixelSize;
+
 uniform vec2 uClickPos[${MAX_CLICKS}];
 uniform float uClickTimes[${MAX_CLICKS}];
 
 const int MAX_CLICKS = ${MAX_CLICKS};
-const float PIXEL_SIZE = ${PIXEL_SIZE.toFixed(1)};
+
+// fBm constants
+const int FBM_OCTAVES = 5;
+const float FBM_LACUNARITY = 1.25;
+const float FBM_GAIN = 1.0;
+const float FBM_SCALE = 4.0;
 
 // Bayer matrix helpers
 float Bayer2(vec2 a) {
@@ -68,29 +82,93 @@ float Bayer8(vec2 a) {
     return Bayer4(0.5 * a) * 0.25 + Bayer2(a);
 }
 
+// 1-D hash and 3-D value-noise helpers
+float hash11(float n) { 
+    return fract(sin(n) * 43758.5453); 
+}
+
+float vnoise(vec3 p) {
+    vec3 ip = floor(p);
+    vec3 fp = fract(p);
+
+    float n000 = hash11(dot(ip + vec3(0.0,0.0,0.0), vec3(1.0,57.0,113.0)));
+    float n100 = hash11(dot(ip + vec3(1.0,0.0,0.0), vec3(1.0,57.0,113.0)));
+    float n010 = hash11(dot(ip + vec3(0.0,1.0,0.0), vec3(1.0,57.0,113.0)));
+    float n110 = hash11(dot(ip + vec3(1.0,1.0,0.0), vec3(1.0,57.0,113.0)));
+    float n001 = hash11(dot(ip + vec3(0.0,0.0,1.0), vec3(1.0,57.0,113.0)));
+    float n101 = hash11(dot(ip + vec3(1.0,0.0,1.0), vec3(1.0,57.0,113.0)));
+    float n011 = hash11(dot(ip + vec3(0.0,1.0,1.0), vec3(1.0,57.0,113.0)));
+    float n111 = hash11(dot(ip + vec3(1.0,1.0,1.0), vec3(1.0,57.0,113.0)));
+
+    vec3 w = fp*fp*fp*(fp*(fp*6.0-15.0)+10.0);
+
+    float x00 = mix(n000, n100, w.x);
+    float x10 = mix(n010, n110, w.x);
+    float x01 = mix(n001, n101, w.x);
+    float x11 = mix(n011, n111, w.x);
+
+    float y0 = mix(x00, x10, w.y);
+    float y1 = mix(x01, x11, w.y);
+
+    return mix(y0, y1, w.z) * 2.0 - 1.0;
+}
+
+// Stable fBm
+float fbm2(vec2 uv, float t) {
+    vec3 p = vec3(uv * FBM_SCALE, t);
+    float amp = 1.0;
+    float freq = 1.0;
+    float sum = 1.0;
+
+    for (int i = 0; i < FBM_OCTAVES; ++i) {
+        sum += amp * vnoise(p * freq);
+        freq *= FBM_LACUNARITY;
+        amp *= FBM_GAIN;
+    }
+    
+    return sum * 0.5 + 0.5;
+}
+
+// Circle mask
+float maskCircle(vec2 p, float cov) {
+    float r = sqrt(cov) * 0.25;
+    float d = length(p - 0.5) - r;
+    #ifdef GL_OES_standard_derivatives
+        float aa = 0.5 * fwidth(d);
+        return cov * (1.0 - smoothstep(-aa, aa, d * 2.0));
+    #else
+        return cov * (1.0 - step(0.0, d * 2.0));
+    #endif
+}
+
 void main() {
-    float pixelSize = PIXEL_SIZE;
+    float pixelSize = uPixelSize;
     vec2 fragCoord = gl_FragCoord.xy - uResolution * 0.5;
 
-    // Calculate the UV coordinates for the grid
     float aspectRatio = uResolution.x / uResolution.y;
+
+    vec2 pixelId = floor(fragCoord / pixelSize);
+    vec2 pixelUV = fract(fragCoord / pixelSize);
 
     float cellPixelSize = 8.0 * pixelSize;
     vec2 cellId = floor(fragCoord / cellPixelSize);
     vec2 cellCoord = cellId * cellPixelSize;
 
-    vec2 uv = ((cellCoord / uResolution)) * vec2(aspectRatio, 1.0);
+    vec2 uv = cellCoord / uResolution * vec2(aspectRatio, 1.0);
 
-    float feed = 0.0;
+    // Animated fbm feed
+    float feed = fbm2(uv, uTime * 0.05);
+    feed = feed * 0.5 - 0.65;
 
-    const float speed = 0.30;      // wave-front speed
-    const float thickness = 0.10;  // half-width of bright ring
-    const float dampT = 1.0;       // time attenuation
-    const float dampR = 1.0;       // radial attenuation
+    // Ripple clicks
+    const float speed = 0.30;
+    const float thickness = 0.10;
+    const float dampT = 1.0;
+    const float dampR = 10.0;
 
     for (int i = 0; i < MAX_CLICKS; ++i) {
         vec2 pos = uClickPos[i];
-        if (pos.x < 0.0 && pos.y < 0.0) continue; // skip empty clicks
+        if (pos.x < 0.0) continue;
 
         vec2 cuv = (((pos - uResolution * 0.5 - cellPixelSize * 0.5) / uResolution)) * vec2(aspectRatio, 1.0);
 
@@ -100,18 +178,16 @@ void main() {
         float waveR = speed * t;
         float ring = exp(-pow((r - waveR) / thickness, 2.0));
         float atten = exp(-dampT * t) * exp(-dampR * r);
-
         feed = max(feed, ring * atten);
     }
 
-        float bayerValue = Bayer8(fragCoord / pixelSize) - 0.5;
-    float bw = step(0.5, feed + bayerValue);
+    float bayer = Bayer8(fragCoord / uPixelSize) - 0.5;
+    float bw = step(0.5, feed + bayer);
 
-    // Use blue #0751cf as background and cream #eceadf as effect color
-    vec3 backgroundColor = vec3(0.027, 0.318, 0.812); // #0751cf
-    vec3 effectColor = vec3(0.925, 0.918, 0.875);     // #eceadf
+    // Apply circle mask
+    float M = maskCircle(pixelUV, bw);
 
-    gl_FragColor = vec4(mix(backgroundColor, effectColor, bw), 1.0);
+    gl_FragColor = vec4(uColor, M);
 }
 `;
 
@@ -216,6 +292,8 @@ const initializeWebGL = (): boolean => {
     uTime: gl.getUniformLocation(program, "uTime"),
     uClickPos: gl.getUniformLocation(program, "uClickPos"),
     uClickTimes: gl.getUniformLocation(program, "uClickTimes"),
+    uColor: gl.getUniformLocation(program, "uColor"),
+    uPixelSize: gl.getUniformLocation(program, "uPixelSize"),
   };
 
   // Initialize click arrays with invalid positions
@@ -310,6 +388,14 @@ const animate = (): void => {
     gl.uniform1fv(uniforms.uClickTimes, clickTimes);
   }
 
+  if (uniforms.uColor) {
+    gl.uniform3f(uniforms.uColor, 0.925, 0.918, 0.875); // #eceadf cream color
+  }
+
+  if (uniforms.uPixelSize) {
+    gl.uniform1f(uniforms.uPixelSize, PIXEL_SIZE);
+  }
+
   // Clear and draw
   gl.clearColor(0, 0, 0, 1);
   gl.clear(gl.COLOR_BUFFER_BIT);
@@ -370,6 +456,7 @@ onMount(() => {
     left: 0;
     width: 100%;
     height: 100%;
+    background-color: #0751cf; // Blue background
 
     pointer-events: auto;
     cursor: pointer;
