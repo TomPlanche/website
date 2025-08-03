@@ -77,7 +77,7 @@ onMount(() => {
     <h2
       bind:this={WIPRef}
     >
-      French Software Engineer based in Paris.
+      French Software Engineer based in Paris
     </h2>
   </div>
 </section>
@@ -112,9 +112,10 @@ onMount(() => {
     }
 
     h2 {
-      font-family: "PP Supply Mono", sans-serif;
+      font-family: "FK Raster Grotesk Compact Blended", sans-serif;
       font-kerning: none;
       font-size: 3vw;
+      letter-spacing: .15rem;
     }
   }
 </style>
