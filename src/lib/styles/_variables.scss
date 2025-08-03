@@ -227,3 +227,11 @@ $main-elem-padding: $main-vertical-padding $main-padding;
   font-weight: bold;
   font-style: normal;
 }
+
+// FK Raster Grotesk
+@font-face {
+  font-family: 'FK Raster Grotesk Compact Blended';
+  src: url('$lib/fonts/FK Raster Grotesk/FKRasterGroteskCompactTrial-Blended.otf');
+  font-weight: bold;
+  font-style: normal;
+}

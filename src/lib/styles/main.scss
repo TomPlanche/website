@@ -3,12 +3,10 @@
 @use "base";
 
 :root {
-  --background-color: #002b36;
-  --text-color: #DDD;
+  --text-color: #eceadf;
 }
 
 body {
-  background-color: var(--background-color);
   color: var(--text-color);
 
   transition: background-color 0.1s ease-in-out;
