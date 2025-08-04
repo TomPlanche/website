@@ -1,6 +1,7 @@
 <script lang="ts">
 // Imports
 import "$lib/styles/main.scss";
+import BackgroundCanvas from "$lib/components/BackgroundCanvas.svelte";
 import Cursor from "$lib/components/Cursor.svelte";
 import Footer from "$lib/components/header-footer/Footer.svelte";
 import Header from "$lib/components/header-footer/Header.svelte";
@@ -70,7 +71,7 @@ $effect(() => {
 });
 </script>
 
-<!--<BackgroundCanvas/>-->
+<BackgroundCanvas/>
 <div id="noise"></div>
 
 {#if !$mainStore.isMobileOrTablet}
