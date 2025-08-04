@@ -1,12 +1,32 @@
 <script lang="ts">
 // Imports
 import { cursorEnter, cursorLeave } from "$lib/actions/cursor";
+import { scrollTrigger } from "$lib/components/header-footer/index";
+import { onMount } from "svelte";
 
 // Variables
 const e_m_a_i_l = "tom" + "planche" + "@" + "icloud.com";
+
+// Scroll effect state
+let scrollY = $state(0);
+const isScrolled = $derived(scrollY >= scrollTrigger);
+
+// Lifecycle
+onMount(() => {
+  // Track scroll position
+  const handleScroll = () => {
+    scrollY = window.scrollY;
+  };
+
+  window.addEventListener("scroll", handleScroll);
+
+  return () => {
+    window.removeEventListener("scroll", handleScroll);
+  };
+});
 </script>
 
-<footer>
+<footer class:scrolled={isScrolled}>
   <span><span class="light">©2025</span> Paris</span>
   <span class="right">
     <span class="links">
@@ -44,11 +64,11 @@ const e_m_a_i_l = "tom" + "planche" + "@" + "icloud.com";
 
   footer {
     position: fixed;
-    bottom: variables.$main-padding;
-    left: variables.$main-padding;
+    bottom: 0;
+    left: 0;
 
-    outline: 1px solid $light-color;
-    border-radius: 0 0 1rem 1rem;
+    outline: none;
+    border-radius: 0;
 
     display: flex;
     flex-direction: row;
@@ -56,7 +76,7 @@ const e_m_a_i_l = "tom" + "planche" + "@" + "icloud.com";
     align-items: center;
 
     height: variables.$footer-height;
-    width: calc(100% - #{$double-padding});
+    width: 100%;
 
     // Blurry background
     backdrop-filter: blur(16px);
@@ -69,6 +89,21 @@ const e_m_a_i_l = "tom" + "planche" + "@" + "icloud.com";
     font-weight: 100;
     text-transform: uppercase;
     z-index: 1000;
+
+    // Smooth transitions (excluding outline)
+    transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+                bottom 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+                left 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+                border-radius 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+
+    // Scrolled state - current appearance
+    &.scrolled {
+      width: calc(100% - #{$double-padding});
+      bottom: variables.$main-padding;
+      left: variables.$main-padding;
+      outline: 1px solid $light-color;
+      border-radius: 0 0 1rem 1rem;
+    }
 
     .right {
       text-transform: initial;

@@ -18,12 +18,12 @@ The website is automatically deployed using GitHub Actions. On every push to the
 5. The PM2 process is restarted
 
 ## Cool things
-- [Header Theme Switcher](./src/lib/components/Header.svelte)
+- [Header Theme Switcher](src/lib/components/header-footer/Header.svelte)
 
     The changing button rotates on hover and fully rotates on click.
     The issue was that if the button hover was exited before the rotation was complete,the button would rotate back to its original positio, in a very jarring way.
 
-- [Footer Link](./src/lib/components/Footer.svelte)
+- [Footer Link](src/lib/components/header-footer/Footer.svelte)
 
     The SVG external link icon was cool to tweak in order to animate it on hover.
 

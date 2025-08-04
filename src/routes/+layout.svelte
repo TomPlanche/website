@@ -3,8 +3,8 @@
 import "$lib/styles/main.scss";
 import BackgroundCanvas from "$lib/components/BackgroundCanvas.svelte";
 import Cursor from "$lib/components/Cursor.svelte";
-import Footer from "$lib/components/Footer.svelte";
-import Header from "$lib/components/Header.svelte";
+import Footer from "$lib/components/header-footer/Footer.svelte";
+import Header from "$lib/components/header-footer/Header.svelte";
 import { mainStore } from "$lib/stores/mainStore";
 import { refStore } from "$lib/stores/refStore";
 import type { SvelteComponent } from "svelte";

@@ -1,13 +1,18 @@
 <script lang="ts">
 import { cursorEnter, cursorLeave } from "$lib/actions/cursor";
 import LiveIndicator from "$lib/components/LiveIndicator.svelte";
+import { scrollTrigger } from "$lib/components/header-footer/index"; // Statee
 import { BackendSongSchema, type TBackendSong } from "$lib/types/lastfm";
 import { onMount } from "svelte";
-import { fade } from "svelte/transition"; // Statee
+import { fade } from "svelte/transition";
 
 // Statee
 let currentTrack: TBackendSong | null = $state(null);
 const isLive = $derived(() => currentTrack?.currently_playing);
+
+// Scroll effect state
+let scrollY = $state(0);
+const isScrolled = $derived(scrollY >= scrollTrigger);
 
 // Functions
 const fetchNowPlaying = async () => {
@@ -37,25 +42,35 @@ onMount(() => {
   // Refresh every 10 seconds
   const interval = setInterval(fetchNowPlaying, 10000);
 
-  return () => clearInterval(interval);
+  // Track scroll position
+  const handleScroll = () => {
+    scrollY = window.scrollY;
+  };
+
+  window.addEventListener("scroll", handleScroll);
+
+  return () => {
+    clearInterval(interval);
+    window.removeEventListener("scroll", handleScroll);
+  };
 });
 </script>
 
-<nav>
-    <a
-        class="title"
-        href="/"
-        use:cursorEnter
-        use:cursorLeave
-    >Tom Planche</a>
-    <span
-        class="now-playing"
-        in:fade={{duration: 500}}
-        out:fade={{duration: 500}}
+<nav class:scrolled={isScrolled}>
+  <a
+      class="title"
+      href="/static"
+      use:cursorEnter
+      use:cursorLeave
+  >Tom Planche</a>
+  <span
+      class="now-playing"
+      in:fade={{duration: 500}}
+      out:fade={{duration: 500}}
 
-        use:cursorEnter
-        use:cursorLeave
-    >
+      use:cursorEnter
+      use:cursorLeave
+  >
       {#if isLive() && currentTrack}
         <LiveIndicator size="small"/>
         Live:
@@ -81,11 +96,11 @@ onMount(() => {
 
   nav {
     height: variables.$header-height;
-    width: calc(100% - #{$double-padding});
+    width: 100%;
 
     position: fixed;
-    top: variables.$main-padding;
-    left: variables.$main-padding;
+    top: 0;
+    left: 0;
     z-index: 1000;
 
     display: flex;
@@ -93,14 +108,28 @@ onMount(() => {
     justify-content: space-between;
     align-items: center;
 
-    outline: 1px solid $light-color;
-    border-radius: 1rem 1rem 0 0;
+    outline: none;
+    border-radius: 0;
 
     padding: 1rem;
 
     // Blurry background
     backdrop-filter: blur(16px);
     -webkit-backdrop-filter: blur(16px); // Compatible with Safari
+
+    // (excluding outline)
+    transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+    top 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+    left 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+    border-radius 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+
+    &.scrolled {
+      width: calc(100% - #{$double-padding});
+      top: variables.$main-padding;
+      left: variables.$main-padding;
+      outline: 1px solid $light-color;
+      border-radius: 1rem 1rem 0 0;
+    }
 
     .title {
       font-family: "Mondwest", monospace;
