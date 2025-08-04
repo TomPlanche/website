@@ -4,10 +4,12 @@
 
 :root {
   --text-color: #eceadf;
+  --background-color: #0751cf;
 }
 
 body {
   color: var(--text-color);
+  background-color: var(--background-color);
 
   transition: background-color 0.1s ease-in-out;
 
