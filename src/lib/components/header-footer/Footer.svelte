@@ -1,64 +1,61 @@
 <script lang="ts">
-// Imports
-import { cursorEnter, cursorLeave } from "$lib/actions/cursor";
-import { scrollTrigger } from "$lib/components/header-footer/index";
+  // Imports
+  import { cursorEnter, cursorLeave } from "$lib/actions/cursor";
+  import { scrollTrigger } from "$lib/components/header-footer/index";
 
-import { onMount } from "svelte";
+  import { onMount } from "svelte";
 
-// Variables
-const e_m_a_i_l = "tom" + "planche" + "@" + "icloud.com";
+  // Variables
+  const e_m_a_i_l = "tom" + "planche" + "@" + "icloud.com";
 
-// Scroll effect state
-let scrollY = $state(0);
-const isScrolled = $derived(scrollY >= scrollTrigger);
+  // Scroll effect state
+  let scrollY = $state(0);
+  const isScrolled = $derived(scrollY >= scrollTrigger);
 
-// Lifecycle
-onMount(() => {
-  // Track scroll position
-  const handleScroll = () => {
-    scrollY = window.scrollY;
-  };
+  // Lifecycle
+  onMount(() => {
+    // Track scroll position
+    const handleScroll = () => {
+      scrollY = window.scrollY;
+    };
 
-  window.addEventListener("scroll", handleScroll);
+    window.addEventListener("scroll", handleScroll);
 
-  return () => {
-    window.removeEventListener("scroll", handleScroll);
-  };
-});
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
+  });
 </script>
 
 <footer class:scrolled={isScrolled}>
   <span><span class="light">©2025</span> Paris</span>
   <span class="right">
     <span class="links">
-      <a
-          href="mailto:{e_m_a_i_l}"
-
-          use:cursorEnter
-          use:cursorLeave
-      >email</a>
-      <a
-          href="https://github.com/tomplanche"
-
-          use:cursorEnter
-          use:cursorLeave
-      >github</a>
+      <a href="mailto:{e_m_a_i_l}" use:cursorEnter use:cursorLeave>email</a>
+      <a href="https://github.com/tomplanche" use:cursorEnter use:cursorLeave
+        >github</a
+      >
     </span>
     <span class="name">
       Tom Planche
       <svg class="arrow" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-        <path class="arrow-tip" d="M21 11V3h-8v2h4v2h-2v2h-2v2h-2v2H9v2h2v-2h2v-2h2V9h2V7h2v4z"
-              fill="currentColor"/>
-        <path d="M 19 5 z M 11 5 H 3 v 16 h 16 v -8 h -2 v 6 H 5 V 7 h 6 z"
-              fill="currentColor"/>
+        <path
+          class="arrow-tip"
+          d="M21 11V3h-8v2h4v2h-2v2h-2v2h-2v2H9v2h2v-2h2v-2h2V9h2V7h2v4z"
+          fill="currentColor"
+        />
+        <path
+          d="M 19 5 z M 11 5 H 3 v 16 h 16 v -8 h -2 v 6 H 5 V 7 h 6 z"
+          fill="currentColor"
+        />
       </svg>
     </span>
   </span>
 </footer>
 
 <style lang="scss">
-  @use '$lib/styles/variables' as v;
-  @use './shared' as s;
+  @use "$lib/styles/variables" as v;
+  @use "./shared" as s;
 
   $double-padding: v.$main-padding * 2;
   $light-color: color-mix(in srgb, var(--text-color) 50%, transparent);
@@ -77,11 +74,11 @@ onMount(() => {
     text-transform: uppercase;
 
     // (excluding outline)
-    transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1),
-                bottom 0.3s cubic-bezier(0.4, 0, 0.2, 1),
-                left 0.3s cubic-bezier(0.4, 0, 0.2, 1),
-                border-radius 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-
+    transition:
+      width 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+      bottom 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+      left 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+      border-radius 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 
     // Scrolled state - current appearance
     &.scrolled {
@@ -101,7 +98,7 @@ onMount(() => {
         gap: $font-size;
         opacity: 0;
         transform: translateX(1rem);
-        transition: 
+        transition:
           opacity 0.3s ease 0.15s,
           transform 0.3s ease 0.15s;
         cursor: pointer;
@@ -120,7 +117,7 @@ onMount(() => {
         .links {
           opacity: 1;
           transform: translateX(0);
-          transition: 
+          transition:
             opacity 0.3s ease,
             transform 0.3s ease;
         }

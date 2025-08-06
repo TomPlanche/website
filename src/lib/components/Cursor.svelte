@@ -1,112 +1,112 @@
 <script lang="ts">
-import type { Snippet } from "svelte";
-// Imports
-import { Spring } from "svelte/motion";
-import type { TCursorOptions } from "../types/";
+  import type { Snippet } from "svelte";
+  // Imports
+  import { Spring } from "svelte/motion";
+  import type { TCursorOptions } from "../types/";
 
-// Props
-type TCursorProps = {
-  children?: Snippet;
-};
+  // Props
+  type TCursorProps = {
+    children?: Snippet;
+  };
 
-const { children }: TCursorProps = $props();
+  const { children }: TCursorProps = $props();
 
-// Variables
-const cursor_base = {
-  size: 15,
-  background: "color-mix(in srgb, var(--text-color) 50%, transparent)",
-};
-let scroll = $state<{
-  x: number;
-  y: number;
-}>({ x: 0, y: 0 });
+  // Variables
+  const cursor_base = {
+    size: 15,
+    background: "color-mix(in srgb, var(--text-color) 50%, transparent)",
+  };
+  let scroll = $state<{
+    x: number;
+    y: number;
+  }>({ x: 0, y: 0 });
 
-// Springs
-const opacity = new Spring(0);
-const coords = new Spring(
-  {
-    x: 0,
-    y: 0,
-  },
-  { stiffness: 0.3, damping: 0.8 },
-);
-const size = new Spring(cursor_base.size);
-const blur = new Spring(0);
+  // Springs
+  const opacity = new Spring(0);
+  const coords = new Spring(
+    {
+      x: 0,
+      y: 0,
+    },
+    { stiffness: 0.3, damping: 0.8 },
+  );
+  const size = new Spring(cursor_base.size);
+  const blur = new Spring(0);
 
-let background = $state(cursor_base.background as string);
-let hasMoved = $state(false);
+  let background = $state(cursor_base.background as string);
+  let hasMoved = $state(false);
 
-let innerSvg: string | null = $state(null);
-let innerText: string | null = $state(null);
+  let innerSvg: string | null = $state(null);
+  let innerText: string | null = $state(null);
 
-// Functions
-export function setCursorParams(params: TCursorOptions) {
-  if (params.isHover) {
-    // params.svg can be undefined, a svg string or a boolean
-    if (params.svg) {
-      innerSvg = params.svg;
+  // Functions
+  export function setCursorParams(params: TCursorOptions) {
+    if (params.isHover) {
+      // params.svg can be undefined, a svg string or a boolean
+      if (params.svg) {
+        innerSvg = params.svg;
+      }
+
+      if (params.innerText) {
+        innerText = params.innerText;
+      }
+
+      opacity.target = params.opacity ?? 0.5;
+    } else {
+      if (params.svg === undefined || params.svg === null) {
+        innerSvg = null;
+      }
+
+      opacity.set(params.opacity ?? 1);
+      if (params.innerText === undefined || params.innerText === null) {
+        innerText = null;
+      }
     }
 
-    if (params.innerText) {
-      innerText = params.innerText;
-    }
-
-    opacity.target = params.opacity ?? 0.5;
-  } else {
-    if (params.svg === undefined || params.svg === null) {
-      innerSvg = null;
-    }
-
-    opacity.set(params.opacity ?? 1);
-    if (params.innerText === undefined || params.innerText === null) {
-      innerText = null;
-    }
+    blur.target = params.blur ?? 0;
+    background = params.backgroundColor ?? cursor_base.background;
+    size.target = params.scale
+      ? cursor_base.size * params.scale
+      : cursor_base.size;
   }
 
-  blur.target = params.blur ?? 0;
-  background = params.backgroundColor ?? cursor_base.background;
-  size.target = params.scale
-    ? cursor_base.size * params.scale
-    : cursor_base.size;
-}
-
-// If hasMoved is false, then the cursor is not visible
-$effect(() => {
-  if (!hasMoved) {
-    opacity.target = 0;
-  } else {
-    setTimeout(() => {
-      opacity.target = 1;
-    }, 150);
-  }
-});
+  // If hasMoved is false, then the cursor is not visible
+  $effect(() => {
+    if (!hasMoved) {
+      opacity.target = 0;
+    } else {
+      setTimeout(() => {
+        opacity.target = 1;
+      }, 150);
+    }
+  });
 </script>
 
 <!-- The window is used to get the mouse position -->
 <svelte:window
-    onmousemove={(e) => {
+  onmousemove={(e) => {
     !hasMoved && (hasMoved = true);
 
     coords.target = {
       x: e.clientX,
-      y: e.clientY
+      y: e.clientY,
     };
 
     scroll = {
       x: window.scrollX,
-      y: window.scrollY
+      y: window.scrollY,
     };
   }}
-    onmousedown={() => {
-    size.target = size.current * 0.90;
+  onmousedown={() => {
+    size.target = size.current * 0.9;
   }}
-    onmouseup={() => {
-    size.target = size.current / .9;
+  onmouseup={() => {
+    size.target = size.current / 0.9;
   }}
-    onscroll={() => {
+  onscroll={() => {
     scroll = {
       x: window.scrollX,
-      y: window.scrollY
+      y: window.scrollY,
     };
   }}
 />
@@ -114,10 +114,10 @@ $effect(() => {
 <!-- The svg is always displayed -->
 <svg aria-hidden="true">
   <circle
-      cx={coords.current.x}
-      cy={coords.current.y}
-      r={size.current}
-      style="
+    cx={coords.current.x}
+    cy={coords.current.y}
+    r={size.current}
+    style="
 			opacity: {opacity.current};
 			filter: blur({blur.current}px);
 			fill: {background};
@@ -128,12 +128,14 @@ $effect(() => {
 <!-- If there is a svg, then we display it -->
 {#if innerSvg}
   <img
-      src={innerSvg}
-      alt="Github gif"
-      style="
+    src={innerSvg}
+    alt="Github gif"
+    style="
 			height: {$size * 2}px;
 			width: {$size * 2}px;
-			transform: translate({$coords.x + scroll.x - $size}px, {$coords.y + scroll.y - $size}px);
+			transform: translate({$coords.x + scroll.x - $size}px, {$coords.y +
+      scroll.y -
+      $size}px);
 		"
   />
 {/if}
@@ -141,12 +143,12 @@ $effect(() => {
 <!-- If something is in the default slot, then we display it -->
 {#if children || innerText}
   <div
-      class="html-container"
-      style="
+    class="html-container"
+    style="
 			height: {$size * 2}px;
 			width: {$size * 2}px;
-			transform: translate({$coords.x - $size}px, {$coords.y - $size}px) scale({$size /
-      cursor_base.size});
+			transform: translate({$coords.x - $size}px, {$coords.y -
+      $size}px) scale({$size / cursor_base.size});
 			pointer-events: none;
 			position: fixed;
 		"
