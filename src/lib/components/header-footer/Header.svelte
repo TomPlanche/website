@@ -1,18 +1,20 @@
 <script lang="ts">
   import { cursorEnter, cursorLeave } from "$lib/actions/cursor";
   import LiveIndicator from "$lib/components/LiveIndicator.svelte";
+  import { scrollTrigger } from "$lib/components/header-footer/index"; // Statee
   import { BackendSongSchema, type TBackendSong } from "$lib/types/lastfm";
 
   import { onMount } from "svelte";
   import { fade } from "svelte/transition";
-  import { useScrollState } from "$lib/composables/useScrollState";
 
   // Statee
   let currentTrack: TBackendSong | null = $state(null);
   const isLive = $derived(() => currentTrack?.currently_playing);
 
   // Scroll effect state
-  const { isScrolled } = useScrollState();
+  let scrollY: number = $state(0);
+  let canScroll: boolean = $state(false);
+  const isScrolled: boolean = $derived(!canScroll || scrollY >= scrollTrigger);
 
   // Functions
   const fetchNowPlaying = async () => {
@@ -42,8 +44,30 @@
     // Refresh every 10 seconds
     const interval = setInterval(fetchNowPlaying, 10000);
 
-    return () => {
+    const updateScrollY = (): void => {
+      scrollY = window.scrollY;
+    };
+
+    const updateCanScroll = (): void => {
+      canScroll = document.documentElement.scrollHeight > window.innerHeight;
+    };
+
+    const updateAll = (): void => {
+      updateScrollY();
+      updateCanScroll();
+    };
+
+    // Initial update
+    updateAll();
+
+    window.addEventListener("scroll", updateScrollY);
+    window.addEventListener("resize", updateAll);
+
+    return (): void => {
       clearInterval(interval);
+
+      window.removeEventListener("scroll", updateScrollY);
+      window.removeEventListener("resize", updateAll);
     };
   });
 </script>

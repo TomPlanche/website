@@ -1,12 +1,43 @@
 <script lang="ts">
   // Imports
   import { cursorEnter, cursorLeave } from "$lib/actions/cursor";
-  import { useScrollState } from "$lib/composables/useScrollState";
+  import { scrollTrigger } from "$lib/components/header-footer/index";
+
+  import { onMount } from "svelte";
 
   // Variables
   const e_m_a_i_l = "tom" + "planche" + "@" + "icloud.com";
 
-  const { isScrolled } = useScrollState();
+  // Scroll effect state
+  let scrollY: number = $state(0);
+  let canScroll: boolean = $state(true);
+  const isScrolled: boolean = $derived(!canScroll || scrollY >= scrollTrigger);
+
+  onMount(() => {
+    const updateScrollY = (): void => {
+      scrollY = window.scrollY;
+    };
+
+    const updateCanScroll = (): void => {
+      canScroll = document.documentElement.scrollHeight > window.innerHeight;
+    };
+
+    const updateAll = (): void => {
+      updateScrollY();
+      updateCanScroll();
+    };
+
+    // Initial update
+    updateAll();
+
+    window.addEventListener("scroll", updateScrollY);
+    window.addEventListener("resize", updateAll);
+
+    return (): void => {
+      window.removeEventListener("scroll", updateScrollY);
+      window.removeEventListener("resize", updateAll);
+    };
+  });
 </script>
 
 <footer class:scrolled={isScrolled}>

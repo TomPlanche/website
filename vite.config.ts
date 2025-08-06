@@ -3,7 +3,6 @@ import { sveltekit } from "@sveltejs/kit/vite";
 import { defineConfig } from "vite";
 
 export default defineConfig({
-  plugins: [enhancedImages(), sveltekit()],
   css: {
     preprocessorOptions: {
       scss: {
@@ -11,6 +10,7 @@ export default defineConfig({
       },
     },
   },
+  plugins: [enhancedImages(), sveltekit()],
   server: {
     host: "0.0.0.0",
   },
