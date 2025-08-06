@@ -1,30 +1,12 @@
 <script lang="ts">
   // Imports
   import { cursorEnter, cursorLeave } from "$lib/actions/cursor";
-  import { scrollTrigger } from "$lib/components/header-footer/index";
-
-  import { onMount } from "svelte";
+  import { useScrollState } from "$lib/composables/useScrollState";
 
   // Variables
   const e_m_a_i_l = "tom" + "planche" + "@" + "icloud.com";
 
-  // Scroll effect state
-  let scrollY = $state(0);
-  const isScrolled = $derived(scrollY >= scrollTrigger);
-
-  // Lifecycle
-  onMount(() => {
-    // Track scroll position
-    const handleScroll = () => {
-      scrollY = window.scrollY;
-    };
-
-    window.addEventListener("scroll", handleScroll);
-
-    return () => {
-      window.removeEventListener("scroll", handleScroll);
-    };
-  });
+  const { isScrolled } = useScrollState();
 </script>
 
 <footer class:scrolled={isScrolled}>
