@@ -1,90 +1,82 @@
 <script lang="ts">
-import { gsap } from "gsap";
-import { Flip } from "gsap/Flip";
-import { ScrambleTextPlugin } from "gsap/ScrambleTextPlugin";
-import { SplitText } from "gsap/SplitText";
-import { onMount } from "svelte";
+  import { gsap } from "gsap";
+  import { Flip } from "gsap/Flip";
+  import { ScrambleTextPlugin } from "gsap/ScrambleTextPlugin";
+  import { SplitText } from "gsap/SplitText";
+  import { onMount } from "svelte";
 
-gsap.registerPlugin(ScrambleTextPlugin);
-gsap.registerPlugin(SplitText);
-gsap.registerPlugin(Flip);
+  gsap.registerPlugin(ScrambleTextPlugin);
+  gsap.registerPlugin(SplitText);
+  gsap.registerPlugin(Flip);
 
-const title = "Tom Planche";
+  const title = "Tom Planche";
 
-// Bindings
-let titleRef: HTMLHeadingElement;
-let WIPRef: HTMLParagraphElement;
+  // Bindings
+  let titleRef: HTMLHeadingElement;
+  let WIPRef: HTMLParagraphElement;
 
-let introAnimationIsOver = $state(false);
+  let introAnimationIsOver = $state(false);
 
-// Initialize animations
-onMount(() => {
-  if (!titleRef || !WIPRef) {
-    console.error("Title or WIP reference is not set");
-    return;
-  }
+  // Initialize animations
+  onMount(() => {
+    if (!titleRef || !WIPRef) {
+      console.error("Title or WIP reference is not set");
+      return;
+    }
 
-  document.fonts.ready.then(() => {
-    const splittedTitle = new SplitText(WIPRef, { type: "chars" });
+    document.fonts.ready.then(() => {
+      const splittedTitle = new SplitText(WIPRef, { type: "chars" });
 
-    const tl = gsap.timeline({
-      defaults: {
-        duration: 1,
-        ease: "power2.out",
-      },
-    });
-
-    tl.set(splittedTitle.chars, { opacity: 0 })
-      .to(titleRef, {
-        scrambleText: {
-          text: title,
-          chars: title.replace(/a/g, "4").replace(/e/g, "3").replace(/o/g, "O"),
-          revealDelay: 0.625,
+      const tl = gsap.timeline({
+        defaults: {
+          duration: 1,
+          ease: "power2.out",
         },
-        duration: 1,
-      })
-      .fromTo(
-        splittedTitle.chars,
-        {
-          opacity: 0,
-          translateY: "1rem",
-        },
-        {
-          opacity: 1,
-          translateY: 0,
-          stagger: 0.01,
-          duration: 0.25,
-          onComplete: () => {
-            splittedTitle.revert();
+      });
 
-            introAnimationIsOver = true;
+      tl.set(splittedTitle.chars, { opacity: 0 })
+        .to(titleRef, {
+          scrambleText: {
+            text: title,
+            chars: title
+              .replace(/a/g, "4")
+              .replace(/e/g, "3")
+              .replace(/o/g, "O"),
+            revealDelay: 0.625,
           },
-        },
-      );
+          duration: 1,
+        })
+        .fromTo(
+          splittedTitle.chars,
+          {
+            opacity: 0,
+            translateY: "1rem",
+          },
+          {
+            opacity: 1,
+            translateY: 0,
+            stagger: 0.01,
+            duration: 0.25,
+            onComplete: () => {
+              splittedTitle.revert();
+
+              introAnimationIsOver = true;
+            },
+          },
+        );
+    });
   });
-});
 </script>
 
-<section
-    id="intro"
->
+<section id="intro">
   <div class="title">
-    <h1
-        bind:this={titleRef}
-    >
-      Tom Planche
-    </h1>
-    <h2
-      bind:this={WIPRef}
-    >
-      French Software Engineer based in Paris
-    </h2>
+    <h1 bind:this={titleRef}>Tom Planche</h1>
+    <h2 bind:this={WIPRef}>French Software Engineer based in Paris</h2>
   </div>
 </section>
 
-
 <style lang="scss">
-  @use '$lib/styles/variables';
+  @use "$lib/styles/variables";
 
   #intro {
     min-height: 100dvh;
@@ -98,7 +90,8 @@ onMount(() => {
     justify-content: center;
     align-items: center;
 
-    h1, h2 {
+    h1,
+    h2 {
       text-shadow: 0 0 5px var(--text-color);
       font-family: "Mondwest", sans-serif;
     }
@@ -115,7 +108,7 @@ onMount(() => {
       font-family: "FK Raster Grotesk Compact Blended", sans-serif;
       font-kerning: none;
       font-size: 3vw;
-      letter-spacing: .15rem;
+      letter-spacing: 0.15rem;
     }
   }
 </style>

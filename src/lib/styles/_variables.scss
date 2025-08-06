@@ -28,11 +28,6 @@
 @mixin base-style() {
   background-color: $app-bg-light;
   transition: background-color 0.5s ease-in-out;
-
-  :global(body.dark) & {
-    color: $main-color;
-    background-color: $app-bg-dark;
-  }
 }
 
 @mixin blurry-bg($filter-blur: 16px, $bg-color: #eeeeee25) {

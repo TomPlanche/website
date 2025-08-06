@@ -1,89 +1,89 @@
 <script lang="ts">
-import { songsStore } from "$lib/stores/songStore";
-import type { TBackendSong } from "$lib/types/lastfm";
-import { onMount } from "svelte";
+  import { songsStore } from "$lib/stores/songStore";
+  import type { TBackendSong } from "$lib/types/lastfm";
+  import { onMount } from "svelte";
 
-/**
- * Variables
- */
-let fetchingSongs = $state(true);
-let songs = $state<TBackendSong[]>([]);
-let grid: HTMLDivElement | null = $state(null);
-let imageLoadStates = $state<Map<string, { loaded: boolean; error: boolean }>>(
-  new Map(),
-);
+  /**
+   * Variables
+   */
+  let fetchingSongs = $state(true);
+  let songs = $state<TBackendSong[]>([]);
+  let grid: HTMLDivElement | null = $state(null);
+  let imageLoadStates = $state<
+    Map<string, { loaded: boolean; error: boolean }>
+  >(new Map());
 
-/**
- * Functions
- */
-const handleImageLoad = (songId: string) => {
-  const currentState = imageLoadStates.get(songId) || {
-    loaded: false,
-    error: false,
+  /**
+   * Functions
+   */
+  const handleImageLoad = (songId: string) => {
+    const currentState = imageLoadStates.get(songId) || {
+      loaded: false,
+      error: false,
+    };
+    imageLoadStates.set(songId, { ...currentState, loaded: true });
+    // Trigger reactivity
+    imageLoadStates = new Map(imageLoadStates);
   };
-  imageLoadStates.set(songId, { ...currentState, loaded: true });
-  // Trigger reactivity
-  imageLoadStates = new Map(imageLoadStates);
-};
 
-const handleImageError = (songId: string) => {
-  const currentState = imageLoadStates.get(songId) || {
-    loaded: false,
-    error: false,
+  const handleImageError = (songId: string) => {
+    const currentState = imageLoadStates.get(songId) || {
+      loaded: false,
+      error: false,
+    };
+    imageLoadStates.set(songId, { ...currentState, error: true });
+    // Trigger reactivity
+    imageLoadStates = new Map(imageLoadStates);
   };
-  imageLoadStates.set(songId, { ...currentState, error: true });
-  // Trigger reactivity
-  imageLoadStates = new Map(imageLoadStates);
-};
 
-const getImageState = (songId: string) => {
-  return imageLoadStates.get(songId) || { loaded: false, error: false };
-};
+  const getImageState = (songId: string) => {
+    return imageLoadStates.get(songId) || { loaded: false, error: false };
+  };
 
-/**
- * Lifecycle
- */
-onMount(() => {
-  // Filter out songs without a proper image URL
-  songs = $songsStore.filter((song: TBackendSong) => {
-    return (
-      song.image_url &&
-      song.image_url.length > 0 &&
-      !song.image_url?.includes("2a96cbd8b46e442fc41c2b86b821562f")
-    );
-  });
+  /**
+   * Lifecycle
+   */
+  onMount(() => {
+    // Filter out songs without a proper image URL
+    songs = $songsStore.filter((song: TBackendSong) => {
+      return (
+        song.image_url &&
+        song.image_url.length > 0 &&
+        !song.image_url?.includes("2a96cbd8b46e442fc41c2b86b821562f")
+      );
+    });
 
-  // Initialize loading states for all songs
-  for (const song of songs) {
-    const songId = `${song.artist}-${song.name}`;
-    imageLoadStates.set(songId, { loaded: false, error: false });
-  }
-  imageLoadStates = new Map(imageLoadStates);
-
-  setTimeout(() => {
-    if (!grid) {
-      console.warn("Grid element is not defined.");
-      return;
+    // Initialize loading states for all songs
+    for (const song of songs) {
+      const songId = `${song.artist}-${song.name}`;
+      imageLoadStates.set(songId, { loaded: false, error: false });
     }
+    imageLoadStates = new Map(imageLoadStates);
 
-    const gridStyles = window.getComputedStyle(grid);
-    const columnsRaw = gridStyles.getPropertyValue("grid-template-columns");
+    setTimeout(() => {
+      if (!grid) {
+        console.warn("Grid element is not defined.");
+        return;
+      }
 
-    const numColumns = columnsRaw.split(" ").filter(Boolean).length;
+      const gridStyles = window.getComputedStyle(grid);
+      const columnsRaw = gridStyles.getPropertyValue("grid-template-columns");
 
-    // slice the songs array to match the number of columns for modulo
-    songs = songs.slice(0, songs.length - (songs.length % numColumns));
+      const numColumns = columnsRaw.split(" ").filter(Boolean).length;
 
-    fetchingSongs = false;
-  }, 0);
-});
+      // slice the songs array to match the number of columns for modulo
+      songs = songs.slice(0, songs.length - (songs.length % numColumns));
+
+      fetchingSongs = false;
+    }, 0);
+  });
 </script>
 
 <section class="music-section">
   <h1>Recently Played (last {songs.length} songs)</h1>
 
   <div bind:this={grid} class="song-container">
-    {#if (fetchingSongs)}
+    {#if fetchingSongs}
       <div class="song-container__item">Loading...</div>
     {:else if songs.length === 0}
       <div class="song-container__item">No songs found</div>
@@ -108,13 +108,12 @@ onMount(() => {
 
           <!-- Actual image -->
           <img
-              alt=""
-              src={song.image_url}
-              title={`${song.name} by ${song.artist}`}
-              class:loaded={imageState.loaded}
-              class:error={imageState.error}
-              onload={() => handleImageLoad(songId)}
-              onerror={() => handleImageError(songId)}
+            alt=""
+            src={song.image_url}
+            title={`${song.name} by ${song.artist}`}
+            class:loaded={imageState.loaded}
+            class:error={imageState.error}
+            onload={() => handleImageLoad(songId)}
           />
         </div>
       {/each}
@@ -123,10 +122,10 @@ onMount(() => {
 </section>
 
 <style lang="scss">
-  @use '$lib/styles/variables';
+  @use "$lib/styles/variables";
 
   $line-height: 5rem;
-  $top-padding: .5rem;
+  $top-padding: 0.5rem;
 
   .music-section {
     display: flex;
@@ -153,7 +152,10 @@ onMount(() => {
       width: 100%;
 
       display: grid;
-      grid-template-columns: repeat(var(--column-count), minmax($column-size, 1fr));
+      grid-template-columns: repeat(
+        var(--column-count),
+        minmax($column-size, 1fr)
+      );
       grid-column-gap: $c-gap;
       grid-row-gap: $r-gap;
 
@@ -194,10 +196,10 @@ onMount(() => {
             width: 100%;
             height: 100%;
             background: linear-gradient(
-                            90deg,
-                            rgba(128, 128, 128, 0.1) 25%,
-                            rgba(128, 128, 128, 0.2) 50%,
-                            rgba(128, 128, 128, 0.1) 75%
+              90deg,
+              rgba(128, 128, 128, 0.1) 25%,
+              rgba(128, 128, 128, 0.2) 50%,
+              rgba(128, 128, 128, 0.1) 75%
             );
             background-size: 200% 100%;
             animation: skeleton-loading 2s infinite;
@@ -231,7 +233,9 @@ onMount(() => {
 
           // Hide by default
           opacity: 0;
-          transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out;
+          transition:
+            opacity 0.3s ease-in-out,
+            transform 0.3s ease-in-out;
 
           // Show when loaded
           &.loaded {

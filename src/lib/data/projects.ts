@@ -166,30 +166,3 @@ export const projects: Project[] = [
       "Full-stack development and feature implementation",
   },
 ];
-
-// Helper functions for filtering and sorting
-export const getFeaturedProjects = (): Project[] =>
-  projects.filter((project) => project.featured);
-
-export const getProjectsByCategory = (
-  category: Project["category"],
-): Project[] => projects.filter((project) => project.category === category);
-
-export const getProjectsByStatus = (status: Project["status"]): Project[] =>
-  projects.filter((project) => project.status === status);
-
-export const getProjectsByYear = (year: number): Project[] =>
-  projects.filter((project) => project.year === year);
-
-export const getProjectsByContributionType = (
-  type: Project["contributionType"],
-): Project[] => projects.filter((project) => project.contributionType === type);
-
-export const getOwnProjects = (): Project[] =>
-  getProjectsByContributionType("owner");
-
-export const getContributedProjects = (): Project[] =>
-  getProjectsByContributionType("contributor");
-
-export const getProjectById = (id: string): Project | undefined =>
-  projects.find((project) => project.id === id);

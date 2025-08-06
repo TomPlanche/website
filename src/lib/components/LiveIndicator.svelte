@@ -1,6 +1,6 @@
 <script lang="ts">
-export const size = "small";
-export const color = "#35d151";
+  export const size = "small";
+  export const color = "#35d151";
 </script>
 
 <div class="live-indicator {size}" style="--indicator-color: {color}">
@@ -9,7 +9,7 @@ export const color = "#35d151";
 </div>
 
 <style lang="scss">
-  @use '$lib/styles/variables' as vars;
+  @use "$lib/styles/variables" as vars;
 
   @keyframes pulse {
     0% {
@@ -32,20 +32,23 @@ export const color = "#35d151";
     align-items: center;
 
     &.small {
-      .dot, .pulse {
+      .dot,
+      .pulse {
         width: 8px;
         height: 8px;
       }
     }
 
     &.medium {
-      .dot, .pulse {
+      .dot,
+      .pulse {
         width: 12px;
         height: 12px;
       }
     }
 
-    .dot, .pulse {
+    .dot,
+    .pulse {
       background-color: var(--indicator-color, vars.$gh-green-active);
       border-radius: 50%;
     }
