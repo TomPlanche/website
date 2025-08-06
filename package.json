@@ -8,7 +8,11 @@
     "build": "vite build",
     "preview": "vite preview",
     "check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
-    "check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch"
+    "check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
+    "format": "prettier --write \"**/*.svelte\"",
+    "format:check": "prettier --check \"**/*.svelte\"",
+    "lint": "biome check .",
+    "lint:fix": "biome check --apply ."
   },
   "devDependencies": {
     "@biomejs/biome": "1.9.4",
@@ -18,6 +22,8 @@
     "@sveltejs/kit": "^2.21.1",
     "@sveltejs/vite-plugin-svelte": "^5.0.3",
     "image-size": "^2.0.2",
+    "prettier": "^3.6.2",
+    "prettier-plugin-svelte": "^3.4.0",
     "sass-embedded": "^1.89.0",
     "svelte": "^5.33.10",
     "svelte-check": "^4.2.1",

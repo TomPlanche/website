@@ -1,46 +1,46 @@
 <script lang="ts">
-import { onMount } from "svelte";
+  import { onMount } from "svelte";
 
-/**
- * CONSTANTS
- */
-const MAX_CLICKS = 100;
-const PIXEL_SIZE = 8.0;
+  /**
+   * CONSTANTS
+   */
+  const MAX_CLICKS = 100;
+  const PIXEL_SIZE = 8.0;
 
-/**
- * VARIABLES
- */
-// Canvas and WebGL context
-let canvas: HTMLCanvasElement;
-let gl: WebGLRenderingContext | WebGL2RenderingContext;
-let program: WebGLProgram;
+  /**
+   * VARIABLES
+   */
+  // Canvas and WebGL context
+  let canvas: HTMLCanvasElement;
+  let gl: WebGLRenderingContext | WebGL2RenderingContext;
+  let program: WebGLProgram;
 
-// Animation frame ID for cleanup
-let animationId: number;
-let startTime: number;
+  // Animation frame ID for cleanup
+  let animationId: number;
+  let startTime: number;
 
-// Click tracking
-let clickIndex = 0;
-let clickPositions = new Float32Array(MAX_CLICKS * 2); // x, y pairs
-let clickTimes = new Float32Array(MAX_CLICKS);
+  // Click tracking
+  let clickIndex = 0;
+  let clickPositions = new Float32Array(MAX_CLICKS * 2); // x, y pairs
+  let clickTimes = new Float32Array(MAX_CLICKS);
 
-// Touch/drag state
-let isHolding = false;
+  // Touch/drag state
+  let isHolding = false;
 
-// Uniforms
-let uniforms: {
-  uResolution: WebGLUniformLocation | null;
-  uTime: WebGLUniformLocation | null;
-  uClickPos: WebGLUniformLocation | null;
-  uClickTimes: WebGLUniformLocation | null;
-  uColor: WebGLUniformLocation | null;
-  uPixelSize: WebGLUniformLocation | null;
-};
+  // Uniforms
+  let uniforms: {
+    uResolution: WebGLUniformLocation | null;
+    uTime: WebGLUniformLocation | null;
+    uClickPos: WebGLUniformLocation | null;
+    uClickTimes: WebGLUniformLocation | null;
+    uColor: WebGLUniformLocation | null;
+    uPixelSize: WebGLUniformLocation | null;
+  };
 
-/**
- * SHADERS
- */
-const vertexShaderSource = `
+  /**
+   * SHADERS
+   */
+  const vertexShaderSource = `
 attribute vec2 a_position;
 
 void main() {
@@ -48,7 +48,7 @@ void main() {
 }
 `;
 
-const fragmentShaderSource = `
+  const fragmentShaderSource = `
 #ifdef GL_OES_standard_derivatives
 #extension GL_OES_standard_derivatives : enable
 #endif
@@ -194,322 +194,319 @@ void main() {
 }
 `;
 
-/**
- * FUNCTIONS
- */
-/**
- * Create and compile a shader
- */
-const createShader = (
-  gl: WebGLRenderingContext,
-  type: number,
-  source: string,
-): WebGLShader | null => {
-  const shader = gl.createShader(type);
-  if (!shader) return null;
+  /**
+   * FUNCTIONS
+   */
+  /**
+   * Create and compile a shader
+   */
+  const createShader = (
+    gl: WebGLRenderingContext,
+    type: number,
+    source: string,
+  ): WebGLShader | null => {
+    const shader = gl.createShader(type);
+    if (!shader) return null;
 
-  gl.shaderSource(shader, source);
-  gl.compileShader(shader);
+    gl.shaderSource(shader, source);
+    gl.compileShader(shader);
 
-  if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
-    console.error("Shader compilation error:", gl.getShaderInfoLog(shader));
-    gl.deleteShader(shader);
-    return null;
-  }
+    if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
+      console.error("Shader compilation error:", gl.getShaderInfoLog(shader));
+      gl.deleteShader(shader);
+      return null;
+    }
 
-  return shader;
-};
-
-/**
- * Create shader program
- */
-const createProgram = (
-  gl: WebGLRenderingContext,
-  vertexShader: WebGLShader,
-  fragmentShader: WebGLShader,
-): WebGLProgram | null => {
-  const program = gl.createProgram();
-  if (!program) return null;
-
-  gl.attachShader(program, vertexShader);
-  gl.attachShader(program, fragmentShader);
-  gl.linkProgram(program);
-
-  if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
-    console.error("Program linking error:", gl.getProgramInfoLog(program));
-
-    return null;
-  }
-
-  return program;
-};
-
-/**
- * Initialize WebGL and shaders
- */
-const initializeWebGL = (): boolean => {
-  const context =
-    canvas.getContext("webgl2", {
-      alpha: true,
-      premultipliedAlpha: false,
-    }) ||
-    canvas.getContext("webgl", {
-      alpha: true,
-      premultipliedAlpha: false,
-    });
-  if (!context) {
-    console.error("WebGL not supported");
-
-    return false;
-  }
-
-  gl = context;
-
-  // Create shaders
-  const vertexShader = createShader(gl, gl.VERTEX_SHADER, vertexShaderSource);
-  const fragmentShader = createShader(
-    gl,
-    gl.FRAGMENT_SHADER,
-    fragmentShaderSource,
-  );
-
-  if (!vertexShader || !fragmentShader) {
-    return false;
-  }
-
-  // Create program
-  const createdProgram = createProgram(gl, vertexShader, fragmentShader);
-  if (!createdProgram) {
-    return false;
-  }
-
-  program = createdProgram;
-  gl.useProgram(program);
-
-  // Enable alpha blending for transparency
-  gl.enable(gl.BLEND);
-  gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
-
-  // Set up geometry (fullscreen quad)
-  const vertices = new Float32Array([-1, -1, 1, -1, -1, 1, 1, 1]);
-
-  const buffer = gl.createBuffer();
-  gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
-  gl.bufferData(gl.ARRAY_BUFFER, vertices, gl.STATIC_DRAW);
-
-  const positionLocation = gl.getAttribLocation(program, "a_position");
-  gl.enableVertexAttribArray(positionLocation);
-  gl.vertexAttribPointer(positionLocation, 2, gl.FLOAT, false, 0, 0);
-
-  // Get uniform locations
-  uniforms = {
-    uResolution: gl.getUniformLocation(program, "uResolution"),
-    uTime: gl.getUniformLocation(program, "uTime"),
-    uClickPos: gl.getUniformLocation(program, "uClickPos"),
-    uClickTimes: gl.getUniformLocation(program, "uClickTimes"),
-    uColor: gl.getUniformLocation(program, "uColor"),
-    uPixelSize: gl.getUniformLocation(program, "uPixelSize"),
+    return shader;
   };
 
-  // Initialize click arrays with invalid positions
-  for (let i = 0; i < MAX_CLICKS; i++) {
-    clickPositions[i * 2] = -1;
-    clickPositions[i * 2 + 1] = -1;
-    clickTimes[i] = 0;
-  }
+  /**
+   * Create shader program
+   */
+  const createProgram = (
+    gl: WebGLRenderingContext,
+    vertexShader: WebGLShader,
+    fragmentShader: WebGLShader,
+  ): WebGLProgram | null => {
+    const program = gl.createProgram();
+    if (!program) return null;
 
-  return true;
-};
+    gl.attachShader(program, vertexShader);
+    gl.attachShader(program, fragmentShader);
+    gl.linkProgram(program);
 
-/**
- * Resize canvas and update WebGL viewport
- */
-const resizeCanvas = (): void => {
-  if (!canvas || !gl) return;
+    if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
+      console.error("Program linking error:", gl.getProgramInfoLog(program));
 
-  const devicePixelRatio = window.devicePixelRatio || 1;
-  const displayWidth = canvas.clientWidth;
-  const displayHeight = canvas.clientHeight;
-
-  // Account for device pixel ratio for consistent sizing across browsers
-  const bufferWidth = Math.floor(displayWidth * devicePixelRatio);
-  const bufferHeight = Math.floor(displayHeight * devicePixelRatio);
-
-  if (canvas.width !== bufferWidth || canvas.height !== bufferHeight) {
-    canvas.width = bufferWidth;
-    canvas.height = bufferHeight;
-    gl.viewport(0, 0, bufferWidth, bufferHeight);
-
-    // Update resolution uniform with buffer dimensions
-    if (uniforms.uResolution) {
-      gl.uniform2f(uniforms.uResolution, bufferWidth, bufferHeight);
-    }
-  }
-};
-
-/**
- * Handle mouse/touch clicks with throttling for continuous effects
- */
-const handleClick = (clientX: number, clientY: number): void => {
-  if (!canvas) return;
-
-  const currentTime = performance.now();
-
-  const rect = canvas.getBoundingClientRect();
-  const cssX = clientX - rect.left;
-  const cssY = clientY - rect.top;
-
-  // Convert to frame-buffer pixels accounting for device pixel ratio
-  const devicePixelRatio = window.devicePixelRatio || 1;
-  const fragX = cssX * devicePixelRatio;
-  const fragY = (rect.height - cssY) * devicePixelRatio;
-
-  // Store click position and time
-  clickPositions[clickIndex * 2] = fragX;
-  clickPositions[clickIndex * 2 + 1] = fragY;
-  clickTimes[clickIndex] = (currentTime - startTime) / 1000;
-
-  clickIndex = (clickIndex + 1) % MAX_CLICKS;
-};
-
-/**
- * Mouse event handlers
- */
-const handleMouseDown = (e: MouseEvent): void => {
-  isHolding = true;
-  handleClick(e.clientX, e.clientY); // Force first click
-};
-
-const handleMouseMove = (e: MouseEvent): void => {
-  if (isHolding) {
-    handleClick(e.clientX, e.clientY);
-  }
-};
-
-const handleMouseUp = (_e: MouseEvent): void => {
-  isHolding = false;
-};
-
-/**
- * Touch event handlers
- */
-const handleTouchStart = (e: TouchEvent): void => {
-  e.preventDefault();
-  if (e.touches.length > 0) {
-    isHolding = true;
-    const touch = e.touches[0];
-    handleClick(touch.clientX, touch.clientY); // Force first click
-  }
-};
-
-const handleTouchMove = (e: TouchEvent): void => {
-  e.preventDefault();
-  if (isHolding && e.touches.length > 0) {
-    const touch = e.touches[0];
-    handleClick(touch.clientX, touch.clientY);
-  }
-};
-
-const handleTouchEnd = (e: TouchEvent): void => {
-  e.preventDefault();
-  isHolding = false;
-};
-
-/**
- * Main animation loop
- */
-const animate = (): void => {
-  if (!gl || !program) return;
-
-  const currentTime = (performance.now() - startTime) / 1000;
-
-  // Update uniforms
-  if (uniforms.uTime) {
-    gl.uniform1f(uniforms.uTime, currentTime);
-  }
-
-  if (uniforms.uClickPos) {
-    gl.uniform2fv(uniforms.uClickPos, clickPositions);
-  }
-
-  if (uniforms.uClickTimes) {
-    gl.uniform1fv(uniforms.uClickTimes, clickTimes);
-  }
-
-  if (uniforms.uColor) {
-    gl.uniform3f(uniforms.uColor, 0.925, 0.918, 0.875); // #eceadf cream color
-  }
-
-  if (uniforms.uPixelSize) {
-    gl.uniform1f(uniforms.uPixelSize, PIXEL_SIZE);
-  }
-
-  // Clear and draw with blue background color
-  gl.clearColor(0.027, 0.318, 0.812, 1.0); // #0751cf blue background
-  gl.clear(gl.COLOR_BUFFER_BIT);
-  gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
-
-  animationId = requestAnimationFrame(animate);
-};
-
-/**
- * Initialize everything
- */
-const initialize = (): void => {
-  try {
-    if (!initializeWebGL()) {
-      throw new Error("Failed to initialize WebGL");
+      return null;
     }
 
-    startTime = performance.now();
-    resizeCanvas();
-    animate();
-  } catch (error) {
-    console.error(
-      `[BackgroundCanvas] failed to initialize WebGL object. Error: ${error}`,
+    return program;
+  };
+
+  /**
+   * Initialize WebGL and shaders
+   */
+  const initializeWebGL = (): boolean => {
+    const context =
+      canvas.getContext("webgl2", {
+        alpha: true,
+        premultipliedAlpha: false,
+      }) ||
+      canvas.getContext("webgl", {
+        alpha: true,
+        premultipliedAlpha: false,
+      });
+    if (!context) {
+      console.error("WebGL not supported");
+
+      return false;
+    }
+
+    gl = context;
+
+    // Create shaders
+    const vertexShader = createShader(gl, gl.VERTEX_SHADER, vertexShaderSource);
+    const fragmentShader = createShader(
+      gl,
+      gl.FRAGMENT_SHADER,
+      fragmentShaderSource,
     );
-  }
-};
 
-onMount(() => {
-  if (typeof window === "undefined") return;
+    if (!vertexShader || !fragmentShader) {
+      return false;
+    }
 
-  initialize();
+    // Create program
+    const createdProgram = createProgram(gl, vertexShader, fragmentShader);
+    if (!createdProgram) {
+      return false;
+    }
 
-  // Mouse events
-  window.addEventListener("resize", resizeCanvas);
-  canvas.addEventListener("mousedown", handleMouseDown);
-  window.addEventListener("mousemove", handleMouseMove);
-  window.addEventListener("mouseup", handleMouseUp);
+    program = createdProgram;
+    gl.useProgram(program);
 
-  // Touch events
-  canvas.addEventListener("touchstart", handleTouchStart, { passive: false });
-  canvas.addEventListener("touchmove", handleTouchMove, { passive: false });
-  canvas.addEventListener("touchend", handleTouchEnd, { passive: false });
+    // Enable alpha blending for transparency
+    gl.enable(gl.BLEND);
+    gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
 
-  return () => {
-    // Clean up mouse events
-    window.removeEventListener("resize", resizeCanvas);
-    canvas.removeEventListener("mousedown", handleMouseDown);
-    window.removeEventListener("mousemove", handleMouseMove);
-    window.removeEventListener("mouseup", handleMouseUp);
+    // Set up geometry (fullscreen quad)
+    const vertices = new Float32Array([-1, -1, 1, -1, -1, 1, 1, 1]);
 
-    // Clean up touch events
-    canvas.removeEventListener("touchstart", handleTouchStart);
-    canvas.removeEventListener("touchmove", handleTouchMove);
-    canvas.removeEventListener("touchend", handleTouchEnd);
+    const buffer = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
+    gl.bufferData(gl.ARRAY_BUFFER, vertices, gl.STATIC_DRAW);
 
-    if (animationId) {
-      cancelAnimationFrame(animationId);
+    const positionLocation = gl.getAttribLocation(program, "a_position");
+    gl.enableVertexAttribArray(positionLocation);
+    gl.vertexAttribPointer(positionLocation, 2, gl.FLOAT, false, 0, 0);
+
+    // Get uniform locations
+    uniforms = {
+      uResolution: gl.getUniformLocation(program, "uResolution"),
+      uTime: gl.getUniformLocation(program, "uTime"),
+      uClickPos: gl.getUniformLocation(program, "uClickPos"),
+      uClickTimes: gl.getUniformLocation(program, "uClickTimes"),
+      uColor: gl.getUniformLocation(program, "uColor"),
+      uPixelSize: gl.getUniformLocation(program, "uPixelSize"),
+    };
+
+    // Initialize click arrays with invalid positions
+    for (let i = 0; i < MAX_CLICKS; i++) {
+      clickPositions[i * 2] = -1;
+      clickPositions[i * 2 + 1] = -1;
+      clickTimes[i] = 0;
+    }
+
+    return true;
+  };
+
+  /**
+   * Resize canvas and update WebGL viewport
+   */
+  const resizeCanvas = (): void => {
+    if (!canvas || !gl) return;
+
+    const devicePixelRatio = window.devicePixelRatio || 1;
+    const displayWidth = canvas.clientWidth;
+    const displayHeight = canvas.clientHeight;
+
+    // Account for device pixel ratio for consistent sizing across browsers
+    const bufferWidth = Math.floor(displayWidth * devicePixelRatio);
+    const bufferHeight = Math.floor(displayHeight * devicePixelRatio);
+
+    if (canvas.width !== bufferWidth || canvas.height !== bufferHeight) {
+      canvas.width = bufferWidth;
+      canvas.height = bufferHeight;
+      gl.viewport(0, 0, bufferWidth, bufferHeight);
+
+      // Update resolution uniform with buffer dimensions
+      if (uniforms.uResolution) {
+        gl.uniform2f(uniforms.uResolution, bufferWidth, bufferHeight);
+      }
     }
   };
-});
+
+  /**
+   * Handle mouse/touch clicks with throttling for continuous effects
+   */
+  const handleClick = (clientX: number, clientY: number): void => {
+    if (!canvas) return;
+
+    const currentTime = performance.now();
+
+    const rect = canvas.getBoundingClientRect();
+    const cssX = clientX - rect.left;
+    const cssY = clientY - rect.top;
+
+    // Convert to frame-buffer pixels accounting for device pixel ratio
+    const devicePixelRatio = window.devicePixelRatio || 1;
+    const fragX = cssX * devicePixelRatio;
+    const fragY = (rect.height - cssY) * devicePixelRatio;
+
+    // Store click position and time
+    clickPositions[clickIndex * 2] = fragX;
+    clickPositions[clickIndex * 2 + 1] = fragY;
+    clickTimes[clickIndex] = (currentTime - startTime) / 1000;
+
+    clickIndex = (clickIndex + 1) % MAX_CLICKS;
+  };
+
+  /**
+   * Mouse event handlers
+   */
+  const handleMouseDown = (e: MouseEvent): void => {
+    isHolding = true;
+    handleClick(e.clientX, e.clientY); // Force first click
+  };
+
+  const handleMouseMove = (e: MouseEvent): void => {
+    if (isHolding) {
+      handleClick(e.clientX, e.clientY);
+    }
+  };
+
+  const handleMouseUp = (_e: MouseEvent): void => {
+    isHolding = false;
+  };
+
+  /**
+   * Touch event handlers
+   */
+  const handleTouchStart = (e: TouchEvent): void => {
+    e.preventDefault();
+    if (e.touches.length > 0) {
+      isHolding = true;
+      const touch = e.touches[0];
+      handleClick(touch.clientX, touch.clientY); // Force first click
+    }
+  };
+
+  const handleTouchMove = (e: TouchEvent): void => {
+    e.preventDefault();
+    if (isHolding && e.touches.length > 0) {
+      const touch = e.touches[0];
+      handleClick(touch.clientX, touch.clientY);
+    }
+  };
+
+  const handleTouchEnd = (e: TouchEvent): void => {
+    e.preventDefault();
+    isHolding = false;
+  };
+
+  /**
+   * Main animation loop
+   */
+  const animate = (): void => {
+    if (!gl || !program) return;
+
+    const currentTime = (performance.now() - startTime) / 1000;
+
+    // Update uniforms
+    if (uniforms.uTime) {
+      gl.uniform1f(uniforms.uTime, currentTime);
+    }
+
+    if (uniforms.uClickPos) {
+      gl.uniform2fv(uniforms.uClickPos, clickPositions);
+    }
+
+    if (uniforms.uClickTimes) {
+      gl.uniform1fv(uniforms.uClickTimes, clickTimes);
+    }
+
+    if (uniforms.uColor) {
+      gl.uniform3f(uniforms.uColor, 0.925, 0.918, 0.875); // #eceadf cream color
+    }
+
+    if (uniforms.uPixelSize) {
+      gl.uniform1f(uniforms.uPixelSize, PIXEL_SIZE);
+    }
+
+    // Clear and draw with blue background color
+    gl.clearColor(0.027, 0.318, 0.812, 1.0); // #0751cf blue background
+    gl.clear(gl.COLOR_BUFFER_BIT);
+    gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+
+    animationId = requestAnimationFrame(animate);
+  };
+
+  /**
+   * Initialize everything
+   */
+  const initialize = (): void => {
+    try {
+      if (!initializeWebGL()) {
+        throw new Error("Failed to initialize WebGL");
+      }
+
+      startTime = performance.now();
+      resizeCanvas();
+      animate();
+    } catch (error) {
+      console.error(
+        `[BackgroundCanvas] failed to initialize WebGL object. Error: ${error}`,
+      );
+    }
+  };
+
+  onMount(() => {
+    if (typeof window === "undefined") return;
+
+    initialize();
+
+    // Mouse events
+    window.addEventListener("resize", resizeCanvas);
+    canvas.addEventListener("mousedown", handleMouseDown);
+    window.addEventListener("mousemove", handleMouseMove);
+    window.addEventListener("mouseup", handleMouseUp);
+
+    // Touch events
+    canvas.addEventListener("touchstart", handleTouchStart, { passive: false });
+    canvas.addEventListener("touchmove", handleTouchMove, { passive: false });
+    canvas.addEventListener("touchend", handleTouchEnd, { passive: false });
+
+    return () => {
+      // Clean up mouse events
+      window.removeEventListener("resize", resizeCanvas);
+      canvas.removeEventListener("mousedown", handleMouseDown);
+      window.removeEventListener("mousemove", handleMouseMove);
+      window.removeEventListener("mouseup", handleMouseUp);
+
+      // Clean up touch events
+      canvas.removeEventListener("touchstart", handleTouchStart);
+      canvas.removeEventListener("touchmove", handleTouchMove);
+      canvas.removeEventListener("touchend", handleTouchEnd);
+
+      if (animationId) {
+        cancelAnimationFrame(animationId);
+      }
+    };
+  });
 </script>
 
-<canvas
-    bind:this={canvas}
-    class="background-canvas"
-></canvas>
+<canvas bind:this={canvas} class="background-canvas"></canvas>
 
 <style lang="scss">
   .background-canvas {
@@ -519,7 +516,7 @@ onMount(() => {
     width: 100%;
     height: 100%;
     background-color: #0751cf; // Blue background
-    
+
     pointer-events: auto;
   }
-</style> 
+</style>
