@@ -87,7 +87,7 @@ onMount(() => {
   @use '$lib/styles/variables';
 
   #intro {
-    min-height: 100svh;
+    min-height: 100dvh;
     height: 100%;
     width: 100%;
 

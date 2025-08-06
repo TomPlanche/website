@@ -232,6 +232,13 @@ $main-elem-padding: $main-vertical-padding $main-padding;
 @font-face {
   font-family: 'FK Raster Grotesk Compact Blended';
   src: url('$lib/fonts/FK Raster Grotesk/FKRasterGroteskCompactTrial-Blended.otf');
-  font-weight: bold;
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'FK Raster Grotesk Blended';
+  src: url('$lib/fonts/FK Raster Grotesk/FKRasterGroteskTrial-Blended.otf');
+  font-weight: normal;
   font-style: normal;
 }
