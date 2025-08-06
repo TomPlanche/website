@@ -1,1 +1,1 @@
-export const scrollTrigger = 100;
+export const scrollTrigger = 50;

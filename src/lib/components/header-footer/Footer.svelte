@@ -2,6 +2,7 @@
 // Imports
 import { cursorEnter, cursorLeave } from "$lib/actions/cursor";
 import { scrollTrigger } from "$lib/components/header-footer/index";
+
 import { onMount } from "svelte";
 
 // Variables
@@ -56,53 +57,36 @@ onMount(() => {
 </footer>
 
 <style lang="scss">
-  @use '$lib/styles/variables';
+  @use '$lib/styles/variables' as v;
+  @use './shared' as s;
 
-  $double-padding: variables.$main-padding * 2;
+  $double-padding: v.$main-padding * 2;
   $light-color: color-mix(in srgb, var(--text-color) 50%, transparent);
   $font-size: 1.25rem;
 
   footer {
-    position: fixed;
+    @include s.header-footer();
+
+    height: v.$footer-height;
+
     bottom: 0;
-    left: 0;
-
-    outline: none;
-    border-radius: 0;
-
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: center;
-
-    height: variables.$footer-height;
-    width: 100%;
-
-    // Blurry background
-    backdrop-filter: blur(16px);
-    -webkit-backdrop-filter: blur(16px); // Compatible with Safari
-
-    padding: 1rem;
 
     font-family: "Monorama", monospace;
     font-size: $font-size;
     font-weight: 100;
     text-transform: uppercase;
-    z-index: 1000;
 
-    // Smooth transitions (excluding outline)
+    // (excluding outline)
     transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1),
                 bottom 0.3s cubic-bezier(0.4, 0, 0.2, 1),
                 left 0.3s cubic-bezier(0.4, 0, 0.2, 1),
                 border-radius 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 
+
     // Scrolled state - current appearance
     &.scrolled {
-      width: calc(100% - #{$double-padding});
-      bottom: variables.$main-padding;
-      left: variables.$main-padding;
-      outline: 1px solid $light-color;
-      border-radius: 0 0 1rem 1rem;
+      border-radius: 0 0 v.$main-padding v.$main-padding;
+      bottom: v.$main-padding;
     }
 
     .right {
