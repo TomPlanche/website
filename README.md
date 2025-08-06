@@ -46,6 +46,10 @@ The website is automatically deployed using GitHub Actions. On every push to the
   
   *Inspired by the techniques described in [Interactive WebGL Backgrounds: A Quick Guide to Bayer Dithering](https://tympanus.net/codrops/2025/07/30/interactive-webgl-backgrounds-a-quick-guide-to-bayer-dithering/) on Codrops.*
 
+- [Scroll State Composable](./src/lib/composables/useScrollState.ts)
+
+  A reactive composable that elegantly tracks scroll state using Svelte 5's runes system. It monitors both the current scroll position and whether the page can be scrolled, then derives a boolean indicating if the scroll position has exceeded a defined trigger threshold. The composable automatically manages event listeners for scroll and resize events, providing a clean API for scroll-based UI changes like header styling or element visibility. Perfect for implementing smooth scroll-triggered animations and responsive design patterns.
+
 ## Backend Infrastructure
 The website is powered by two custom Rust services:
 

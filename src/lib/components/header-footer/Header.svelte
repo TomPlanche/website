@@ -1,19 +1,18 @@
 <script lang="ts">
   import { cursorEnter, cursorLeave } from "$lib/actions/cursor";
   import LiveIndicator from "$lib/components/LiveIndicator.svelte";
-  import { scrollTrigger } from "$lib/components/header-footer/index"; // Statee
   import { BackendSongSchema, type TBackendSong } from "$lib/types/lastfm";
 
   import { onMount } from "svelte";
   import { fade } from "svelte/transition";
+  import { useScrollState } from "$lib/composables/useScrollState";
 
   // Statee
   let currentTrack: TBackendSong | null = $state(null);
   const isLive = $derived(() => currentTrack?.currently_playing);
 
   // Scroll effect state
-  let scrollY = $state(0);
-  const isScrolled = $derived(scrollY >= scrollTrigger);
+  const { isScrolled } = useScrollState();
 
   // Functions
   const fetchNowPlaying = async () => {
@@ -43,16 +42,8 @@
     // Refresh every 10 seconds
     const interval = setInterval(fetchNowPlaying, 10000);
 
-    // Track scroll position
-    const handleScroll = () => {
-      scrollY = window.scrollY;
-    };
-
-    window.addEventListener("scroll", handleScroll);
-
     return () => {
       clearInterval(interval);
-      window.removeEventListener("scroll", handleScroll);
     };
   });
 </script>
