@@ -1,12 +1,11 @@
-export interface Project {
+interface BaseProject {
   id: string;
   title: string;
   description: string;
   url: string;
   tech: string[];
   year?: number;
-  status?: "completed" | "in-progress" | "archived";
-  featured?: boolean;
+  status?: "completed" | "in-progress";
   repository?: string;
   image?: string;
   category?:
@@ -17,27 +16,23 @@ export interface Project {
     | "library"
     | "cli"
     | "tool";
-  contributionType: "owner" | "contributor";
   githubUrl?: string;
-  contributionDescription?: string;
 }
+
+interface OwnerProject extends BaseProject {
+  contributionType: "owner";
+  contributionDescription?: never; // Explicitly disallow this field
+}
+
+interface ContributorProject extends BaseProject {
+  contributionType: "contributor";
+  contributionDescription: string; // Required for contributors
+}
+
+export type Project = OwnerProject | ContributorProject;
 
 export const projects: Project[] = [
   // Own Projects
-  {
-    id: "personal-website",
-    title: "Personal Website",
-    description:
-      "My personal portfolio and blog built with modern web technologies",
-    url: "https://tomplanche.com",
-    tech: ["SvelteKit", "TypeScript", "SCSS", "Vercel"],
-    year: 2025,
-    status: "completed",
-    featured: true,
-    category: "web",
-    contributionType: "owner",
-    githubUrl: "https://github.com/TomPlanche/website",
-  },
   {
     id: "rona",
     title: "Rona",
@@ -47,8 +42,7 @@ export const projects: Project[] = [
     tech: ["Rust", "CLI", "Git"],
     year: 2025,
     status: "completed",
-    featured: true,
-    category: "cli",
+    category: "tool",
     contributionType: "owner",
     githubUrl: "https://github.com/TomPlanche/rona",
     image: "/favicon.png",
@@ -57,26 +51,26 @@ export const projects: Project[] = [
     id: "hooksmith",
     title: "Hooksmith",
     description:
-      "🪝 Trivial Git hook management tool for better development workflow",
+      "Trivial Git hook management tool for better development workflow",
     url: "https://github.com/TomPlanche/hooksmith",
-    tech: ["Rust", "Git", "CLI", "YAML"],
+    tech: ["Rust", "Git hooks", "CLI"],
     year: 2025,
     status: "completed",
-    featured: true,
     category: "tool",
     contributionType: "owner",
     githubUrl: "https://github.com/TomPlanche/hooksmith",
   },
   {
-    id: "trivial-website",
-    title: "Trivial Website",
+    id: "this-website",
+    title: "This Website",
     description: "Current portfolio website showcasing projects and skills",
-    url: "#",
+    url: "https://github.com/TomPlanche/website",
     tech: ["SvelteKit", "TypeScript", "SCSS", "GSAP"],
     year: 2025,
     status: "in-progress",
     category: "web",
     contributionType: "owner",
+    githubUrl: "https://github.com/TomPlanche/website",
   },
 
   // Contributed Projects
@@ -86,13 +80,13 @@ export const projects: Project[] = [
     description:
       "Code at the speed of thought – High-performance, multiplayer code editor",
     url: "https://zed.dev",
-    tech: ["Rust", "WebGPU", "Tree-sitter"],
+    tech: ["Rust", "Text editor"],
     year: 2025,
     status: "in-progress",
-    featured: true,
     category: "desktop",
     contributionType: "contributor",
-    githubUrl: "https://github.com/zed-industries/zed",
+    githubUrl:
+      "https://github.com/zed-industries/zed/pulls?q=is%3Apr%20author%3AtomPlanche",
     contributionDescription:
       "Contributing to features and performance improvements",
   },
@@ -101,14 +95,14 @@ export const projects: Project[] = [
     title: "Chess TUI",
     description:
       "Play chess from your terminal 🦀 - A beautiful terminal-based chess game",
-    url: "https://github.com/thomas-mauran/chess-tui",
+    url: "https://github.com/thomas-mauran/chess-tui/",
     tech: ["Rust", "TUI", "Chess Engine"],
     year: 2025,
     status: "completed",
-    featured: true,
     category: "cli",
     contributionType: "contributor",
-    githubUrl: "https://github.com/thomas-mauran/chess-tui",
+    githubUrl:
+      "https://github.com/thomas-mauran/chess-tui/pulls?q=is%3Apr%20author%3AtomPlanche",
     contributionDescription: "UI improvements and game logic enhancements",
   },
   {
@@ -122,47 +116,8 @@ export const projects: Project[] = [
     status: "completed",
     category: "library",
     contributionType: "contributor",
-    githubUrl: "https://github.com/shuding/cobe",
+    githubUrl:
+      "https://github.com/shuding/cobe/pulls?q=is%3Apr%20author%3Atomplanche",
     contributionDescription: "Performance optimizations and feature additions",
-  },
-
-  // Academic/Learning Projects
-  {
-    id: "cnam-projects",
-    title: "CNAM Engineering Projects",
-    description:
-      "Collection of projects from CS Engineering studies at CNAM Paris",
-    url: "#",
-    tech: ["Python", "C++", "R", "JavaScript", "Bash"],
-    year: 2023,
-    status: "completed",
-    category: "desktop",
-    contributionType: "owner",
-  },
-  {
-    id: "p5js-sketches",
-    title: "P5.js Creative Sketches",
-    description: "Creative coding experiments and visualizations using P5.js",
-    url: "https://editor.p5js.org/TomPlanche/collections/i4Jx6K49n9",
-    tech: ["JavaScript", "P5.js", "Creative Coding"],
-    year: 2023,
-    status: "in-progress",
-    category: "web",
-    contributionType: "owner",
-  },
-
-  // Professional Experience Projects
-  {
-    id: "crealo-work",
-    title: "Crealo Platform",
-    description: "Full-stack development work during my time at Crealo",
-    url: "#",
-    tech: ["JavaScript", "TypeScript", "React", "Node.js"],
-    year: 2023,
-    status: "completed",
-    category: "web",
-    contributionType: "contributor",
-    contributionDescription:
-      "Full-stack development and feature implementation",
   },
 ];

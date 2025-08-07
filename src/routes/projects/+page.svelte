@@ -1,5 +1,17 @@
 <script lang="ts">
   import { projects } from "$lib/data/projects";
+  import { mainStore } from "$lib/stores/mainStore";
+  import { onMount } from "svelte";
+
+  // Hide background canvas on this page
+  onMount(() => {
+    $mainStore.hideBackground = true;
+
+    return () => {
+      // Reset when leaving the page
+      $mainStore.hideBackground = false;
+    };
+  });
 </script>
 
 <section id="projects">
@@ -7,8 +19,8 @@
     <h1>projects.</h1>
     <p>
       Building software is my passion. Here's a selection of projects I've
-      created, <br />
-      primarily driven by curiosity and the desire to solve interesting problems.
+      created, primarily driven by curiosity and the desire to solve interesting
+      problems.
     </p>
   </div>
 
@@ -27,7 +39,19 @@
               {#if project.contributionType === "owner"}
                 <span class="owner-badge" title="Own Project">👨‍💻</span>
               {:else}
-                <span class="contributor-badge" title="Contributed to">🤝</span>
+                <span class="contributor-badge" title="Contributed to">
+                  <svg
+                    height="16"
+                    class="octicon octicon-git-merge"
+                    viewBox="0 0 16 16"
+                    version="1.1"
+                    width="16"
+                    aria-hidden="true"
+                    ><path
+                      d="M5.45 5.154A4.25 4.25 0 0 0 9.25 7.5h1.378a2.251 2.251 0 1 1 0 1.5H9.25A5.734 5.734 0 0 1 5 7.123v3.505a2.25 2.25 0 1 1-1.5 0V5.372a2.25 2.25 0 1 1 1.95-.218ZM4.25 13.5a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5Zm8.5-4.5a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5ZM5 3.25a.75.75 0 1 0 0 .005V3.25Z"
+                    ></path></svg
+                  >
+                </span>
               {/if}
             </div>
           </div>
@@ -55,7 +79,12 @@
                   on:click|stopPropagation={() =>
                     window.open(project.githubUrl, "_blank")}
                 >
-                  <svg width="16" height="16" viewBox="0 0 24 24">
+                  <svg
+                    width="16"
+                    height="16"
+                    viewBox="0 0 24 24"
+                    fill="currentColor"
+                  >
                     <path
                       d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"
                     />
@@ -102,7 +131,7 @@
         text-align: left;
 
         color: var(--text-color);
-        opacity: 0.8;
+        opacity: 0.9;
       }
     }
 
@@ -110,7 +139,7 @@
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
       gap: 1rem;
-      padding-top: 3rem;
+      padding: 1rem 0;
 
       @media (min-width: 768px) {
         grid-template-columns: repeat(2, 1fr);
@@ -127,9 +156,10 @@
       display: block;
       text-decoration: none;
       color: inherit;
-      background: rgba(255, 255, 255, 0.02);
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      border-radius: 12px;
+      background: rgba(255, 255, 255, 0.05);
+
+      outline: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: v.$main-padding;
       padding: 1.5rem 1rem;
       transition: all 0.3s ease;
       position: relative;
@@ -137,9 +167,9 @@
 
       &:hover {
         transform: translateY(-4px);
-        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
-        background: rgba(255, 255, 255, 0.05);
-        border-color: rgba(255, 255, 255, 0.2);
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+        background: rgba(255, 255, 255, 0.1);
+        outline: rgba(255, 255, 255, 0.3);
       }
 
       &::before {
@@ -152,7 +182,7 @@
         background: linear-gradient(
           90deg,
           transparent,
-          rgba(255, 255, 255, 0.3),
+          rgba(255, 255, 255, 0.4),
           transparent
         );
         opacity: 0;
@@ -204,6 +234,14 @@
       font-size: 1.25rem;
       opacity: 0.8;
       transition: opacity 0.2s ease;
+
+      * {
+        fill: var(--text-color);
+      }
+
+      & svg {
+        scale: 1.25;
+      }
     }
 
     .project-card:hover .owner-badge,
@@ -212,20 +250,20 @@
     }
 
     .project-description {
-      font-family: "Supply Mono", monospace;
+      font-family: "Zed Plex Mono", monospace;
       font-size: 0.95rem;
       text-align: left;
       line-height: 1.5;
 
       color: var(--text-color);
-      opacity: 0.7;
+      opacity: 0.85;
 
       margin-bottom: 1rem;
       flex: 1;
     }
 
     .contribution-description {
-      font-family: "Supply Mono", monospace;
+      font-family: "Zed Plex Mono", monospace;
       font-size: 0.85rem;
       font-style: italic;
       text-align: left;
@@ -233,12 +271,12 @@
       line-height: 1.4;
 
       color: var(--text-color);
-      opacity: 0.6;
+      opacity: 0.8;
 
       margin-bottom: 1rem;
       padding: 0.5rem 0.75rem;
 
-      background: rgba(255, 255, 255, 0.03);
+      background: rgba(255, 255, 255, 0.1);
       border-left: 2px solid rgba(255, 255, 255, 0.2);
       border-radius: 4px;
     }
@@ -262,7 +300,7 @@
     }
 
     .project-year {
-      font-family: "Supply Mono", monospace;
+      font-family: "Zed Plex Mono", monospace;
       font-size: 0.8rem;
       color: var(--text-color);
       opacity: 0.6;
@@ -293,14 +331,14 @@
     }
 
     .tech-tag {
-      font-family: "Supply Mono", monospace;
+      font-family: "Zed Plex Mono", monospace;
       font-size: 0.75rem;
       padding: 0.25rem 0.6rem;
       background: rgba(255, 255, 255, 0.08);
       border: 1px solid rgba(255, 255, 255, 0.15);
       border-radius: 16px;
       color: var(--text-color);
-      opacity: 0.8;
+      opacity: 0.9;
       transition: all 0.2s ease;
     }
 
