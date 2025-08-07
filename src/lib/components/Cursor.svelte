@@ -1,112 +1,118 @@
 <script lang="ts">
-import type { Snippet } from "svelte";
-// Imports
-import { Spring } from "svelte/motion";
-import type { TCursorOptions } from "../types/types";
+  import type { Snippet } from "svelte";
+  // Imports
+  import { Spring } from "svelte/motion";
+  import type { TCursorOptions } from "../types/";
 
-// Props
-type TCursorProps = {
-  children?: Snippet<[]>;
-};
+  // Props
+  type TCursorProps = {
+    children?: Snippet;
+  };
 
-const { children }: TCursorProps = $props();
+  const { children }: TCursorProps = $props();
 
-// Variables
-const cursor_base = {
-  size: 15,
-  background: "color-mix(in srgb, var(--text-color) 50%, transparent)",
-};
-let scroll = $state<{
-  x: number;
-  y: number;
-}>({ x: 0, y: 0 });
+  // Variables
+  const cursor_base = {
+    size: 15,
+    background: "color-mix(in srgb, var(--text-color) 50%, transparent)",
+  };
+  let scroll = $state<{
+    x: number;
+    y: number;
+  }>({ x: 0, y: 0 });
 
-// Springs
-const opacity = new Spring(0);
-const coords = new Spring(
-  {
-    x: 0,
-    y: 0,
-  },
-  { stiffness: 0.3, damping: 0.8 },
-);
-const size = new Spring(cursor_base.size);
-const blur = new Spring(0);
+  let baseSize = $state(cursor_base.size);
 
-let background = $state(cursor_base.background as string);
-let hasMoved = $state(false);
+  // Springs
+  const opacity = new Spring(0);
+  const coords = new Spring(
+    {
+      x: 0,
+      y: 0,
+    },
+    { stiffness: 0.3, damping: 0.8 },
+  );
+  const size = new Spring(cursor_base.size);
+  const blur = new Spring(0);
 
-let innerSvg: string | null = $state(null);
-let innerText: string | null = $state(null);
+  let background = $state(cursor_base.background as string);
+  let hasMoved = $state(false);
 
-// Functions
-export const setCursorParams = (params: TCursorOptions) => {
-  if (params.isHover) {
-    // params.svg can be undefined, a svg string or a boolean
-    if (params.svg) {
-      innerSvg = params.svg;
+  let innerSvg: string | null = $state(null);
+  let innerText: string | null = $state(null);
+
+  // Functions
+  export function setCursorParams(params: TCursorOptions) {
+    if (params.isHover) {
+      // params.svg can be undefined, a svg string or a boolean
+      if (params.svg) {
+        innerSvg = params.svg;
+      }
+
+      if (params.innerText) {
+        innerText = params.innerText;
+      }
+
+      opacity.target = params.opacity ?? 0.5;
+    } else {
+      if (params.svg === undefined || params.svg === null) {
+        innerSvg = null;
+      }
+
+      opacity.set(params.opacity ?? 1);
+      if (params.innerText === undefined || params.innerText === null) {
+        innerText = null;
+      }
     }
 
-    if (params.innerText) {
-      innerText = params.innerText;
-    }
+    blur.target = params.blur ?? 0;
+    background = params.backgroundColor ?? cursor_base.background;
 
-    opacity.target = params.opacity ?? 0.5;
-  } else {
-    if (params.svg === undefined || params.svg === null) {
-      innerSvg = null;
-    }
+    const newSize = params.scale
+      ? cursor_base.size * params.scale
+      : cursor_base.size;
 
-    opacity.set(params.opacity ?? 1);
-    if (params.innerText === undefined || params.innerText === null) {
-      innerText = null;
-    }
+    baseSize = newSize;
+    size.target = newSize;
   }
 
-  blur.target = params.blur ?? 0;
-  background = params.backgroundColor ?? cursor_base.background;
-  size.target = params.scale
-    ? cursor_base.size * params.scale
-    : cursor_base.size;
-};
-
-// If hasMoved is false, then the cursor is not visible
-$effect(() => {
-  if (!hasMoved) {
-    opacity.target = 0;
-  } else {
-    setTimeout(() => {
-      opacity.target = 1;
-    }, 150);
-  }
-});
+  // If hasMoved is false, then the cursor is not visible
+  $effect(() => {
+    if (!hasMoved) {
+      opacity.target = 0;
+    } else {
+      setTimeout(() => {
+        opacity.target = 1;
+      }, 150);
+    }
+  });
 </script>
 
 <!-- The window is used to get the mouse position -->
 <svelte:window
-    onmousemove={(e) => {
+  onmousemove={(e) => {
     !hasMoved && (hasMoved = true);
 
     coords.target = {
       x: e.clientX,
-      y: e.clientY
+      y: e.clientY,
     };
 
     scroll = {
       x: window.scrollX,
-      y: window.scrollY
+      y: window.scrollY,
     };
   }}
-    onmousedown={() => {
-    size.target = size.current * 1.5;
+  onmousedown={() => {
+    size.target = baseSize * 0.9;
   }}
-    onmouseup={() => {
-    size.target = size.current / 1.5;
+  onmouseup={() => {
+    size.target = baseSize;
   }}
-    onscroll={() => {
+  onscroll={() => {
     scroll = {
       x: window.scrollX,
-      y: window.scrollY
+      y: window.scrollY,
     };
   }}
 />
@@ -114,10 +120,10 @@ $effect(() => {
 <!-- The svg is always displayed -->
 <svg aria-hidden="true">
   <circle
-      cx={coords.current.x}
-      cy={coords.current.y}
-      r={size.current}
-      style="
+    cx={coords.current.x}
+    cy={coords.current.y}
+    r={size.current}
+    style="
 			opacity: {opacity.current};
 			filter: blur({blur.current}px);
 			fill: {background};
@@ -128,12 +134,15 @@ $effect(() => {
 <!-- If there is a svg, then we display it -->
 {#if innerSvg}
   <img
-      src={innerSvg}
-      alt="Github gif"
-      style="
-			height: {$size * 2}px;
-			width: {$size * 2}px;
-			transform: translate({$coords.x + scroll.x - $size}px, {$coords.y + scroll.y - $size}px);
+    src={innerSvg}
+    alt="Github gif"
+    style="
+			height: {size.current * 2}px;
+			width: {size.current * 2}px;
+			transform: translate({coords.current.x + scroll.x - size.current}px, {coords
+      .current.y +
+      scroll.y -
+      size.current}px);
 		"
   />
 {/if}
@@ -141,12 +150,12 @@ $effect(() => {
 <!-- If something is in the default slot, then we display it -->
 {#if children || innerText}
   <div
-      class="html-container"
-      style="
-			height: {$size * 2}px;
-			width: {$size * 2}px;
-			transform: translate({$coords.x - $size}px, {$coords.y - $size}px) scale({$size /
-      cursor_base.size});
+    class="html-container"
+    style="
+			height: {size.current * 2}px;
+			width: {size.current * 2}px;
+			transform: translate({coords.current.x - size.current}px, {coords.current.y -
+      size.current}px) scale({size.current / cursor_base.size});
 			pointer-events: none;
 			position: fixed;
 		"

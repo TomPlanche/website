@@ -1,0 +1,39 @@
+@use "$lib/styles/variables" as v;
+
+$double-padding: v.$main-padding * 2;
+$light-color: color-mix(in srgb, var(--text-color) 50%, transparent);
+
+@mixin header-footer {
+  width: 100%;
+
+  position: fixed;
+  left: 0;
+
+  outline: none;
+  border-radius: 0;
+
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+
+  padding: 1rem;
+
+  // (excluding outline)
+  transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+  left 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+  border-radius 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+
+  // Blurry background
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px); // Compatible with Safari
+
+  z-index: 1000;
+
+  // Scrolled state - current appearance
+  &.scrolled {
+    width: calc(100% - #{$double-padding});
+    left: v.$main-padding;
+    outline: 1px solid $light-color;
+  }
+}

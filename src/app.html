@@ -1,5 +1,5 @@
 <!doctype html>
-<html data-theme='1' lang="en">
+<html lang="en">
 	<head>
 		<meta charset="utf-8" />
 		<link href="/favicon.png" rel="icon"/>
@@ -22,14 +22,6 @@
 		<meta content="500" property="og:image:width"/>
 		<meta content="500" property="og:image:height"/>
 		<meta content="Tom Planche's ugly face" property="og:image:alt"/>
-
-		<!-- Prevent theme flickering -->
-		<script>
-			const storedTheme = localStorage.getItem('selected-theme');
-			if (storedTheme) {
-				document.documentElement.dataset.theme = storedTheme;
-			}
-		</script>
 
 		%sveltekit.head%
 	</head>

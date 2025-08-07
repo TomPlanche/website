@@ -26,11 +26,13 @@ vite.config.ts.timestamp-*
 # IDEs
 *.idea/*
 
-# Personal
+# === Personal
 .commitignore
 commit_message.md
 
 src/lib/fonts
+
+src/routes/tests/*
 
 # Package manager
 *.lock

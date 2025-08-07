@@ -1,5 +1,4 @@
-import { get } from "svelte/store";
-/**
+import { get } from "svelte/store"; /**
  * @file src/lib/actions/cursor.ts
  * @description Cursor actions for handling cursor interactions
  */
@@ -55,7 +54,6 @@ export const cursorLeave: Action<TCursorOptions> = (
   const handleLeave = () => {
     const cursor = get(refStore).cursor;
     if (cursor) {
-      // @ts-ignore - we know setCursorParams exists on the cursor component
       cursor.setCursorParams({ ...params, isHover: false });
     }
   };
