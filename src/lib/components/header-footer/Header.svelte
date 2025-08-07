@@ -72,8 +72,6 @@
   });
 </script>
 
-<link href="shared.scss" rel="stylesheet" />
-
 <nav class:scrolled={isScrolled}>
   <a class="title" href="/static" use:cursorEnter use:cursorLeave>Tom Planche</a
   >

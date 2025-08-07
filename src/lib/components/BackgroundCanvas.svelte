@@ -86,8 +86,8 @@ float Bayer8(vec2 a) {
 }
 
 // 1-D hash and 3-D value-noise helpers
-float hash11(float n) { 
-    return fract(sin(n) * 43758.5453); 
+float hash11(float n) {
+    return fract(sin(n) * 43758.5453);
 }
 
 float vnoise(vec3 p) {
@@ -128,7 +128,7 @@ float fbm2(vec2 uv, float t) {
         freq *= FBM_LACUNARITY;
         amp *= FBM_GAIN;
     }
-    
+
     return sum * 0.5 + 0.5;
 }
 
@@ -476,24 +476,12 @@ void main() {
 
     initialize();
 
-    // Mouse events
-    window.addEventListener("resize", resizeCanvas);
-    canvas.addEventListener("mousedown", handleMouseDown);
-    window.addEventListener("mousemove", handleMouseMove);
-    window.addEventListener("mouseup", handleMouseUp);
-
-    // Touch events
+    // Only touch events need imperative listeners for passive: false
     canvas.addEventListener("touchstart", handleTouchStart, { passive: false });
     canvas.addEventListener("touchmove", handleTouchMove, { passive: false });
     canvas.addEventListener("touchend", handleTouchEnd, { passive: false });
 
     return () => {
-      // Clean up mouse events
-      window.removeEventListener("resize", resizeCanvas);
-      canvas.removeEventListener("mousedown", handleMouseDown);
-      window.removeEventListener("mousemove", handleMouseMove);
-      window.removeEventListener("mouseup", handleMouseUp);
-
       // Clean up touch events
       canvas.removeEventListener("touchstart", handleTouchStart);
       canvas.removeEventListener("touchmove", handleTouchMove);
@@ -506,7 +494,17 @@ void main() {
   });
 </script>
 
-<canvas bind:this={canvas} class="background-canvas"></canvas>
+<svelte:window
+  onmousemove={handleMouseMove}
+  onmouseup={handleMouseUp}
+  onresize={resizeCanvas}
+/>
+
+<canvas
+  bind:this={canvas}
+  class="background-canvas"
+  onmousedown={handleMouseDown}
+></canvas>
 
 <style lang="scss">
   .background-canvas {
