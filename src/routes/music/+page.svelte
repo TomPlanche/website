@@ -114,7 +114,6 @@
             class:loaded={imageState.loaded}
             class:error={imageState.error}
             onload={() => handleImageLoad(songId)}
-            onerror={() => handleImageError(songId)}
           />
         </div>
       {/each}

@@ -73,8 +73,7 @@
 </script>
 
 <nav class:scrolled={isScrolled}>
-  <a class="title" href="/static" use:cursorEnter use:cursorLeave>Tom Planche</a
-  >
+  <a class="title" href="/" use:cursorEnter use:cursorLeave>Tom Planche</a>
   <span
     class="now-playing"
     in:fade={{ duration: 500 }}
