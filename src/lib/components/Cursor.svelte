@@ -21,6 +21,8 @@
     y: number;
   }>({ x: 0, y: 0 });
 
+  let baseSize = $state(cursor_base.size);
+
   // Springs
   const opacity = new Spring(0);
   const coords = new Spring(
@@ -65,9 +67,13 @@
 
     blur.target = params.blur ?? 0;
     background = params.backgroundColor ?? cursor_base.background;
-    size.target = params.scale
+
+    const newSize = params.scale
       ? cursor_base.size * params.scale
       : cursor_base.size;
+
+    baseSize = newSize;
+    size.target = newSize;
   }
 
   // If hasMoved is false, then the cursor is not visible
@@ -98,10 +104,10 @@
     };
   }}
   onmousedown={() => {
-    size.target = size.current * 0.9;
+    size.target = baseSize * 0.9;
   }}
   onmouseup={() => {
-    size.target = size.current / 0.9;
+    size.target = baseSize;
   }}
   onscroll={() => {
     scroll = {
@@ -131,11 +137,12 @@
     src={innerSvg}
     alt="Github gif"
     style="
-			height: {$size * 2}px;
-			width: {$size * 2}px;
-			transform: translate({$coords.x + scroll.x - $size}px, {$coords.y +
+			height: {size.current * 2}px;
+			width: {size.current * 2}px;
+			transform: translate({coords.current.x + scroll.x - size.current}px, {coords
+      .current.y +
       scroll.y -
-      $size}px);
+      size.current}px);
 		"
   />
 {/if}
@@ -145,10 +152,10 @@
   <div
     class="html-container"
     style="
-			height: {$size * 2}px;
-			width: {$size * 2}px;
-			transform: translate({$coords.x - $size}px, {$coords.y -
-      $size}px) scale({$size / cursor_base.size});
+			height: {size.current * 2}px;
+			width: {size.current * 2}px;
+			transform: translate({coords.current.x - size.current}px, {coords.current.y -
+      size.current}px) scale({size.current / cursor_base.size});
 			pointer-events: none;
 			position: fixed;
 		"
