@@ -15,28 +15,28 @@
     "lint:fix": "biome check --apply ."
   },
   "devDependencies": {
-    "@biomejs/biome": "1.9.4",
-    "@sveltejs/adapter-auto": "^6.0.1",
-    "@sveltejs/adapter-static": "^3.0.8",
-    "@sveltejs/enhanced-img": "^0.6.0",
-    "@sveltejs/kit": "^2.21.1",
-    "@sveltejs/vite-plugin-svelte": "^5.0.3",
+    "@biomejs/biome": "2.2.4",
+    "@sveltejs/adapter-auto": "^6.1.0",
+    "@sveltejs/adapter-static": "^3.0.9",
+    "@sveltejs/enhanced-img": "^0.8.2",
+    "@sveltejs/kit": "^2.43.7",
+    "@sveltejs/vite-plugin-svelte": "^6.2.1",
     "image-size": "^2.0.2",
     "prettier": "^3.6.2",
     "prettier-plugin-svelte": "^3.4.0",
-    "sass-embedded": "^1.89.0",
-    "svelte": "^5.33.10",
-    "svelte-check": "^4.2.1",
-    "typescript": "^5.8.3",
-    "vite": "^6.3.5"
+    "sass-embedded": "^1.93.2",
+    "svelte": "^5.39.8",
+    "svelte-check": "^4.3.2",
+    "typescript": "^5.9.3",
+    "vite": "^7.1.7"
   },
   "dependencies": {
-    "@sveltejs/adapter-node": "^5.2.12",
+    "@sveltejs/adapter-node": "^5.3.2",
     "@unpic/svelte": "^1.0.0",
-    "axios": "^1.9.0",
+    "axios": "^1.12.2",
     "gsap": "^3.13.0",
-    "sass": "^1.89.0",
+    "sass": "^1.93.2",
     "svelte-preprocess": "^6.0.3",
-    "zod": "^3.25.44"
+    "zod": "^4.1.11"
   }
 }
