@@ -1,17 +1,5 @@
 <script lang="ts">
   import { projects } from "$lib/data/projects";
-  import { mainStore } from "$lib/stores/mainStore";
-  import { onMount } from "svelte";
-
-  // Hide background canvas on this page
-  onMount(() => {
-    $mainStore.hideBackground = true;
-
-    return () => {
-      // Reset when leaving the page
-      $mainStore.hideBackground = false;
-    };
-  });
 </script>
 
 <section id="projects">

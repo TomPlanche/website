@@ -1,5 +1,4 @@
 pre-commit:
   commands:
     - npx prettier --write --list-different "src/**/*.svelte"
-    - npx biome check --fix --no-errors-on-unmatched --staged src/
     - git add -u

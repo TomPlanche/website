@@ -5,7 +5,7 @@
    * CONSTANTS
    */
   const MAX_CLICKS = 100;
-  const PIXEL_SIZE = 8.0;
+  const PIXEL_SIZE = 2.0;
 
   /**
    * VARIABLES
@@ -33,7 +33,8 @@
     uTime: WebGLUniformLocation | null;
     uClickPos: WebGLUniformLocation | null;
     uClickTimes: WebGLUniformLocation | null;
-    uColor: WebGLUniformLocation | null;
+    uColorA: WebGLUniformLocation | null;
+    uColorB: WebGLUniformLocation | null;
     uPixelSize: WebGLUniformLocation | null;
   };
 
@@ -55,7 +56,8 @@ void main() {
 
 precision highp float;
 
-uniform vec3 uColor;
+uniform vec3 uColorA;
+uniform vec3 uColorB;
 uniform vec2 uResolution;
 uniform float uTime;
 uniform float uPixelSize;
@@ -71,19 +73,10 @@ const float FBM_LACUNARITY = 1.125;
 const float FBM_GAIN = 1.0;
 const float FBM_SCALE = 2.0;
 
-// Bayer matrix helpers
-float Bayer2(vec2 a) {
-    a = floor(a);
-    return fract(a.x / 2.0 + a.y * a.y * 0.75);
-}
-
-float Bayer4(vec2 a) {
-    return Bayer2(0.5 * a) * 0.25 + Bayer2(a);
-}
-
-float Bayer8(vec2 a) {
-    return Bayer4(0.5 * a) * 0.25 + Bayer2(a);
-}
+// Bayer matrix helpers (for subtle dithering)
+float Bayer2(vec2 a) { a = floor(a); return fract(a.x / 2.0 + a.y * a.y * 0.75); }
+float Bayer4(vec2 a) { return Bayer2(0.5 * a) * 0.25 + Bayer2(a); }
+float Bayer8(vec2 a) { return Bayer4(0.5 * a) * 0.25 + Bayer2(a); }
 
 // 1-D hash and 3-D value-noise helpers
 float hash11(float n) {
@@ -132,65 +125,48 @@ float fbm2(vec2 uv, float t) {
     return sum * 0.5 + 0.5;
 }
 
-// Circle mask
-float maskCircle(vec2 p, float cov) {
-    float r = sqrt(cov) * 0.25;
-    float d = length(p - 0.5) - r;
-    #ifdef GL_OES_standard_derivatives
-        float aa = 0.5 * fwidth(d);
-        return cov * (1.0 - smoothstep(-aa, aa, d * 2.0));
-    #else
-        return cov * (1.0 - step(0.0, d * 2.0));
-    #endif
-}
+// Smooth remap helper
+float remap(float v, float a, float b) { return clamp((v - a) / max(b - a, 1e-5), 0.0, 1.0); }
 
 void main() {
     float pixelSize = uPixelSize;
-    vec2 fragCoord = gl_FragCoord.xy - uResolution * 0.5;
+    vec2 fragCoord = gl_FragCoord.xy;
 
-    float aspectRatio = uResolution.x / uResolution.y;
+    float aspectRatio = uResolution.x / max(uResolution.y, 1.0);
 
+    // Voxel-like sampling to reduce aliasing and cost
     vec2 pixelId = floor(fragCoord / pixelSize);
-    vec2 pixelUV = fract(fragCoord / pixelSize);
+    vec2 uv = (pixelId * pixelSize) / uResolution * vec2(aspectRatio, 1.0);
 
-    float cellPixelSize = 8.0 * pixelSize;
-    vec2 cellId = floor(fragCoord / cellPixelSize);
-    vec2 cellCoord = cellId * cellPixelSize;
+    // Animated fbm field
+    float field = fbm2(uv * 1.0, uTime * 0.08);
 
-    vec2 uv = cellCoord / uResolution * vec2(aspectRatio, 1.0);
-
-    // Animated fbm feed
-    float feed = fbm2(uv, uTime * 0.1);
-    feed = feed * 0.5 - 0.65;
-
-    // Ripple clicks
-    const float speed = 0.30;
-    const float thickness = 0.10;
+    // Ripple clicks blended into the field
+    const float speed = 0.35;
+    const float thickness = 0.12;
     const float dampT = 1.0;
-    const float dampR = 10.0;
+    const float dampR = 8.0;
 
     for (int i = 0; i < MAX_CLICKS; ++i) {
         vec2 pos = uClickPos[i];
         if (pos.x < 0.0) continue;
 
-        vec2 cuv = (((pos - uResolution * 0.5 - cellPixelSize * 0.5) / uResolution)) * vec2(aspectRatio, 1.0);
-
+        vec2 cuv = pos / uResolution * vec2(aspectRatio, 1.0);
         float t = max(uTime - uClickTimes[i], 0.0);
         float r = distance(uv, cuv);
 
         float waveR = speed * t;
         float ring = exp(-pow((r - waveR) / thickness, 2.0));
         float atten = exp(-dampT * t) * exp(-dampR * r);
-        feed = max(feed, ring * atten);
+        field = max(field, ring * atten);
     }
 
-    float bayer = Bayer8(fragCoord / uPixelSize) - 0.5;
-    float bw = step(0.5, feed + bayer);
+    // Contrast and bias for aesthetic range between the two colors
+    float dither = Bayer8(fragCoord / max(uPixelSize, 1.0)) - 0.5;
+    float m = remap(field + 0.06 * dither, 0.2, 0.9);
 
-    // Apply circle mask
-    float M = maskCircle(pixelUV, bw);
-
-    gl_FragColor = vec4(uColor, M);
+    vec3 color = mix(uColorB, uColorA, smoothstep(0.0, 1.0, m));
+    gl_FragColor = vec4(color, 1.0);
 }
 `;
 
@@ -307,7 +283,8 @@ void main() {
       uTime: gl.getUniformLocation(program, "uTime"),
       uClickPos: gl.getUniformLocation(program, "uClickPos"),
       uClickTimes: gl.getUniformLocation(program, "uClickTimes"),
-      uColor: gl.getUniformLocation(program, "uColor"),
+      uColorA: gl.getUniformLocation(program, "uColorA"),
+      uColorB: gl.getUniformLocation(program, "uColorB"),
       uPixelSize: gl.getUniformLocation(program, "uPixelSize"),
     };
 
@@ -436,16 +413,21 @@ void main() {
       gl.uniform1fv(uniforms.uClickTimes, clickTimes);
     }
 
-    if (uniforms.uColor) {
-      gl.uniform3f(uniforms.uColor, 0.925, 0.918, 0.875); // #eceadf cream color
+    // Colors
+    // Zed's blue (#084CCF) and deep neutral (#0873cf)
+    if (uniforms.uColorA) {
+      gl.uniform3f(uniforms.uColorA, 8 / 255, 76 / 255, 207 / 255);
+    }
+    if (uniforms.uColorB) {
+      gl.uniform3f(uniforms.uColorB, 8 / 255, 115 / 255, 207 / 255);
     }
 
     if (uniforms.uPixelSize) {
       gl.uniform1f(uniforms.uPixelSize, PIXEL_SIZE);
     }
 
-    // Clear and draw with blue background color
-    gl.clearColor(0.027, 0.318, 0.812, 1.0); // #0751cf blue background
+    // Clear and draw
+    // gl.clearColor(0.137, 0.145, 0.165, 1.0); // fallback clear to #23252A
     gl.clear(gl.COLOR_BUFFER_BIT);
     gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
 

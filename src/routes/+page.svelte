@@ -17,8 +17,6 @@
   let WIPRef: HTMLParagraphElement;
   let projectsButtonRef: HTMLAnchorElement;
 
-  let introAnimationIsOver = $state(false);
-
   // Initialize animations
   onMount(() => {
     if (!titleRef || !WIPRef) {
@@ -62,11 +60,6 @@
             translateY: 0,
             stagger: 0.01,
             duration: 0.25,
-            onComplete: () => {
-              splittedTitle.revert();
-
-              introAnimationIsOver = true;
-            },
           },
         )
         .to(
