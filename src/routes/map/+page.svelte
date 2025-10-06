@@ -1,11 +1,17 @@
 <script lang="ts">
   import { onMount } from "svelte";
   import { mainStore } from "$lib/stores/mainStore";
+  import type { Sticker } from "$lib/types";
+
+  // Get stickers from page data
+  let { data } = $props();
+  let stickers = $state<Sticker[]>(data.stickers);
 
   // Map state
   let mapContainer: HTMLDivElement;
   let map: any = null;
   let isMapLoaded = $state(false);
+  let markerIcon: any = null;
 
   // Paris coordinates and zoom level for ~10km radius
   const PARIS_COORDINATES: [number, number] = [48.8566, 2.3522];
@@ -13,7 +19,7 @@
 
   // Map tile configuration
   const mapTileConfig = {
-    url: "https://tiles.stadiamaps.com/tiles/stamen_watercolor/{z}/{x}/{y}{r}.png",
+    url: "https://tiles.stadiamaps.com/tiles/alidade_smooth_dark/{z}/{x}/{y}{r}.png",
     attribution: "© OpenStreetMap contributors © CARTO",
     options: {
       subdomains: "abcd",
@@ -40,14 +46,63 @@
       }).addTo(map);
 
       isMapLoaded = true;
+
+      // Add stickers if already loaded
+      if (stickers.length) {
+        await addStickersToMap(L);
+      }
     } catch (error) {
       console.error("Failed to initialize map:", error);
     }
   };
 
+  // Add stickers to map
+  const addStickersToMap = async (L: any) => {
+    if (!map || !stickers.length) return;
+
+    // Clear existing markers if any
+    map.eachLayer((layer: any) => {
+      if (layer instanceof L.Marker) {
+        map.removeLayer(layer);
+      }
+    });
+
+    // Ensure custom icon is created once
+    if (!markerIcon) {
+      markerIcon = L.icon({
+        iconUrl: "/zoizo.png",
+        iconSize: [48, 48],
+        iconAnchor: [24, 40],
+        popupAnchor: [0, -36],
+        className: "zoizo-marker",
+      });
+    }
+
+    // Add marker for each sticker
+    stickers.forEach((sticker) => {
+      console.log("Adding sticker to map:", sticker);
+
+      const marker = L.marker([sticker.latitude, sticker.longitude], {
+        icon: markerIcon,
+      }).addTo(map);
+
+      // Create popup content
+      const popupContent = `
+        <div style="font-family: 'Zed Plex Mono', monospace;">
+          <strong>${sticker.name}</strong><br/>
+          <em>${sticker.place_name}</em>
+        </div>
+      `;
+
+      marker.bindPopup(popupContent);
+    });
+  };
+
   onMount(() => {
     $mainStore.hideBackground = true;
     initializeMap();
+
+    console.log("Stickers data:", stickers);
 
     return () => {
       // Reset when leaving the page
@@ -59,13 +114,13 @@
 <svelte:head>
   <title>Paris Map - Tom Planche</title>
   <meta
-    name="description"
     content="Interactive map of Paris and its surroundings"
+    name="description"
   />
 </svelte:head>
 
 <section class="map-section">
-  <div class="map-container" bind:this={mapContainer}>
+  <div bind:this={mapContainer} class="map-container">
     {#if !isMapLoaded}
       <div class="map-loading">
         <div class="loading-spinner"></div>
@@ -134,6 +189,12 @@
   :global(.leaflet-container) {
     background: transparent !important;
     border-radius: 1rem;
+  }
+
+  // Tweak custom marker rendering on high-DPI screens
+  :global(.zoizo-marker) {
+    image-rendering: -webkit-optimize-contrast;
+    image-rendering: crisp-edges;
   }
 
   :global(.leaflet-control-zoom) {

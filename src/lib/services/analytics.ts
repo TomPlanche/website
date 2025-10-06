@@ -1,11 +1,7 @@
-import { PUBLIC_API_ENDPOINT } from "$env/static/public";
-import type {
-  TGetSourcesResponse,
-  TLogSourceResponse,
-  TSources,
-} from "$lib/types/";
+import type { TGetSourcesResponse, TLogSourceResponse, TSources, } from "$lib/types/";
 import type { TBackendResponse } from "$lib/types/back";
-import axios, { type AxiosResponse } from "axios";
+import { createAuthenticatedAxios } from "$lib/utils/http";
+import type { AxiosResponse } from "axios";
 
 /**
  * Logs the source to the API.
@@ -19,17 +15,10 @@ export const logSource = async (
   source: string,
   apiKey: string,
 ): Promise<TLogSourceResponse> => {
+  const authenticatedAxios = createAuthenticatedAxios(apiKey);
+
   const response: AxiosResponse<TBackendResponse<TLogSourceResponse>> =
-    await axios.post(
-      `${PUBLIC_API_ENDPOINT}/source`,
-      { source },
-      {
-        headers: {
-          Authorization: `Bearer ${apiKey}`,
-          "Content-Type": "application/json",
-        },
-      },
-    );
+    await authenticatedAxios.post("/source", { source });
 
   if (response.status !== 200 || !response.data.success) {
     console.error("Failed to log source:", response.data);
@@ -48,13 +37,10 @@ export const logSource = async (
  * @return {Promise<TSources>} - A promise that resolves to an object containing sources and their counts.
  */
 export const getSources = async (apiKey: string): Promise<TSources> => {
+  const authenticatedAxios = createAuthenticatedAxios(apiKey);
+
   const response: AxiosResponse<TBackendResponse<TGetSourcesResponse>> =
-    await axios.get(`${PUBLIC_API_ENDPOINT}/source`, {
-      headers: {
-        Authorization: `Bearer ${apiKey}`,
-        "Content-Type": "application/json",
-      },
-    });
+    await authenticatedAxios.get("/source");
 
   if (response.status !== 200 || !response.data.success) {
     console.error("Failed to fetch sources:", response.data);
