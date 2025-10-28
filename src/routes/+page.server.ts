@@ -6,6 +6,11 @@ export const load: PageServerLoad = async ({ url }) => {
   const source = url.searchParams.get("source");
 
   if (source) {
-    await logSource(source, API_KEY);
+    try {
+      await logSource(source, API_KEY);
+    } catch (error) {
+      console.error("Failed to log source parameter:", error);
+      // Continue loading the page even if analytics fails
+    }
   }
 };
