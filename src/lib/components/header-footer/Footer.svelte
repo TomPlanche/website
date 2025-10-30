@@ -1,9 +1,8 @@
 <script lang="ts">
+  import { onMount } from "svelte";
   // Imports
   import { cursorEnter, cursorLeave } from "$lib/actions/cursor";
   import { scrollTrigger } from "$lib/components/header-footer/index";
-
-  import { onMount } from "svelte";
 
   // Variables
   const e_m_a_i_l = "tom" + "planche" + "@" + "icloud.com";

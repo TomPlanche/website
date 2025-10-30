@@ -21,8 +21,8 @@
 
   // Click tracking
   let clickIndex = 0;
-  let clickPositions = new Float32Array(MAX_CLICKS * 2); // x, y pairs
-  let clickTimes = new Float32Array(MAX_CLICKS);
+  const clickPositions = new Float32Array(MAX_CLICKS * 2); // x, y pairs
+  const clickTimes = new Float32Array(MAX_CLICKS);
 
   // Touch/drag state
   let isHolding = false;

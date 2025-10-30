@@ -1,11 +1,10 @@
-import { PUBLIC_API_ENDPOINT } from "$env/static/public";
 import type {
   TGetSourcesResponse,
   TLogSourceResponse,
   TSources,
 } from "$lib/types/";
 import type { TBackendResponse } from "$lib/types/back";
-import axios, { type AxiosResponse } from "axios";
+import { apiGet, apiPost } from "$lib/utils/api";
 
 /**
  * Logs the source to the API.
@@ -19,21 +18,14 @@ export const logSource = async (
   source: string,
   apiKey: string,
 ): Promise<TLogSourceResponse> => {
-  const response: AxiosResponse<TBackendResponse<TLogSourceResponse>> =
-    await axios.post(
-      `${PUBLIC_API_ENDPOINT}/source`,
-      { source },
-      {
-        headers: {
-          Authorization: `Bearer ${apiKey}`,
-          "Content-Type": "application/json",
-        },
-      },
-    );
+  const response = await apiPost<TBackendResponse<TLogSourceResponse>>(
+    "/secure/source",
+    { source },
+    apiKey,
+  );
 
   if (response.status !== 200 || !response.data.success) {
     console.error("Failed to log source:", response.data);
-
     throw new Error("Failed to log source");
   }
 
@@ -48,18 +40,20 @@ export const logSource = async (
  * @return {Promise<TSources>} - A promise that resolves to an object containing sources and their counts.
  */
 export const getSources = async (apiKey: string): Promise<TSources> => {
-  const response: AxiosResponse<TBackendResponse<TGetSourcesResponse>> =
-    await axios.get(`${PUBLIC_API_ENDPOINT}/source`, {
-      headers: {
-        Authorization: `Bearer ${apiKey}`,
-        "Content-Type": "application/json",
-      },
-    });
+  try {
+    const response = await apiGet<TBackendResponse<TGetSourcesResponse>>(
+      "/source",
+      apiKey,
+    );
 
-  if (response.status !== 200 || !response.data.success) {
-    console.error("Failed to fetch sources:", response.data);
+    if (response.status !== 200 || !response.data.success) {
+      console.error("Failed to fetch sources:", response.data);
+      return {};
+    }
+
+    return response.data.data.sources;
+  } catch (error) {
+    console.error("Error fetching sources:", error);
     return {};
   }
-
-  return response.data.data.sources;
 };

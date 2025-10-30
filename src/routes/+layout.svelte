@@ -1,13 +1,13 @@
 <script lang="ts">
   // Imports
   import "$lib/styles/main.scss";
+  import type { SvelteComponent } from "svelte";
+  import BackgroundCanvas from "$lib/components/BackgroundCanvas.svelte";
   import Cursor from "$lib/components/Cursor.svelte";
   import Footer from "$lib/components/header-footer/Footer.svelte";
   import Header from "$lib/components/header-footer/Header.svelte";
   import { mainStore } from "$lib/stores/mainStore";
   import { refStore } from "$lib/stores/refStore";
-  import type { SvelteComponent } from "svelte";
-  import BackgroundCanvas from "$lib/components/BackgroundCanvas.svelte";
 
   /**
    * Variables
@@ -16,7 +16,7 @@
   const { children } = $props();
 
   // Bindings
-  let cursor: SvelteComponent | null = $state(null);
+  const cursor: SvelteComponent | null = $state(null);
 
   //Delay between each title update in milliseconds
   const DELAY_MS: number = 200;

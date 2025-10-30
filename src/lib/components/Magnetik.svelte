@@ -1,8 +1,8 @@
 <script lang="ts">
-  // Imports
-  import { mainStore } from "$lib/stores/mainStore";
   import { gsap } from "gsap";
   import type { Snippet } from "svelte";
+  // Imports
+  import { mainStore } from "$lib/stores/mainStore";
 
   // Types
   type TProps = {

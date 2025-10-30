@@ -1,14 +1,14 @@
 <script lang="ts">
+  import { onMount } from "svelte";
   import { songsStore } from "$lib/stores/songStore";
   import type { TBackendSong } from "$lib/types/lastfm";
-  import { onMount } from "svelte";
 
   /**
    * Variables
    */
   let fetchingSongs = $state(true);
   let songs = $state<TBackendSong[]>([]);
-  let grid: HTMLDivElement | null = $state(null);
+  const grid: HTMLDivElement | null = $state(null);
   let imageLoadStates = $state<
     Map<string, { loaded: boolean; error: boolean }>
   >(new Map());
