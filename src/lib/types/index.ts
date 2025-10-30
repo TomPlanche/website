@@ -4,7 +4,7 @@ import type {
   TSources,
 } from "$lib/types/analytics";
 import type { TBackendResponse } from "./back";
-import { type TGetRecentTracks, getRecentTracksSchema } from "./lastfm";
+import { getRecentTracksSchema, type TGetRecentTracks } from "./lastfm";
 
 export type TCursor = {
   isHover: boolean;

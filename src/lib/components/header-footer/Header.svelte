@@ -1,11 +1,10 @@
 <script lang="ts">
-  import { cursorEnter, cursorLeave } from "$lib/actions/cursor";
-  import LiveIndicator from "$lib/components/LiveIndicator.svelte";
-  import { scrollTrigger } from "$lib/components/header-footer/index"; // Statee
-  import { BackendSongSchema, type TBackendSong } from "$lib/types/lastfm";
-
   import { onMount } from "svelte";
   import { fade } from "svelte/transition";
+  import { cursorEnter, cursorLeave } from "$lib/actions/cursor";
+  import { scrollTrigger } from "$lib/components/header-footer/index"; // Statee
+  import LiveIndicator from "$lib/components/LiveIndicator.svelte";
+  import { BackendSongSchema, type TBackendSong } from "$lib/types/lastfm";
 
   // Statee
   let currentTrack: TBackendSong | null = $state(null);
@@ -21,17 +20,39 @@
     try {
       const response = await fetch("/api-front/music/now-playing");
 
-      const parse = BackendSongSchema.safeParse(await response.json());
+      if (!response.ok) {
+        const errorText = await response.text().catch(() => "Unknown error");
+        console.error(
+          `Failed to fetch now playing: ${response.status} - ${errorText}`,
+        );
+        return;
+      }
+
+      const data = await response.json().catch((err) => {
+        console.error(
+          "Failed to parse response as JSON:",
+          err instanceof Error ? err.message : "Unknown error",
+        );
+        return null;
+      });
+
+      if (!data) {
+        return;
+      }
+
+      const parse = BackendSongSchema.safeParse(data);
 
       if (parse.success) {
         currentTrack = parse.data;
       } else {
-        throw new Error(
-          `Failed to parse now playing response: ${JSON.stringify(parse.error)}`,
+        console.error(
+          "Failed to parse now playing response:",
+          parse.error.issues.map((i) => i.message).join(", "),
         );
       }
     } catch (error) {
-      console.error("Error fetching now playing:", error);
+      const message = error instanceof Error ? error.message : "Unknown error";
+      console.error("Error fetching now playing:", message);
     }
   };
 

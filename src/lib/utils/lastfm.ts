@@ -1,28 +1,37 @@
-import { PUBLIC_API_ENDPOINT } from "$env/static/public";
-import { BackendSongSchema, type TBackendSong } from "$lib/types/lastfm";
 import { error } from "@sveltejs/kit";
-import axios, { type AxiosResponse } from "axios";
+import { BackendSongSchema, type TBackendSong } from "$lib/types/lastfm";
+import { apiGet } from "$lib/utils/api";
 
 export const getRecentTracks = async (): Promise<TBackendSong[]> => {
-  const response: AxiosResponse<TBackendSong[]> = await axios.get<
-    TBackendSong[]
-  >(`${PUBLIC_API_ENDPOINT}/static/recent_play_counts.json`);
+  try {
+    const response = await apiGet<TBackendSong[]>(
+      "/static/recent_play_counts.json",
+    );
 
-  if (response.status !== 200) {
-    throw error(response.status, response.statusText);
+    if (response.status !== 200) {
+      throw error(response.status, response.statusText);
+    }
+
+    return response.data.map((song) => BackendSongSchema.parse(song));
+  } catch (e: unknown) {
+    const message = e instanceof Error ? e.message : "Unknown error";
+    throw error(500, message);
   }
-
-  return response.data.map((song) => BackendSongSchema.parse(song));
 };
 
 export const getCurrentTrack = async (): Promise<TBackendSong> => {
-  const response: AxiosResponse<TBackendSong[]> = await axios.get<
-    TBackendSong[]
-  >(`${PUBLIC_API_ENDPOINT}/static/currently_listening.json`);
+  try {
+    const response = await apiGet<TBackendSong[]>(
+      "/static/currently_listening.json",
+    );
 
-  if (response.status !== 200) {
-    throw error(response.status, response.statusText);
+    if (response.status !== 200) {
+      throw error(response.status, response.statusText);
+    }
+
+    return BackendSongSchema.parse(response.data[0]);
+  } catch (e: unknown) {
+    const message = e instanceof Error ? e.message : "Unknown error";
+    throw error(500, message);
   }
-
-  return BackendSongSchema.parse(response.data[0]);
 };
