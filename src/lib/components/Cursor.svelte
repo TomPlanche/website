@@ -16,7 +16,7 @@
     size: 15,
     background: "color-mix(in srgb, var(--text-color) 50%, transparent)",
   };
-  const scroll = $state<{
+  let scroll = $state<{
     x: number;
     y: number;
   }>({ x: 0, y: 0 });
@@ -36,7 +36,7 @@
   const blur = new Spring(0);
 
   let background = $state(cursor_base.background as string);
-  const hasMoved = $state(false);
+  let hasMoved = $state(false);
 
   let innerSvg: string | null = $state(null);
   let innerText: string | null = $state(null);
