@@ -16,7 +16,7 @@
   const { children } = $props();
 
   // Bindings
-  let cursor: SvelteComponent | null = $state(null);
+  const cursor: SvelteComponent | null = $state(null);
 
   //Delay between each title update in milliseconds
   const DELAY_MS: number = 200;
