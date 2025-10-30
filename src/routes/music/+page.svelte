@@ -8,7 +8,8 @@
    */
   let fetchingSongs = $state(true);
   let songs = $state<TBackendSong[]>([]);
-  const grid: HTMLDivElement | null = $state(null);
+  let grid: HTMLDivElement | null = $state(null);
+
   let imageLoadStates = $state<
     Map<string, { loaded: boolean; error: boolean }>
   >(new Map());
