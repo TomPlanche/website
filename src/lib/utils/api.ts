@@ -49,7 +49,9 @@ const createConfig = (
 const handleAxiosError = (error: unknown, operation: string): never => {
   if (axios.isAxiosError(error)) {
     // Try to extract error message from new API format
-    const apiErrorResponse = error.response?.data as TApiErrorResponse | undefined;
+    const apiErrorResponse = error.response?.data as
+      | TApiErrorResponse
+      | undefined;
     const apiErrorMessage = apiErrorResponse?.error?.message;
 
     const errorDetails = {

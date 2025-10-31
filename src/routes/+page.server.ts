@@ -1,5 +1,4 @@
-import { API_KEY } from "$env/static/private";
-import { logSource } from "$lib/services/analytics";
+import { sourceService } from "$lib/services/sourceService.server";
 import type { PageServerLoad } from "./$types";
 
 export const load: PageServerLoad = async ({ url }) => {
@@ -7,7 +6,7 @@ export const load: PageServerLoad = async ({ url }) => {
 
   if (source) {
     try {
-      await logSource(source, API_KEY);
+      await sourceService.logSource(source);
     } catch (error) {
       console.error("Failed to log source parameter:", error);
     }
