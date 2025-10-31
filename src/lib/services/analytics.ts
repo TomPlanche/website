@@ -3,7 +3,7 @@ import type {
   TLogSourceResponse,
   TSources,
 } from "$lib/types/";
-import type { TBackendResponse } from "$lib/types/back";
+import type { TApiSuccessResponse } from "$lib/types/back";
 import { apiGet, apiPost } from "$lib/utils/api";
 
 /**
@@ -18,13 +18,14 @@ export const logSource = async (
   source: string,
   apiKey: string,
 ): Promise<TLogSourceResponse> => {
-  const response = await apiPost<TBackendResponse<TLogSourceResponse>>(
+  const response = await apiPost<TApiSuccessResponse<TLogSourceResponse>>(
     "/secure/source",
     { source },
     apiKey,
   );
 
-  if (response.status !== 200 || !response.data.success) {
+  // HTTP status is now in headers only
+  if (response.status !== 200) {
     console.error("Failed to log source:", response.data);
     throw new Error("Failed to log source");
   }
@@ -41,12 +42,13 @@ export const logSource = async (
  */
 export const getSources = async (apiKey: string): Promise<TSources> => {
   try {
-    const response = await apiGet<TBackendResponse<TGetSourcesResponse>>(
+    const response = await apiGet<TApiSuccessResponse<TGetSourcesResponse>>(
       "/source",
       apiKey,
     );
 
-    if (response.status !== 200 || !response.data.success) {
+    // HTTP status is now in headers only
+    if (response.status !== 200) {
       console.error("Failed to fetch sources:", response.data);
       return {};
     }
