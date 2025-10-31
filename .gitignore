@@ -37,3 +37,5 @@ src/routes/tests/*
 # Package manager
 *.lock
 *-lock.*
+
+bun.lockb

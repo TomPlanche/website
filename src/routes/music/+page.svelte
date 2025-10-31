@@ -27,16 +27,6 @@
     imageLoadStates = new Map(imageLoadStates);
   };
 
-  const handleImageError = (songId: string) => {
-    const currentState = imageLoadStates.get(songId) || {
-      loaded: false,
-      error: false,
-    };
-    imageLoadStates.set(songId, { ...currentState, error: true });
-    // Trigger reactivity
-    imageLoadStates = new Map(imageLoadStates);
-  };
-
   const getImageState = (songId: string) => {
     return imageLoadStates.get(songId) || { loaded: false, error: false };
   };

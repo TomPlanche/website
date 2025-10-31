@@ -10,7 +10,7 @@ const BaseObjectSchema = BaseObjectSchemaNoMbid.extend({
 });
 
 const DateSchema = z.object({
-  uts: z.union([
+  "uts": z.union([
     z.coerce.date(),
     z.coerce.number().transform((v) => new Date(v * 1000)),
   ]),
@@ -18,32 +18,32 @@ const DateSchema = z.object({
 });
 
 const TrackImageSchema = z.object({
-  size: z.string(),
+  "size": z.string(),
   "#text": z.string(),
 });
 
 const RecentTrackArtistSchema = z.object({
-  mbid: z.string(),
+  "mbid": z.string(),
   "#text": z.string(),
 });
 
 const RecentTrackExtendedArtistSchema = RecentTrackArtistSchema.extend({
   "#text": z.union([z.undefined(), z.never()]), // Not present in the response
-  image: z.array(TrackImageSchema),
+  "image": z.array(TrackImageSchema),
 });
 
 export const RecentTrackSchema = BaseObjectSchema.extend({
-  artist: z.union([
+  "artist": z.union([
     z.object({
-      mbid: z.string(),
+      "mbid": z.string(),
       "#text": z.string(),
     }),
     RecentTrackExtendedArtistSchema,
   ]),
-  streamable: z.coerce.number().pipe(z.coerce.boolean()),
-  image: z.array(TrackImageSchema),
-  album: z.object({
-    mbid: z.string(),
+  "streamable": z.coerce.number().pipe(z.coerce.boolean()),
+  "image": z.array(TrackImageSchema),
+  "album": z.object({
+    "mbid": z.string(),
     "#text": z.string(),
   }),
   "@attr": z
@@ -56,10 +56,10 @@ export const RecentTrackSchema = BaseObjectSchema.extend({
       ]),
     })
     .optional(),
-  date: DateSchema.optional(),
+  "date": DateSchema.optional(),
   // the 'loved' field is not present in the response
 
-  loved: z.coerce.number().pipe(z.coerce.boolean()).optional(),
+  "loved": z.coerce.number().pipe(z.coerce.boolean()).optional(),
 });
 
 export type TRecentTrack = z.infer<typeof RecentTrackSchema>;
@@ -74,7 +74,7 @@ export const BaseResponseSchema = z.object({
 
 export const getRecentTracksSchema = z.object({
   recenttracks: z.object({
-    track: z.array(RecentTrackSchema),
+    "track": z.array(RecentTrackSchema),
     "@attr": BaseResponseSchema,
   }),
 });
