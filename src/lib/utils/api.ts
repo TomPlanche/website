@@ -1,5 +1,16 @@
 import axios, { type AxiosRequestConfig, type AxiosResponse } from "axios";
 import { PUBLIC_API_ENDPOINT } from "$env/static/public";
+import type { TApiErrorResponse } from "$lib/types";
+
+/**
+ * API Response Format:
+ *
+ * Success responses: { data: T }
+ * Error responses: { error: { message: string } }
+ * Paginated responses: { _metadata: {...}, data: T }
+ *
+ * HTTP status codes are in response headers only (not in response body)
+ */
 
 /**
  * Creates axios config with common headers including API key if provided
@@ -33,18 +44,25 @@ const createConfig = (
 
 /**
  * Handles axios errors safely, avoiding circular reference issues
+ * Extracts error message from the new API error format
  */
 const handleAxiosError = (error: unknown, operation: string): never => {
   if (axios.isAxiosError(error)) {
+    // Try to extract error message from new API format
+    const apiErrorResponse = error.response?.data as TApiErrorResponse | undefined;
+    const apiErrorMessage = apiErrorResponse?.error?.message;
+
     const errorDetails = {
       status: error.response?.status,
       statusText: error.response?.statusText,
-      message: error.message,
+      message: apiErrorMessage || error.message,
     };
     console.error(`API ${operation} failed:`, errorDetails);
 
+    // Prefer the API error message if available
+    const displayMessage = apiErrorMessage || error.message;
     throw new Error(
-      `${operation} failed: ${error.response?.status || "Network error"} - ${error.message}`,
+      `${operation} failed: ${error.response?.status || "Network error"} - ${displayMessage}`,
     );
   }
 
