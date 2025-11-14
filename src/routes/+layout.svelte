@@ -2,7 +2,6 @@
   // Imports
   import "$lib/styles/main.scss";
   import type { SvelteComponent } from "svelte";
-  import BackgroundCanvas from "$lib/components/BackgroundCanvas.svelte";
   import Cursor from "$lib/components/Cursor.svelte";
   import Footer from "$lib/components/header-footer/Footer.svelte";
   import Header from "$lib/components/header-footer/Header.svelte";
@@ -71,9 +70,9 @@
   });
 </script>
 
-{#if !$mainStore.hideBackground}
-  <BackgroundCanvas />
-{/if}
+<!--{#if !$mainStore.hideBackground}-->
+<!--  <BackgroundCanvas />-->
+<!--{/if}-->
 <div id="noise"></div>
 
 {#if !$mainStore.isMobileOrTablet}
@@ -94,6 +93,10 @@
 
 <style lang="scss">
   @use "$lib/styles/variables";
+
+  $dot-color: rgba(255, 255, 255, 0.8);
+  $dot-size: 1px;
+  $dot-space: 22px;
 
   $spacing-between-dots: 20px;
 
@@ -136,6 +139,20 @@
     :global([tabindex]:not([tabindex="-1"])) {
       pointer-events: auto;
     }
+
+    background:
+      linear-gradient(
+          90deg,
+          var(--background-color) calc($dot-space - $dot-size),
+          transparent 1%
+        )
+        center / $dot-space $dot-space,
+      linear-gradient(
+          var(--background-color) calc($dot-space - $dot-size),
+          transparent 1%
+        )
+        center / $dot-space $dot-space,
+      $dot-color;
   }
 
   #noise {
