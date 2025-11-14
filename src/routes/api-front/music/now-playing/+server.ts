@@ -1,5 +1,5 @@
+import { error, json, type RequestHandler } from "@sveltejs/kit";
 import { getCurrentTrack } from "$lib/utils/lastfm";
-import { type RequestHandler, error, json } from "@sveltejs/kit";
 
 export const GET: RequestHandler = async () => {
   try {
@@ -7,6 +7,12 @@ export const GET: RequestHandler = async () => {
 
     return json(song);
   } catch (e: unknown) {
-    return error(500, <App.Error>e);
+    if (e && typeof e === "object" && "status" in e && "body" in e) {
+      throw e;
+    }
+
+    const message =
+      e instanceof Error ? e.message : "Failed to fetch current track";
+    return error(500, message);
   }
 };

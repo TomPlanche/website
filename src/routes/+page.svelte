@@ -1,10 +1,10 @@
 <script lang="ts">
-  import { cursorEnter, cursorLeave } from "$lib/actions/cursor";
   import { gsap } from "gsap";
   import { Flip } from "gsap/Flip";
   import { ScrambleTextPlugin } from "gsap/ScrambleTextPlugin";
   import { SplitText } from "gsap/SplitText";
   import { onMount } from "svelte";
+  import { cursorEnter, cursorLeave } from "$lib/actions/cursor";
 
   gsap.registerPlugin(ScrambleTextPlugin);
   gsap.registerPlugin(SplitText);

@@ -3,8 +3,15 @@ import type {
   TLogSourceResponse,
   TSources,
 } from "$lib/types/analytics";
-import type { TBackendResponse } from "./back";
-import { type TGetRecentTracks, getRecentTracksSchema } from "./lastfm";
+import type {
+  TApiErrorResponse,
+  TApiPaginatedResponse,
+  TApiResponse,
+  TApiSuccessResponse,
+  TPaginationMetadata,
+} from "./back";
+import { isApiError, isApiPaginated } from "./back";
+import { getRecentTracksSchema, type TGetRecentTracks } from "./lastfm";
 
 export type TCursor = {
   isHover: boolean;
@@ -35,6 +42,10 @@ export type {
   TGetSourcesResponse,
   TLogSourceResponse,
   TGetRecentTracks,
-  TBackendResponse,
+  TApiSuccessResponse,
+  TApiErrorResponse,
+  TApiPaginatedResponse,
+  TApiResponse,
+  TPaginationMetadata,
 };
-export { getRecentTracksSchema };
+export { getRecentTracksSchema, isApiError, isApiPaginated };

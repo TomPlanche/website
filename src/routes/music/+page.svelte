@@ -1,7 +1,7 @@
 <script lang="ts">
+  import { onMount } from "svelte";
   import { songsStore } from "$lib/stores/songStore";
   import type { TBackendSong } from "$lib/types/lastfm";
-  import { onMount } from "svelte";
 
   /**
    * Variables
@@ -9,6 +9,7 @@
   let fetchingSongs = $state(true);
   let songs = $state<TBackendSong[]>([]);
   let grid: HTMLDivElement | null = $state(null);
+
   let imageLoadStates = $state<
     Map<string, { loaded: boolean; error: boolean }>
   >(new Map());
@@ -22,16 +23,6 @@
       error: false,
     };
     imageLoadStates.set(songId, { ...currentState, loaded: true });
-    // Trigger reactivity
-    imageLoadStates = new Map(imageLoadStates);
-  };
-
-  const handleImageError = (songId: string) => {
-    const currentState = imageLoadStates.get(songId) || {
-      loaded: false,
-      error: false,
-    };
-    imageLoadStates.set(songId, { ...currentState, error: true });
     // Trigger reactivity
     imageLoadStates = new Map(imageLoadStates);
   };
